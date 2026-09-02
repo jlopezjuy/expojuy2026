@@ -1,0 +1,68 @@
+---
+import { faq } from '../../data/faq';
+import Container from '../layout/Container.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+  /** Heading level, since this section is its own page (h1) yet reuse-safe. */
+  headingLevel?: 'h1' | 'h2';
+}
+
+const { headingLevel = 'h1' } = Astro.props;
+---
+
+<section class="bg-cream pb-16 lg:pb-20" aria-labelledby="faq-title">
+  <Container width="normal">
+    <div class="reveal">
+      <SectionHeading
+        eyebrow="Preguntas frecuentes"
+        title="Dudas frecuentes del"
+        accent="Desafío."
+        accentColor="gold"
+        as={headingLevel}
+        id="faq-title"
+      />
+      <p class="mt-6 max-w-[58ch] text-body text-night/75">
+        Todo lo que necesitás saber para participar del Desafío Digital ExpoJuy 2026.
+      </p>
+    </div>
+
+    {/* Native <details>/<summary>: the accordion works with JS disabled.
+        enhance.ts's initAccordion() only syncs aria-expanded (see enhance.ts). */}
+    <div class="mt-12 flex flex-col gap-3">
+      {
+        faq.map((item, i) => {
+          const panelId = `faq-panel-${i}`;
+          return (
+            <details
+              data-accordion
+              class="reveal group rounded-card border border-night/10 bg-cream-deep/60 transition-colors duration-300 open:border-night/20"
+              style={`--reveal-delay:${i * 60}ms`}
+            >
+              <summary
+                id={`faq-toggle-${i}`}
+                data-accordion-toggle
+                aria-controls={panelId}
+                class="flex cursor-pointer items-center justify-between gap-4 p-5 text-display/[0.62] font-semibold text-night transition-opacity duration-300 [&::-webkit-details-marker]:hidden sm:p-6"
+              >
+                <span>{item.question}</span>
+                <span
+                  aria-hidden="true"
+                  class="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-night/20 text-night/70 transition-transform duration-[0.4s] ease-[var(--ease-out-expo)] group-open:rotate-180"
+                >
+                  <Icon name="arrow-down" class="h-4 w-4" />
+                </span>
+              </summary>
+              <div id={panelId} class="px-5 pt-0 pb-5 sm:px-6 sm:pb-6">
+                <p class="max-w-[68ch] border-t border-night/10 pt-4 text-body text-night/75">
+                  {item.answer}
+                </p>
+              </div>
+            </details>
+          );
+        })
+      }
+    </div>
+  </Container>
+</section>

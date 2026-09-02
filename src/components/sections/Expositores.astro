@@ -1,0 +1,75 @@
+---
+import { expositores } from '../../data/expositores';
+import Container from '../layout/Container.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+interface Props {
+  /** Heading level, since this section is its own page (h1) yet reuse-safe. */
+  headingLevel?: 'h1' | 'h2';
+}
+
+const { headingLevel = 'h1' } = Astro.props;
+const empty = expositores.length === 0;
+---
+
+<section class="bg-cream pb-16 lg:pb-20" aria-labelledby="expositores-title">
+  <Container width="normal">
+    <div class="reveal">
+      <SectionHeading
+        eyebrow="Expositores"
+        title="Quiénes exponen en"
+        accent="ExpoJuy 2026."
+        accentColor="magenta"
+        as={headingLevel}
+        id="expositores-title"
+      />
+      <p class="mt-6 max-w-[58ch] text-body text-night/75">
+        Empresas, instituciones y emprendimientos que muestran lo mejor de la producción jujeña.
+      </p>
+    </div>
+
+    {
+      empty ? (
+        /* No confirmed exhibitor list yet. State it honestly instead of inventing. */
+        <div class="mt-12 rounded-card border border-night/10 bg-cream-deep/60 p-8 sm:p-10">
+          <p class="text-[0.62rem] font-bold tracking-[0.16em] text-night/60 uppercase">
+            {/* TODO(Sprint 3.1): listado real de expositores confirmado por la
+                organización (nombre, rubro, stand, contacto). No inventar. */}
+            Próximamente
+          </p>
+          <p class="mt-3 max-w-[46ch] text-title text-night">
+            El listado oficial de expositores se publicará próximamente.
+          </p>
+          <p class="mt-3 max-w-[52ch] text-body text-night/70">
+            La organización está confirmando el padrón de expositores. Cuando esté disponible, este
+            directorio mostrará nombre, rubro, stand y contacto de cada participante.
+          </p>
+        </div>
+      ) : (
+        <ul class="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            expositores.map((expositor, i) => (
+              <li
+                class="reveal flex flex-col gap-3 rounded-card border border-night/10 bg-cream-deep/60 p-6"
+                style={`--reveal-delay:${i * 70}ms`}
+              >
+                <h3 class="font-display text-title text-night">{expositor.nombre}</h3>
+                <p class="eyebrow text-night/60">{expositor.rubro}</p>
+                <dl class="mt-auto flex flex-col gap-1.5 text-body text-night/75">
+                  <div class="flex gap-2">
+                    <dt class="font-bold text-night/60">Stand</dt>
+                    <dd>{expositor.stand}</dd>
+                  </div>
+                  <div class="flex gap-2">
+                    <dt class="font-bold text-night/60">Contacto</dt>
+                    <dd>{expositor.contacto}</dd>
+                  </div>
+                </dl>
+              </li>
+            ))
+          }
+        </ul>
+      )
+    }
+  </Container>
+</section>

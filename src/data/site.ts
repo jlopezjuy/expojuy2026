@@ -30,6 +30,11 @@ export const nav: NavItem[] = [
   { label: 'AGENDA', href: '#agenda' },
   { label: 'VISITAR', href: '#', placeholder: true },
   { label: 'EXPOSITOR', href: '#participar' },
+  // Sprint 3: páginas propias de las secciones mínimas (Consignas Técnicas §5).
+  { label: 'EXPOSITORES', href: '/expositores' },
+  { label: 'NOTICIAS', href: '/noticias' },
+  { label: 'CONTACTO', href: '/contacto' },
+  { label: 'PREGUNTAS', href: '/preguntas-frecuentes' },
 ];
 
 export const heroCategories = ['NEGOCIOS', 'TURISMO', 'CULTURA', 'EXPERIENCIA'] as const;
@@ -113,9 +118,10 @@ export const footerColumns = [
     title: 'LA EXPO',
     links: [
       { label: '¿Qué es ExpoJuy?', href: '#la-expo' },
-      // TODO(Sprint 2.3): "Objetivos" y "Preguntas frecuentes" se retiraron porque
-      // no hay destino real en el repo. "Objetivos" vuelve cuando la organización
-      // publique esa página; "Preguntas frecuentes" vuelve con la sección del Sprint 3.
+      // TODO(Sprint 2.3): "Objetivos" se retiró porque no hay destino real en el
+      // repo; vuelve cuando la organización publique esa página. "Preguntas
+      // frecuentes" vuelve con la sección del Sprint 3.
+      { label: 'Preguntas frecuentes', href: '/preguntas-frecuentes' },
       { label: 'Ediciones anteriores', href: 'https://expojuy.camcomexjujuy.com.ar/' },
     ],
   },
@@ -126,6 +132,10 @@ export const footerColumns = [
       // no hay datos reales en el repo (ni en la sección de información del mockup).
       // Se restituyen cuando la organización los provea.
       { label: 'Turismo en Jujuy', href: '#territorios' },
+      // Sprint 3: secciones mínimas con página propia (Consignas Técnicas §5).
+      { label: 'Expositores', href: '/expositores' },
+      { label: 'Noticias', href: '/noticias' },
+      { label: 'Contacto', href: '/contacto' },
     ],
   },
   {

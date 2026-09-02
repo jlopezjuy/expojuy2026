@@ -1,0 +1,131 @@
+---
+import { event } from '../../data/site';
+import Container from '../layout/Container.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+  /** Heading level, since this section is its own page (h1) yet reuse-safe. */
+  headingLevel?: 'h1' | 'h2';
+}
+
+const { headingLevel = 'h1' } = Astro.props;
+
+// TODO(Sprint 3.2): reemplazar con endpoint real (ID de Formspree o backend).
+// No inventar. Mientras esté vacío, el formulario queda visible pero con el envío
+// deshabilitado y una nota de pendiente: no se produce un envío real falso.
+const FORM_ENDPOINT = '';
+const ready = FORM_ENDPOINT.trim().length > 0;
+
+const fields = [
+  { label: 'Nombre', name: 'nombre', type: 'text', autocomplete: 'name', maxlength: 120, required: true },
+  { label: 'Email', name: 'email', type: 'email', autocomplete: 'email', maxlength: 200, required: true },
+  { label: 'Asunto', name: 'asunto', type: 'text', autocomplete: 'off', maxlength: 200, required: true },
+] as const;
+---
+
+<section class="bg-cream pb-16 lg:pb-20" aria-labelledby="contacto-title">
+  <Container class="grid gap-12 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-16">
+    <div class="reveal">
+      <SectionHeading
+        eyebrow="Contacto"
+        title="Ponete en contacto."
+        accentColor="teal"
+        as={headingLevel}
+        id="contacto-title"
+      />
+      <p class="mt-6 max-w-[44ch] text-body text-night/75">
+        Consultas de expositores, prensa o atención al visitante: escribinos y te respondemos.
+      </p>
+
+      <dl class="mt-10 flex flex-col gap-6">
+        <div>
+          <dt class="eyebrow text-night/60">Fechas</dt>
+          <dd class="mt-2 font-display text-title text-night">17 al 20 de septiembre de 2026</dd>
+        </div>
+        <div>
+          <dt class="eyebrow text-night/60">Lugar</dt>
+          <dd class="mt-2 font-display text-title text-night">{event.venue}</dd>
+          <dd class="mt-1 text-body text-night/70">{event.city}</dd>
+        </div>
+        <div>
+          <dt class="eyebrow text-night/60">Sitio oficial</dt>
+          <dd class="mt-2">
+            <a
+              href="https://expojuy.camcomexjujuy.com.ar/"
+              class="text-body text-night underline decoration-magenta/50 underline-offset-4 transition-colors duration-300 hover:text-magenta"
+            >
+              expojuy.camcomexjujuy.com.ar
+            </a>
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="reveal" style="--reveal-delay:120ms">
+      <form
+        method="POST"
+        action={FORM_ENDPOINT}
+        class="relative flex flex-col gap-5 rounded-card border border-night/10 bg-cream-deep/60 p-6 sm:p-8"
+      >
+        {
+          fields.map((field) => (
+            <div class="flex flex-col gap-1.5">
+              <label for={`${field.name}-field`} class="text-[0.68rem] font-bold tracking-[0.14em] text-night/70 uppercase">
+                {field.label}
+              </label>
+              <input
+                id={`${field.name}-field`}
+                name={field.name}
+                type={field.type}
+                autocomplete={field.autocomplete}
+                maxlength={field.maxlength}
+                required={field.required}
+                class="min-w-0 rounded-[3px] border border-night/25 bg-cream px-4 py-3 text-body text-night placeholder:text-night/40 transition-colors duration-300 focus:border-night/60 focus:outline-none"
+              />
+            </div>
+          ))
+        }
+
+        <div class="flex flex-col gap-1.5">
+          <label for="mensaje-field" class="text-[0.68rem] font-bold tracking-[0.14em] text-night/70 uppercase">
+            Mensaje
+          </label>
+          <textarea
+            id="mensaje-field"
+            name="mensaje"
+            rows="6"
+            maxlength="2000"
+            required
+            class="min-w-0 resize-y rounded-[3px] border border-night/25 bg-cream px-4 py-3 text-body text-night placeholder:text-night/40 transition-colors duration-300 focus:border-night/60 focus:outline-none"
+          ></textarea>
+        </div>
+
+        {/* Honeypot: hidden from people and assistive tech; only bots fill it. */}
+        <div class="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
+          <label for="website-field">No completar este campo</label>
+          <input id="website-field" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div class="flex flex-col gap-3 border-t border-night/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <button
+            type="submit"
+            disabled={!ready}
+            class="group inline-flex items-center justify-center gap-3 text-[0.7rem] font-bold tracking-[0.16em] text-night uppercase transition duration-300 ease-out bg-gold-bright px-7 py-3.5 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)] hover:bg-white disabled:cursor-not-allowed disabled:bg-night/15 disabled:text-night/45 disabled:shadow-none"
+          >
+            Enviar mensaje
+            <Icon name="arrow-right" class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+          </button>
+
+          {/* TODO(Sprint 3.2): el envío se habilita cuando la organización defina el
+              endpoint real (Formspree o backend). No se inventa un ID. */}
+          {!ready && (
+            <p class="max-w-[24ch] text-[0.68rem] leading-relaxed text-night/55">
+              El formulario de envío se habilitará próximamente.
+            </p>
+          )}
+        </div>
+      </form>
+    </div>
+  </Container>
+</section>

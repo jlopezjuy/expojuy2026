@@ -111,6 +111,28 @@ function initFilters(): void {
   });
 }
 
+/* --------------------------------------------------------------- accordion */
+/**
+ * FAQ disclosure. Markup is native <details>/<summary> so the accordion works
+ * without JS; this routine only keeps the aria-expanded state in sync with the
+ * open attribute for assistive tech. It is also a progressive enhancement for
+ * any `<details data-accordion>` element, not just the FAQ.
+ */
+function initAccordion(): void {
+  const items = document.querySelectorAll<HTMLDetailsElement>('[data-accordion]');
+  if (!items.length) return;
+
+  const sync = (item: HTMLDetailsElement) => {
+    const toggle = item.querySelector<HTMLElement>('[data-accordion-toggle]');
+    if (toggle) toggle.setAttribute('aria-expanded', String(item.open));
+  };
+
+  items.forEach((item) => {
+    sync(item);
+    item.addEventListener('toggle', () => sync(item));
+  });
+}
+
 /* ---------------------------------------------------------------- parallax */
 function initParallax(): void {
   if (reduceMotion.matches) return;
@@ -156,6 +178,7 @@ function boot(): void {
   initHeader();
   initMobileNav();
   initFilters();
+  initAccordion();
   initParallax();
 }
 
