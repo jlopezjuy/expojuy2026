@@ -1,10 +1,54 @@
 @import 'tailwindcss';
 
 /* ------------------------------------------------------------------
+   ExpoJuy 2026 — official typeface (Ambit)
+   Self-hosted from recursos/Fuentes_Oficiales/Ambit-*.otf, converted to
+   woff2. No Google Fonts / third-party font requests at runtime.
+   ------------------------------------------------------------------ */
+@font-face {
+  font-family: 'Ambit';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('../fonts/ambit-light.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Ambit';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../fonts/ambit-regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Ambit';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../fonts/ambit-semibold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Ambit';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../fonts/ambit-bold.woff2') format('woff2');
+}
+
+/* ------------------------------------------------------------------
    ExpoJuy 2026 — design tokens
    Palette sampled from the "Propuesta 1 — Jujuy Cinematográfico"
    spec panel in 00.png. Values are INFERRED from the mockup pixels,
    not from an official brand manual. See docs/design-spec.md.
+
+   Palette review (Sprint 1.3): recursos/ was checked against an official
+   Hex colour kit — NO documented brand Hex palette exists there. The only
+   confirmed official colours are those sampled from the isologotipo in
+   expojuy26_isologotipo.png (teal #25c0d4, violet #774ff0, magenta #820cd0,
+   lavender #bb8cff). Those belong to the logo identity, not the site
+   palette. The site palette below remains INFERRED and is left unchanged.
    ------------------------------------------------------------------ */
 @theme {
   /* Brand accents (the six swatches on the spec panel) */
@@ -23,9 +67,11 @@
   --color-night-soft: #0d1b2a;
   --color-night-line: #1d2c3c;
 
-  /* Type */
-  --font-display: var(--font-editorial), 'Iowan Old Style', Georgia, serif;
-  --font-sans: var(--font-ui), 'Helvetica Neue', Arial, sans-serif;
+  /* Type — Ambit is the single official ExpoJuy family. `--font-display`
+     drives headings (weight 500 → resolves to SemiBold 600) and `--font-sans`
+     drives body/UI (Regular 400). */
+  --font-display: 'Ambit', 'Iowan Old Style', Georgia, serif;
+  --font-sans: 'Ambit', 'Helvetica Neue', Arial, sans-serif;
 
   /* Fluid display sizes (min 390px viewport -> max 1600px viewport) */
   /* Sizes reverse-engineered from the mockup at a 1440px design width. */

@@ -18,6 +18,14 @@ Defined once in `src/styles/global.css` under Tailwind v4's `@theme`. Use the ge
 
 ### Colour — INFERRED (sampled from the palette swatches in `00.png`)
 
+> **Palette review (Sprint 1.3):** `recursos/` was checked for an official brand
+> Hex palette. **No documented Hex colour kit exists there.** The only confirmed
+> official brand colours are those sampled from `expojuy26_isologotipo.png`:
+> teal `#25c0d4`, violet `#774ff0`, magenta `#820cd0`, lavender `#bb8cff`. Those
+> define the *logo identity*, not the site palette. The site palette below remains
+> **INFERRED** from the mockup and is **unchanged** — nothing was invented and no
+> token values were altered.
+
 | Token             | Hex       | Role                                                    |
 | ----------------- | --------- | ------------------------------------------------------- |
 | `gold`            | `#dba649` | Warm accent, swatch 1                                    |
@@ -41,6 +49,11 @@ Both families are self-hosted at build time through Astro's `fonts` config (`ast
   Playfair is the freely licensed half of that pair.
 - **UI/body:** Manrope (variable 400–800). The panel suggests "Satoshi / Manrope"; Satoshi is not
   freely redistributable, so Manrope is used.
+
+> **Type update (Sprint 1.2):** the editorial reference pair above has been replaced with the
+> **official ExpoJuy typeface, Ambit** (from `recursos/Fuentes_Oficiales/`, converted to woff2 and
+> self-hosted in `src/fonts/`). Both `--font-display` and `--font-sans` now resolve to `'Ambit'`
+> (Light 300 / Regular 400 / SemiBold 600 / Bold 700). No Google Fonts are requested at runtime.
 
 Sizes are fluid `clamp()` values reverse-engineered from the mockup at a 1440px design width:
 
@@ -147,8 +160,9 @@ Two placeholders deviate most from the reference and should be prioritised:
 - **Hero backdrop and collage** — the mockup features a person in a poncho in the foreground of a
   Quebrada landscape; the placeholder is landscape-only.
 
-The `EXPOJUY 2026` lockup in `components/ui/Logo.astro` is an **original SVG** inspired by the
-coloured geometric block mark in the reference — not a trace of the mockup bitmap.
+The `EXPOJUY 2026` lockup in `components/ui/Logo.astro` now uses the **official** isologotipo
+(`recursos/EXPOJUY_Logo2026/RGB/expojuy26_isologotipo.png`, cropped to a transparent asset in
+`src/assets/expojuy-isologotipo.png`) — the previous original SVG interpretation is gone.
 
 ---
 
