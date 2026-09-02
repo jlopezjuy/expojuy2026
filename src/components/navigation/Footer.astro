@@ -1,5 +1,5 @@
 ---
-import { event, footerColumns, legalLinks, socials } from '../../data/site';
+import { event, footerColumns } from '../../data/site';
 import Container from '../layout/Container.astro';
 import Icon from '../ui/Icon.astro';
 import Logo from '../ui/Logo.astro';
@@ -15,21 +15,8 @@ import Logo from '../ui/Logo.astro';
         <Logo href="#top" tone="light" />
         <p class="mt-6 max-w-[22ch] text-sm leading-relaxed text-white/65">{event.tagline}</p>
 
-        <ul class="mt-8 flex flex-wrap gap-2.5">
-          {
-            socials.map((social) => (
-              <li>
-                <a
-                  href={social.href}
-                  class="grid h-9 w-9 place-items-center rounded-[3px] border border-white/20 text-white/75 transition duration-300 hover:border-white hover:bg-white hover:text-night"
-                >
-                  <span class="sr-only">{social.label}</span>
-                  <Icon name={social.icon} class="h-4 w-4" />
-                </a>
-              </li>
-            ))
-          }
-        </ul>
+        {/* Sprint 2.2: iconos de redes retirados hasta que la organización provea
+            los handles reales (ver `socials` en src/data/site.ts). */}
       </div>
 
       <!-- Link columns -->
@@ -90,20 +77,9 @@ import Logo from '../ui/Logo.astro';
       <p class="text-[0.72rem] text-white/50">
         © 2026 ExpoJuy. Todos los derechos reservados.
       </p>
-      <ul class="flex flex-wrap justify-center gap-x-8 gap-y-2">
-        {
-          legalLinks.map((link) => (
-            <li>
-              <a
-                href={link.href}
-                class="text-[0.72rem] text-white/50 transition-colors duration-300 hover:text-white"
-              >
-                {link.label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+      {/* Sprint 2.3: enlaces legales ("Términos y condiciones", "Política de
+          privacidad") retirados — no existen las páginas todavía (ver `legalLinks`
+          en src/data/site.ts). */}
     </div>
   </Container>
 </footer>

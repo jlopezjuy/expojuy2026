@@ -113,40 +113,38 @@ export const footerColumns = [
     title: 'LA EXPO',
     links: [
       { label: '¿Qué es ExpoJuy?', href: '#la-expo' },
-      { label: 'Objetivos', href: '#' },
-      { label: 'Ediciones anteriores', href: '#' },
-      { label: 'Preguntas frecuentes', href: '#' },
+      // TODO(Sprint 2.3): "Objetivos" y "Preguntas frecuentes" se retiraron porque
+      // no hay destino real en el repo. "Objetivos" vuelve cuando la organización
+      // publique esa página; "Preguntas frecuentes" vuelve con la sección del Sprint 3.
+      { label: 'Ediciones anteriores', href: 'https://expojuy.camcomexjujuy.com.ar/' },
     ],
   },
   {
     title: 'INFORMACIÓN',
     links: [
-      { label: 'Cómo llegar', href: '#' },
-      { label: 'Alojamiento', href: '#' },
+      // TODO(Sprint 2.3): "Cómo llegar", "Alojamiento" y "Prensa" se retiraron;
+      // no hay datos reales en el repo (ni en la sección de información del mockup).
+      // Se restituyen cuando la organización los provea.
       { label: 'Turismo en Jujuy', href: '#territorios' },
-      { label: 'Prensa', href: '#' },
     ],
   },
   {
     title: 'EXPOSITOR',
     links: [
       { label: 'Quiero participar', href: '#participar' },
-      { label: 'Reglamento', href: '#' },
-      { label: 'Descargar dossier', href: '#' },
-      { label: 'Contacto comercial', href: '#' },
+      // Reglamento real: Bases y Condiciones oficiales del evento (recursos/).
+      { label: 'Reglamento', href: '/docs/bases-y-condiciones.pdf' },
+      // TODO(Sprint 2.3): "Descargar dossier" y "Contacto comercial" se retiraron:
+      // no existe archivo de dossier en el repo y el canal de contacto es del Sprint 3.
     ],
   },
 ] as const;
 
-export const socials = [
-  { label: 'Instagram', icon: 'instagram', href: '#' },
-  { label: 'Facebook', icon: 'facebook', href: '#' },
-  { label: 'X', icon: 'x', href: '#' },
-  { label: 'YouTube', icon: 'youtube', href: '#' },
-  { label: 'LinkedIn', icon: 'linkedin', href: '#' },
-] as const;
+// TODO(Sprint 2.2): no hay handles oficiales de ExpoJuy en el repo (ni en recursos/
+// ni en el mockup). Los iconos se retiran en vez de apuntar a URLs inventadas.
+// Reintroducirlos con la URL real de cada cuenta cuando la organización los provea.
+export const socials = [] as const;
 
-export const legalLinks = [
-  { label: 'Términos y condiciones', href: '#' },
-  { label: 'Política de privacidad', href: '#' },
-] as const;
+// TODO(Sprint 2.3): no existen páginas legales todavía. Se retiran en vez de
+// apuntar a un `#` muerto. Restaurarlas con la URL real cuando existan.
+export const legalLinks = [] as const;
