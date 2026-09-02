@@ -102,6 +102,9 @@ export const agendaDays = [
 /**
  * Institutional supporters read off the sponsor strip in 00.png.
  * No official logo files exist in this repo, so they render as text wordmarks.
+ * TODO(Sprint 5.2): logos reales de sponsors pendientes de confirmación de la
+ * organización; solo existe el logo institucional de la Cámara de Comercio
+ * Exterior en recursos/. Mantener wordmarks de texto, no inventar el set.
  */
 export const sponsors = [
   'Gobierno de Jujuy',

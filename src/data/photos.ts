@@ -5,6 +5,9 @@
  * grading of the "Propuesta 1 — Jujuy Cinematográfico" mockup (00.png / 02.png).
  * They are PLACEHOLDERS: every entry must be swapped for real ExpoJuy /
  * Jujuy photography before launch. See docs/design-spec.md.
+ * TODO(Sprint 5.1): falta material fotográfico real de Jujuy — la organización no
+ * entregó assets en recursos/. Mantener los placeholders de Unsplash hasta que se
+ * aporten y se migre a astro:assets <Image>. NO inventar fotos.
  *
  * They are hot-linked from images.unsplash.com so nothing is committed to the
  * repo. Once real assets land, move them to `src/assets/` and switch `Photo`

@@ -1,8 +1,12 @@
 ---
 import { event, footerColumns } from '../../data/site';
+import { resolveHref } from '../../lib/links';
 import Container from '../layout/Container.astro';
 import Icon from '../ui/Icon.astro';
 import Logo from '../ui/Logo.astro';
+
+const pathname = Astro.url.pathname;
+const href = (value: string) => resolveHref(value, pathname);
 ---
 
 <footer class="bg-night pt-14 pb-8 text-white lg:pt-16">
@@ -12,7 +16,7 @@ import Logo from '../ui/Logo.astro';
     <div class="grid gap-12 xl:grid-cols-[minmax(0,15rem)_minmax(0,1fr)_minmax(0,20rem)] xl:gap-14">
       <!-- Brand -->
       <div>
-        <Logo href="#top" tone="light" />
+        <Logo href={href('#top')} tone="light" />
         <p class="mt-6 max-w-[22ch] text-sm leading-relaxed text-white/65">{event.tagline}</p>
 
         {/* Sprint 2.2: iconos de redes retirados hasta que la organización provea
@@ -29,7 +33,7 @@ import Logo from '../ui/Logo.astro';
                 {column.links.map((link) => (
                   <li>
                     <a
-                      href={link.href}
+                      href={href(link.href)}
                       class="text-[0.85rem] text-white/80 transition-colors duration-300 hover:text-gold-bright"
                     >
                       {link.label}
