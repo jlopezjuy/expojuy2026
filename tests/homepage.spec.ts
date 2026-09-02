@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import axe from 'axe-core';
 
 /** Scroll the whole page so IntersectionObserver reveals fire and lazy images load. */
 async function settle(page: Page) {
@@ -11,6 +12,23 @@ async function settle(page: Page) {
     window.scrollTo({ top: 0, behavior: 'instant' });
   });
   await page.waitForLoadState('networkidle');
+}
+
+/**
+ * Put every `.reveal` element at its resting state before an axe scan. The
+ * scroll-reveal is a 0.85s opacity+translate transition; sampling it mid-fade
+ * makes axe-core report a false color-contrast failure (text at a
+ * semi-transparent midpoint). This only affects the test — production keeps
+ * the fade (see src/styles/global.css @utility reveal).
+ */
+async function settleReveals(page: Page) {
+  await page.evaluate(() => {
+    document.querySelectorAll<HTMLElement>('.reveal').forEach((el) => {
+      el.style.transition = 'none';
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+  });
 }
 
 test.beforeEach(async ({ page }) => {
@@ -101,6 +119,25 @@ test('the page logs no console errors', async ({ page }) => {
   await page.reload({ waitUntil: 'networkidle' });
   await settle(page);
   expect(errors).toEqual([]);
+});
+
+test('WCAG AA con axe-core — la home no tiene violaciones', async ({ page }) => {
+  await settle(page);
+  await settleReveals(page);
+  await page.addScriptTag({ content: axe.source });
+  const violations = await page.evaluate(async () => {
+    const result = await (window as any).axe.run(document, {
+      runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] },
+    });
+    return result.violations.map((v: any) => ({
+      id: v.id,
+      impact: v.impact,
+      help: v.help,
+      count: v.nodes.length,
+      targets: v.nodes.slice(0, 3).map((n: any) => n.target.join(' ')),
+    }));
+  });
+  expect(violations).toEqual([]);
 });
 
 test('reveals resolve even with reduced motion', async ({ page }) => {

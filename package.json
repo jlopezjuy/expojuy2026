@@ -14,6 +14,7 @@
     "check": "astro check"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
     "astro": "^7.2.10"
   },
   "allowScripts": {
@@ -24,6 +25,7 @@
     "@playwright/test": "^1.62.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.4.1",
+    "axe-core": "^4.13.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3"
   }

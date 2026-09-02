@@ -7,11 +7,18 @@ import Logo from '../ui/Logo.astro';
 
 const pathname = Astro.url.pathname;
 const href = (value: string) => resolveHref(value, pathname);
+
+// Sprint 6.3 — a11y (color-contrast): en la home el hero es oscuro y el header
+// puede quedar transparente hasta el estado `stuck`. En las sub-páginas el tope es
+// claro (bg-cream), así que el nav blanco falla contraste. Se reutilizan las mismas
+// clases oscuras del estado `stuck` como estáticas fuera de la home.
+const isHome = pathname === '/';
+const headerBackdrop = isHome ? '' : 'border-b border-white/10 bg-night/90 backdrop-blur-md';
 ---
 
 <header
   id="site-header"
-  class="fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-500 ease-out data-[stuck]:border-b data-[stuck]:border-white/10 data-[stuck]:bg-night/90 data-[stuck]:backdrop-blur-md"
+  class={`fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-500 ease-out data-[stuck]:border-b data-[stuck]:border-white/10 data-[stuck]:bg-night/90 data-[stuck]:backdrop-blur-md ${headerBackdrop}`}
 >
   <Container class="flex items-center justify-between gap-6 py-4 lg:py-5">
     <Logo href="#top" tone="light" />

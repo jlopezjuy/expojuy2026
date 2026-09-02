@@ -13,6 +13,14 @@ export default defineConfig({
   },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 } } },
+    {
+      // Tablet layout QA. Chromium at a tablet viewport: the iPad Pro 11 device
+      // defaults to WebKit, which is not installed in this repo. The sprint QA
+      // cares about the tablet *viewport*, not the mobile Safari engine, so we
+      // emulate a 1024px tablet in Chromium instead.
+      name: 'tablet',
+      use: { ...devices['Desktop Chrome'], viewport: { width: 1024, height: 768 }, hasTouch: true },
+    },
     { name: 'mobile', use: { ...devices['Pixel 7'] } },
   ],
   // Tests run against the built output, not the dev server.
