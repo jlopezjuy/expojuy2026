@@ -1,0 +1,33 @@
+---
+interface Props {
+  href: string;
+  /**
+   * pill      — dark rounded CTA in the header
+   * outline   — hairline box button on cream ("CONOCER MÁS")
+   * ghost     — hairline box button on photography ("DESCUBRIR")
+   * solid     — filled amber CTA ("QUIERO EXPONER")
+   */
+  variant?: 'pill' | 'outline' | 'ghost' | 'solid';
+  class?: string;
+  ariaLabel?: string;
+}
+
+const { href, variant = 'outline', class: className = '', ariaLabel } = Astro.props;
+
+const base =
+  'group inline-flex items-center justify-center gap-3 text-[0.7rem] font-bold tracking-[0.16em] uppercase transition duration-300 ease-out';
+
+const variants = {
+  pill: 'rounded-full border border-white/45 bg-night/45 px-6 py-3 text-white backdrop-blur-sm hover:border-white hover:bg-white hover:text-night',
+  outline:
+    'border border-night/30 px-7 py-3.5 text-night hover:border-night hover:bg-night hover:text-cream',
+  ghost:
+    'border border-white/55 px-6 py-3 text-white hover:border-white hover:bg-white hover:text-night',
+  solid:
+    'bg-gold-bright px-7 py-3.5 text-night shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)] hover:bg-white',
+} as const;
+---
+
+<a href={href} class={`${base} ${variants[variant]} ${className}`} aria-label={ariaLabel}>
+  <slot />
+</a>

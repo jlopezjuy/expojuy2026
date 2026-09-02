@@ -1,0 +1,196 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------
+   ExpoJuy 2026 — design tokens
+   Palette sampled from the "Propuesta 1 — Jujuy Cinematográfico"
+   spec panel in 00.png. Values are INFERRED from the mockup pixels,
+   not from an official brand manual. See docs/design-spec.md.
+   ------------------------------------------------------------------ */
+@theme {
+  /* Brand accents (the six swatches on the spec panel) */
+  --color-gold: #dba649;
+  --color-gold-bright: #eab21e;
+  --color-magenta: #d62a79;
+  --color-teal: #64baba;
+  --color-blue: #1f6399;
+  --color-ink: #2f2e2f;
+  --color-sand: #dad2c6;
+
+  /* Surfaces */
+  --color-cream: #f7efe1;
+  --color-cream-deep: #ece3d4;
+  --color-night: #07121e;
+  --color-night-soft: #0d1b2a;
+  --color-night-line: #1d2c3c;
+
+  /* Type */
+  --font-display: var(--font-editorial), 'Iowan Old Style', Georgia, serif;
+  --font-sans: var(--font-ui), 'Helvetica Neue', Arial, sans-serif;
+
+  /* Fluid display sizes (min 390px viewport -> max 1600px viewport) */
+  /* Sizes reverse-engineered from the mockup at a 1440px design width. */
+  --text-hero: clamp(7.25rem, 19.5vw, 22rem);
+  --text-hero--line-height: 0.84;
+  --text-display: clamp(1.85rem, 1rem + 2vw, 2.85rem);
+  --text-display--line-height: 1.14;
+  --text-title: clamp(1.4rem, 0.95rem + 1.35vw, 2.1rem);
+  --text-title--line-height: 1.18;
+  --text-body: clamp(0.95rem, 0.88rem + 0.18vw, 1.05rem);
+  --text-body--line-height: 1.65;
+
+  /* Layout */
+  --spacing-gutter: clamp(1.25rem, 0.6rem + 2.7vw, 3.5rem);
+  --radius-card: 0.5rem;
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-rise: rise 0.9s var(--ease-out-expo) both;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(1.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Sticky header offset for in-page anchors. */
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+    /* `clip` (not `hidden`) so the element never becomes a scroll container. */
+    overflow-x: clip;
+  }
+
+  body {
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Editorial headings default to the serif. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold-bright);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--color-magenta);
+    color: #fff;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+/* Off-canvas until focused. Written out rather than composed from
+   `sr-only`/`not-sr-only`, whose `position: static` fights `fixed`. */
+@utility skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 100;
+  background: var(--color-gold-bright);
+  color: var(--color-night);
+  padding: 0.75rem 1.25rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transform: translateY(-250%);
+  transition: transform 0.25s var(--ease-out-expo);
+
+  &:focus {
+    transform: none;
+  }
+}
+
+@utility eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+/* Scroll-reveal: hidden until the IntersectionObserver adds .is-visible.
+   Progressive enhancement — without JS the `no-js` guard keeps content visible. */
+@utility reveal {
+  opacity: 0;
+  transform: translateY(1.75rem);
+  transition:
+    opacity 0.85s var(--ease-out-expo),
+    transform 0.85s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+
+  &.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+html:not(.js) .reveal {
+  opacity: 1;
+  transform: none;
+}
+
+/* Horizontal card rails on small screens. */
+@utility rail {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  /* Grid and flex items default to `min-width: auto`, which lets the rail's
+     content push the page wider instead of scrolling. */
+  min-width: 0;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  & > * {
+    scroll-snap-align: start;
+    flex: 0 0 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

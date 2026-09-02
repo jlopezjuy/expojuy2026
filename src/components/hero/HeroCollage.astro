@@ -1,0 +1,41 @@
+---
+/**
+ * The three offset photographs that overlap the hero image on the right.
+ * A genuine overlay collage, so absolute positioning is deliberate here —
+ * the rest of the page is built on grid/flow.
+ */
+import { photos } from '../../data/photos';
+import Photo from '../ui/Photo.astro';
+
+const frame =
+  'absolute overflow-hidden rounded-[2px] shadow-[0_28px_70px_-26px_rgba(0,0,0,0.95)] ring-1 ring-white/20 transition-[scale] duration-700 ease-[var(--ease-out-expo)] hover:scale-[1.04]';
+---
+
+<div class="relative aspect-[7/6] w-full">
+  <figure class={`${frame} top-0 right-0 w-[48%]`} data-collage-item data-depth="0.05">
+    <Photo
+      photo={photos.collageField}
+      ratio={4 / 5}
+      sizes="(min-width: 1024px) 11vw, 30vw"
+      maxWidth={520}
+    />
+  </figure>
+
+  <figure class={`${frame} top-[24%] left-0 w-[56%]`} data-collage-item data-depth="0.1">
+    <Photo
+      photo={photos.collageArtisan}
+      ratio={3 / 4}
+      sizes="(min-width: 1024px) 13vw, 34vw"
+      maxWidth={620}
+    />
+  </figure>
+
+  <figure class={`${frame} right-[-3%] bottom-0 w-[44%]`} data-collage-item data-depth="0.15">
+    <Photo
+      photo={photos.collageSalt}
+      ratio={4 / 3}
+      sizes="(min-width: 1024px) 10vw, 26vw"
+      maxWidth={480}
+    />
+  </figure>
+</div>

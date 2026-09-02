@@ -1,0 +1,54 @@
+---
+import { Font } from 'astro:assets';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  lang?: string;
+}
+
+const { title, description, lang = 'es-AR' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://expojuy.com.ar');
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#07121e" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Photography is hot-linked while placeholders are in place. -->
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+
+    <Font cssVariable="--font-editorial" preload />
+    <Font cssVariable="--font-ui" preload />
+
+    {/* Set before first paint so scroll-reveal elements never flash for no-JS users. */}
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+
+  <body>
+    <a href="#la-expo" class="skip-link">Saltar al contenido</a>
+
+    <slot />
+
+    <script>
+      import '../scripts/enhance';
+    </script>
+  </body>
+</html>

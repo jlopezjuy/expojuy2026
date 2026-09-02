@@ -1,0 +1,54 @@
+---
+/**
+ * ExpoJuy wordmark.
+ *
+ * The glyph is an original SVG interpretation of the colourful geometric
+ * "J/U" block mark seen in the reference — small stacked rectangles over a
+ * rounded "U" cup — NOT a trace of the mockup bitmap.
+ */
+interface Props {
+  /** `light` for dark backgrounds, `dark` for the cream sections. */
+  tone?: 'light' | 'dark';
+  class?: string;
+  /** Rendered as a link when an href is given. */
+  href?: string;
+}
+
+const { tone = 'light', class: className = '', href } = Astro.props;
+const wordColor = tone === 'light' ? 'text-white' : 'text-night';
+const accentColor = tone === 'light' ? 'text-[#6fb4e8]' : 'text-blue';
+const Tag = href ? 'a' : 'div';
+---
+
+<Tag
+  {...href ? { href, 'aria-label': 'ExpoJuy 2026 — inicio' } : {}}
+  class={`inline-flex items-center gap-2.5 ${className}`}
+>
+  <svg
+    class="h-9 w-auto shrink-0"
+    viewBox="0 0 34 40"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <rect x="0" y="0" width="9" height="9" rx="1.6" fill="#d62a79"></rect>
+    <rect x="12" y="0" width="9" height="9" rx="1.6" fill="#eab21e"></rect>
+    <rect x="24" y="0" width="9" height="9" rx="1.6" fill="#64baba"></rect>
+    <rect x="0" y="12" width="9" height="9" rx="1.6" fill="#1f6399"></rect>
+    <rect x="12" y="12" width="9" height="9" rx="1.6" fill="#d62a79"></rect>
+    <rect x="24" y="12" width="9" height="28" rx="4.5" fill="#eab21e"></rect>
+    <path
+      d="M0 24v6a10 10 0 0 0 10 10h6"
+      stroke="#1f6399"
+      stroke-width="9"
+      stroke-linecap="square"></path>
+  </svg>
+
+  <span class={`leading-none ${wordColor}`}>
+    <span class="block text-[1.35rem] font-extrabold tracking-[0.02em]">
+      EXPO<span class={accentColor}>JUY</span>
+    </span>
+    <span class="block text-[0.95rem] font-medium tracking-[0.18em] opacity-90">2026</span>
+  </span>
+</Tag>

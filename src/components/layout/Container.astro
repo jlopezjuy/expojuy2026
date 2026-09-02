@@ -1,0 +1,16 @@
+---
+interface Props {
+  as?: 'div' | 'section' | 'header' | 'footer' | 'nav';
+  /** `wide` matches the full-bleed content width of the mockup. */
+  width?: 'wide' | 'normal';
+  class?: string;
+  id?: string;
+}
+
+const { as: Tag = 'div', width = 'wide', class: className = '', id }: Props = Astro.props;
+const widths = { wide: 'max-w-[96rem]', normal: 'max-w-[76rem]' } as const;
+---
+
+<Tag id={id} class={`mx-auto w-full px-gutter ${widths[width]} ${className}`}>
+  <slot />
+</Tag>

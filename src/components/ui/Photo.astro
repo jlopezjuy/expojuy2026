@@ -1,0 +1,58 @@
+---
+/**
+ * Responsive remote photograph.
+ *
+ * Placeholder photography lives on images.unsplash.com (see src/data/photos.ts),
+ * so Astro's build-time <Image> pipeline is not used yet. This component keeps
+ * every srcset/sizes decision in one place: when real assets land in
+ * src/assets/, only this file has to change.
+ */
+import type { Photo } from '../../data/photos';
+
+interface Props {
+  photo: Photo;
+  /** `sizes` attribute — always pass a real value, the default is a fallback. */
+  sizes?: string;
+  /** Rendered aspect ratio; defaults to the photo's own ratio. */
+  ratio?: number;
+  /** Widest rendition to generate. */
+  maxWidth?: number;
+  priority?: boolean;
+  class?: string;
+  /** Overrides the alt text from the data layer (e.g. decorative usage). */
+  alt?: string;
+}
+
+const {
+  photo,
+  sizes = '100vw',
+  ratio,
+  maxWidth = 1920,
+  priority = false,
+  class: className = '',
+  alt,
+} = Astro.props;
+
+const aspect = ratio ?? photo.ratio;
+const widths = [320, 480, 640, 828, 1080, 1280, 1600, 1920, 2400].filter((w) => w <= maxWidth * 1.25);
+
+const url = (w: number) => {
+  const h = Math.round(w / aspect);
+  return `https://images.unsplash.com/photo-${photo.id}?auto=format&fit=crop&q=72&w=${w}&h=${h}`;
+};
+
+const fallbackWidth = Math.min(1280, maxWidth);
+---
+
+<img
+  src={url(fallbackWidth)}
+  srcset={widths.map((w) => `${url(w)} ${w}w`).join(', ')}
+  sizes={sizes}
+  width={fallbackWidth}
+  height={Math.round(fallbackWidth / aspect)}
+  alt={alt ?? photo.alt}
+  loading={priority ? 'eager' : 'lazy'}
+  decoding={priority ? 'sync' : 'async'}
+  fetchpriority={priority ? 'high' : 'auto'}
+  class={className}
+/>

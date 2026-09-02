@@ -1,0 +1,57 @@
+---
+import { photos } from '../../data/photos';
+import { agendaDays } from '../../data/site';
+import FeatureCard from '../cards/FeatureCard.astro';
+import Container from '../layout/Container.astro';
+---
+
+<section class="bg-cream-deep pb-14 lg:pb-16" aria-label="Ejes destacados de ExpoJuy 2026">
+  <Container class="grid gap-3 lg:grid-cols-3">
+    <FeatureCard
+      eyebrow="Gastronomía"
+      title="Sabores de nuestra tierra."
+      cta="Descubrir"
+      ctaHref="#"
+      photo={photos.sabores}
+      index={0}
+    />
+
+    <FeatureCard
+      eyebrow="Historias que inspiran"
+      title="Personas que transforman Jujuy."
+      cta="Conocer historias"
+      ctaHref="#"
+      photo={photos.personas}
+      index={1}
+    />
+
+    <FeatureCard
+      id="agenda"
+      eyebrow="Agenda 2026"
+      title="Cuatro días para crecer juntos."
+      cta="Ver programa"
+      ctaHref="#agenda"
+      photo={photos.agenda}
+      imageMode="cover"
+      index={2}
+    >
+      <ol slot="aside" class="divide-y divide-white/15 border-y border-white/15">
+        {
+          agendaDays.map((d) => (
+            <li class="flex items-baseline gap-3 py-2.5">
+              <span class="font-display text-lg leading-none font-semibold text-white">
+                {d.day}
+              </span>
+              <span class="text-[0.5rem] font-bold tracking-[0.1em] text-white/60 uppercase">
+                {d.month}
+              </span>
+              <span class="ml-auto text-right text-[0.7rem] leading-tight text-white/85">
+                {d.label}
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+    </FeatureCard>
+  </Container>
+</section>

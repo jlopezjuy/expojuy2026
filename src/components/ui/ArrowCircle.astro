@@ -1,0 +1,28 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  href: string;
+  label: string;
+  tone?: 'light' | 'dark';
+  size?: 'sm' | 'md';
+  class?: string;
+}
+
+const { href, label, tone = 'light', size = 'md', class: className = '' } = Astro.props;
+
+const tones = {
+  light: 'border-white/45 text-white hover:bg-white hover:text-night hover:border-white',
+  dark: 'border-night/30 text-night hover:bg-night hover:text-cream hover:border-night',
+} as const;
+
+const sizes = { sm: 'h-9 w-9', md: 'h-11 w-11' } as const;
+---
+
+<a
+  href={href}
+  aria-label={label}
+  class={`inline-grid shrink-0 place-items-center rounded-full border transition duration-300 ease-out ${tones[tone]} ${sizes[size]} ${className}`}
+>
+  <Icon name="arrow-right" class="h-4 w-4" />
+</a>

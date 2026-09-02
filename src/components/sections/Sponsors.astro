@@ -1,0 +1,29 @@
+---
+import { sponsors } from '../../data/site';
+import Container from '../layout/Container.astro';
+---
+
+<section class="border-t border-night/10 bg-cream py-8" aria-labelledby="sponsors-title">
+  <Container class="flex flex-col items-center gap-6 lg:flex-row lg:gap-10">
+    <h2
+      id="sponsors-title"
+      class="shrink-0 font-sans text-[0.7rem] font-bold tracking-[0.14em] text-night/70 uppercase"
+    >
+      Acompañan
+    </h2>
+
+    {/* No official logo files exist in this repo — institutional supporters render as
+        text wordmarks until the real SVGs are provided. See docs/design-spec.md. */}
+    <ul
+      class="rail -mx-gutter w-full items-center gap-8 px-gutter lg:mx-0 lg:flex-wrap lg:justify-between lg:overflow-visible lg:px-0"
+    >
+      {
+        sponsors.map((name) => (
+          <li class="text-center text-[0.72rem] leading-tight font-bold tracking-[0.05em] whitespace-nowrap text-night/70 uppercase grayscale transition-colors duration-300 hover:text-night/85">
+            {name}
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+</section>

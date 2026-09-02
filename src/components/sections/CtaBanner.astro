@@ -1,0 +1,46 @@
+---
+import { photos } from '../../data/photos';
+import Container from '../layout/Container.astro';
+import ButtonLink from '../ui/ButtonLink.astro';
+import Icon from '../ui/Icon.astro';
+import Photo from '../ui/Photo.astro';
+---
+
+<section id="participar" class="bg-cream-deep pb-14 lg:pb-16" aria-labelledby="participar-title">
+  <Container>
+    <div class="reveal relative isolate overflow-hidden rounded-[3px]">
+      <div class="absolute inset-0 -z-20" data-parallax data-depth="0.06">
+        <Photo
+          photo={photos.ctaSunset}
+          ratio={21 / 9}
+          sizes="(min-width: 1536px) 90rem, 100vw"
+          class="h-full w-full scale-110 object-cover [filter:saturate(1.25)_contrast(1.1)]"
+        />
+      </div>
+      <div
+        class="absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(38,10,48,0.95)_0%,rgba(45,12,54,0.72)_38%,rgba(60,16,60,0.28)_72%,rgba(70,20,60,0.08)_100%)]"
+        aria-hidden="true"
+      >
+      </div>
+
+      <div
+        class="flex flex-col items-start justify-between gap-7 px-6 py-12 sm:px-10 lg:flex-row lg:items-center lg:py-10"
+      >
+        <div>
+          <h2 id="participar-title" class="text-display text-white">Sé parte de ExpoJuy 2026</h2>
+          <p class="mt-3 max-w-[46ch] text-sm leading-relaxed text-white/85 sm:text-base">
+            Exponé tu marca, mostrá tu trabajo, conectá con el mundo.
+          </p>
+        </div>
+
+        <ButtonLink href="#" variant="solid" class="w-full shrink-0 sm:w-fit">
+          Quiero exponer
+          <Icon
+            name="arrow-right"
+            class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+          />
+        </ButtonLink>
+      </div>
+    </div>
+  </Container>
+</section>

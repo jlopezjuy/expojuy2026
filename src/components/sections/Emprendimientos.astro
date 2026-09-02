@@ -1,0 +1,88 @@
+---
+import { productFilters, products } from '../../data/site';
+import ProductCard from '../cards/ProductCard.astro';
+import Container from '../layout/Container.astro';
+import ArrowCircle from '../ui/ArrowCircle.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+---
+
+<section
+  id="emprendimientos"
+  class="bg-cream-deep py-16 lg:py-20"
+  aria-labelledby="emprendimientos-title"
+>
+  <Container class="grid gap-10 lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)] lg:gap-12">
+    <div class="reveal">
+      <SectionHeading
+        eyebrow="Emprendimientos destacados"
+        title="Lo que Jujuy"
+        accent="hace posible."
+        breakBeforeAccent
+        id="emprendimientos-title"
+      />
+      {/* TODO: texto ilegible en la referencia (00.png). No se inventa copy:
+          reemplazar este marcador por el párrafo real cuando esté disponible. */}
+      <p
+        class="mt-6 max-w-[34ch] border-l-2 border-magenta/40 pl-4 text-[0.85rem] leading-relaxed text-night/65 italic"
+      >
+        [Párrafo pendiente — ilegible en la referencia]
+      </p>
+    </div>
+
+    <div class="min-w-0">
+      <!-- Filter tabs: the only genuinely interactive control in this section. -->
+      <div
+        class="rail -mx-gutter px-gutter sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
+        role="group"
+        aria-label="Filtrar emprendimientos por rubro"
+        id="product-filters"
+      >
+        {
+          productFilters.map((filter, i) => (
+            <button
+              type="button"
+              aria-pressed={i === 0 ? 'true' : 'false'}
+              aria-controls="product-grid"
+              data-filter={filter.id}
+              class="rounded-full border border-night/20 px-5 py-2.5 text-[0.62rem] font-bold tracking-[0.14em] whitespace-nowrap text-night/70 uppercase transition duration-300 ease-out hover:border-night/50 hover:text-night aria-pressed:border-night aria-pressed:bg-night aria-pressed:text-cream"
+            >
+              {filter.label}
+            </button>
+          ))
+        }
+      </div>
+
+      <p id="product-count" class="sr-only" role="status" aria-live="polite"></p>
+
+      {/* One continuous row that runs off the right edge, as in the reference —
+          a rail at every breakpoint rather than a wrapping grid. */}
+      <ul
+        id="product-grid"
+        class="rail -mx-gutter mt-6 px-gutter lg:mr-[calc(-1*max(var(--spacing-gutter),(100vw-96rem)/2+var(--spacing-gutter)))] lg:ml-0 lg:pl-0"
+      >
+        {
+          products.map((product, i) => (
+            <li data-category={product.category}>
+              <ProductCard product={product} index={i} />
+            </li>
+          ))
+        }
+      </ul>
+
+      <p class="reveal mt-8 flex items-center justify-center gap-4 sm:justify-end">
+        <a
+          href="#participar"
+          class="text-[0.66rem] font-bold tracking-[0.16em] text-night/75 uppercase transition-colors duration-300 hover:text-night"
+        >
+          Ver más emprendimientos
+        </a>
+        <ArrowCircle
+          href="#participar"
+          label="Ver más emprendimientos"
+          tone="dark"
+          size="sm"
+        />
+      </p>
+    </div>
+  </Container>
+</section>
