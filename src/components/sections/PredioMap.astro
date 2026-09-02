@@ -1,0 +1,118 @@
+---
+import { planoZones } from '../../data/plano';
+import Container from '../layout/Container.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+interface Props {
+  /** Heading level, since this section is its own page (h1) yet reuse-safe. */
+  headingLevel?: 'h1' | 'h2';
+}
+
+const { headingLevel = 'h1' } = Astro.props;
+---
+
+<section class="bg-cream pb-16 lg:pb-20" aria-labelledby="plano-title">
+  <Container width="normal">
+    <div class="reveal">
+      <SectionHeading
+        eyebrow="Mapa del predio"
+        title="Cómo llegar y"
+        accent="recorrer."
+        accentColor="teal"
+        as={headingLevel}
+        id="plano-title"
+      />
+      <p class="mt-6 max-w-[58ch] text-body text-night/75">
+        Conocé las zonas del Predio Ferial Jujuy para orientarte durante el evento.
+      </p>
+    </div>
+
+    <div data-venue-map class="reveal relative mt-10" style="--reveal-delay:120ms">
+      <div class="relative aspect-[1000/620] w-full overflow-hidden rounded-card border border-night/10 bg-cream-deep/60 p-2 sm:p-4">
+        {/*
+          Plano esquemático de referencia. Ver TODO(Sprint 4.1) en src/data/plano.ts.
+          El plano real del predio no está en el repo; no se presenta como disposición
+          real de zonas.
+        */}
+        <svg
+          role="img"
+          aria-labelledby="plano-svg-title"
+          viewBox="0 0 1000 620"
+          preserveAspectRatio="none"
+          class="h-full w-full"
+        >
+          <title id="plano-svg-title">
+            Plano esquemático de las zonas del Predio Ferial Jujuy.
+          </title>
+          {/* Límite del predio */}
+          <rect x="40" y="50" width="920" height="520" rx="28" fill="var(--color-cream)" stroke="var(--color-night)" stroke-opacity="0.12" stroke-width="2" />
+          {/* Pasillos (decorativos) */}
+          <path d="M160 310H820" stroke="var(--color-night)" stroke-opacity="0.1" stroke-width="3" stroke-dasharray="10 8" fill="none" />
+          <path d="M470 205V460" stroke="var(--color-night)" stroke-opacity="0.1" stroke-width="3" stroke-dasharray="10 8" fill="none" />
+          {/* Accesos */}
+          <rect x="60" y="280" width="120" height="60" rx="10" fill="var(--color-teal)" fill-opacity="0.28" stroke="var(--color-teal)" stroke-opacity="0.5" stroke-width="2" />
+          {/* Pabellón Central */}
+          <rect x="340" y="120" width="260" height="170" rx="16" fill="var(--color-magenta)" fill-opacity="0.14" stroke="var(--color-magenta)" stroke-opacity="0.4" stroke-width="2" />
+          {/* Auditorio */}
+          <rect x="730" y="104" width="120" height="90" rx="10" fill="var(--color-gold)" fill-opacity="0.2" stroke="var(--color-gold)" stroke-opacity="0.5" stroke-width="2" />
+          {/* Espacios institucionales */}
+          <rect x="560" y="315" width="160" height="90" rx="10" fill="var(--color-blue)" fill-opacity="0.18" stroke="var(--color-blue)" stroke-opacity="0.4" stroke-width="2" />
+          {/* Puestos de expositores */}
+          <rect x="250" y="420" width="180" height="66" rx="8" fill="var(--color-night)" fill-opacity="0.1" stroke="var(--color-night)" stroke-opacity="0.3" stroke-width="2" />
+          {/* Patio gastronómico */}
+          <rect x="760" y="424" width="120" height="70" rx="10" fill="var(--color-gold)" fill-opacity="0.2" stroke="var(--color-gold)" stroke-opacity="0.5" stroke-width="2" />
+        </svg>
+
+        {/* Marcadores de zona (accesibles por teclado; la lista inferior mantiene la
+            info disponible sin JS). */}
+        {
+          planoZones.map((zone, i) => (
+            <button
+              type="button"
+              data-zone={zone.id}
+              data-zone-name={zone.name}
+              data-zone-note={zone.note}
+              aria-pressed="false"
+              aria-label={`${zone.name}: ${zone.note}`}
+              class="absolute z-10 grid h-9 w-9 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white bg-night font-display text-sm font-semibold text-cream shadow-lg transition-colors duration-200 hover:bg-magenta aria-pressed:bg-magenta"
+              style={`left:${zone.x}%; top:${zone.y}%`}
+            >
+              {i + 1}
+              <span class="sr-only">{zone.name}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <p id="plano-info" class="sr-only" role="status" aria-live="polite"></p>
+
+      {/*
+        TODO(Sprint 4.1): plano esquemático de referencia; el plano oficial del
+        predio se publicará próximamente. Sustituir cuando la organización lo provea.
+      */}
+      <p class="mt-4 text-[0.78rem] leading-relaxed text-night/55">
+        Plano esquemático de referencia. El plano oficial del predio se publicará próximamente.
+      </p>
+
+      {/* Listado de zonas siempre visible (progressive enhancement) */}
+      <ul class="mt-8 grid gap-3 sm:grid-cols-2">
+        {
+          planoZones.map((zone, i) => (
+            <li
+              class="reveal flex items-start gap-3 rounded-card border border-night/10 bg-cream-deep/60 p-5"
+              style={`--reveal-delay:${i * 70}ms`}
+            >
+              <span class="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-night font-display text-sm font-semibold text-cream">
+                {i + 1}
+              </span>
+              <div>
+                <h2 class="font-display text-title text-night">{zone.name}</h2>
+                <p class="mt-1 text-body text-night/75">{zone.note}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Container>
+</section>

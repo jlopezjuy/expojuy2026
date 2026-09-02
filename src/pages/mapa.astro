@@ -1,0 +1,19 @@
+---
+import Footer from '../components/navigation/Footer.astro';
+import Header from '../components/navigation/Header.astro';
+import PredioMap from '../components/sections/PredioMap.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Mapa del predio — ExpoJuy 2026"
+  description="Plano esquemático de las zonas del Predio Ferial Jujuy para recorrer la ExpoJuy 2026, del 17 al 20 de septiembre de 2026."
+>
+  <Header />
+
+  <main>
+    <PredioMap headingLevel="h1" />
+  </main>
+
+  <Footer />
+</BaseLayout>

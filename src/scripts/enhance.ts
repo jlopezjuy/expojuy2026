@@ -111,6 +111,98 @@ function initFilters(): void {
   });
 }
 
+/* --------------------------------------------------------- agenda filter */
+/**
+ * Combiña dos grupos de filtro (día + jornada) sobre la grilla de la agenda
+ * (`#agenda-grid`). Es un filtro independiente del de productos: `initFilters()`
+ * queda intacto para no arriesgar su prueba. Sin JS la lista completa es visible.
+ */
+function initAgendaFilter(): void {
+  const dayGroup = document.getElementById('agenda-days');
+  const trackGroup = document.getElementById('agenda-tracks');
+  const grid = document.getElementById('agenda-grid');
+  const status = document.getElementById('agenda-count');
+  if (!dayGroup || !trackGroup || !grid) return;
+
+  const dayButtons = Array.from(dayGroup.querySelectorAll<HTMLButtonElement>('[data-day]'));
+  const trackButtons = Array.from(trackGroup.querySelectorAll<HTMLButtonElement>('[data-track]'));
+  const items = Array.from(grid.querySelectorAll<HTMLElement>(':scope > [data-day]'));
+
+  let dayFilter = 'todos';
+  let trackFilter = 'todos';
+
+  const apply = () => {
+    for (const button of dayButtons) {
+      button.setAttribute('aria-pressed', String(button.dataset.day === dayFilter));
+    }
+    for (const button of trackButtons) {
+      button.setAttribute('aria-pressed', String(button.dataset.track === trackFilter));
+    }
+
+    let shown = 0;
+    for (const item of items) {
+      const matchDay = dayFilter === 'todos' || item.dataset.day === dayFilter;
+      const matchTrack = trackFilter === 'todos' || item.dataset.track === trackFilter;
+      const match = matchDay && matchTrack;
+      item.hidden = !match;
+      if (match) shown += 1;
+    }
+
+    if (status) {
+      status.textContent = `${shown} ${shown === 1 ? 'actividad' : 'actividades'} en pantalla.`;
+    }
+  };
+
+  dayGroup.addEventListener('click', (e) => {
+    const day = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-day]')?.dataset.day;
+    if (day) {
+      dayFilter = day;
+      apply();
+    }
+  });
+
+  trackGroup.addEventListener('click', (e) => {
+    const track = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-track]')?.dataset.track;
+    if (track) {
+      trackFilter = track;
+      apply();
+    }
+  });
+}
+
+/* ------------------------------------------------------------ venue map */
+/**
+ * Mapa interactivo del predio (`PredioMap.astro`). Los botones `[data-zone]`
+ * actualizan `aria-pressed`/`aria-current` y el live region `#plano-info`.
+ * Ausentes en la página → early return, sin errores. Sin JS la lista de zonas
+ * queda visible igualmente.
+ */
+function initVenueMap(): void {
+  const wrapper = document.querySelector<HTMLElement>('[data-venue-map]');
+  const info = document.getElementById('plano-info');
+  if (!wrapper || !info) return;
+
+  const buttons = Array.from(wrapper.querySelectorAll<HTMLButtonElement>('[data-zone]'));
+  if (!buttons.length) return;
+
+  const select = (button: HTMLButtonElement) => {
+    for (const b of buttons) {
+      const active = b === button;
+      b.setAttribute('aria-pressed', String(active));
+      if (active) b.setAttribute('aria-current', 'true');
+      else b.removeAttribute('aria-current');
+    }
+    const name = button.getAttribute('data-zone-name') ?? '';
+    const note = button.getAttribute('data-zone-note') ?? '';
+    info.textContent = name ? `${name}: ${note}` : '';
+  };
+
+  wrapper.addEventListener('click', (e) => {
+    const button = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-zone]');
+    if (button) select(button);
+  });
+}
+
 /* --------------------------------------------------------------- accordion */
 /**
  * FAQ disclosure. Markup is native <details>/<summary> so the accordion works
@@ -178,6 +270,8 @@ function boot(): void {
   initHeader();
   initMobileNav();
   initFilters();
+  initAgendaFilter();
+  initVenueMap();
   initAccordion();
   initParallax();
 }

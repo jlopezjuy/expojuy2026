@@ -27,8 +27,9 @@ export const nav: NavItem[] = [
   { label: 'LA EXPO', href: '#la-expo' },
   { label: 'REGIONES', href: '#territorios' },
   { label: 'EMPRENDIMIENTOS', href: '#emprendimientos' },
-  { label: 'AGENDA', href: '#agenda' },
-  { label: 'VISITAR', href: '#', placeholder: true },
+  { label: 'AGENDA', href: '/agenda' },
+  { label: 'VISITAR', href: '/mapa' },
+  { label: 'ENTRADAS', href: '/entradas' },
   { label: 'EXPOSITOR', href: '#participar' },
   // Sprint 3: páginas propias de las secciones mínimas (Consignas Técnicas §5).
   { label: 'EXPOSITORES', href: '/expositores' },
@@ -132,6 +133,9 @@ export const footerColumns = [
       // no hay datos reales en el repo (ni en la sección de información del mockup).
       // Se restituyen cuando la organización los provea.
       { label: 'Turismo en Jujuy', href: '#territorios' },
+      // Sprint 4: mapa del predio y gestión de entradas como páginas propias.
+      { label: 'Cómo llegar / Mapa', href: '/mapa' },
+      { label: 'Entradas', href: '/entradas' },
       // Sprint 3: secciones mínimas con página propia (Consignas Técnicas §5).
       { label: 'Expositores', href: '/expositores' },
       { label: 'Noticias', href: '/noticias' },

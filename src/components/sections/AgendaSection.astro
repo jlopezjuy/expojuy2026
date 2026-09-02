@@ -1,0 +1,128 @@
+---
+import { agendaDays } from '../../data/site';
+import { agendaItems, agendaTracks } from '../../data/agenda';
+import Container from '../layout/Container.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+interface Props {
+  /** Heading level, since this section is its own page (h1) yet reuse-safe. */
+  headingLevel?: 'h1' | 'h2';
+}
+
+const { headingLevel = 'h1' } = Astro.props;
+
+const pillClass =
+  'rounded-full border border-night/20 px-5 py-2.5 text-[0.62rem] font-bold tracking-[0.14em] whitespace-nowrap text-night/70 uppercase transition duration-300 ease-out hover:border-night/50 hover:text-night aria-pressed:border-night aria-pressed:bg-night aria-pressed:text-cream';
+
+const dayFilters = [{ id: 'todos', label: 'Todos' }, ...agendaDays.map((d) => ({ id: d.day, label: d.day }))];
+const trackFilters = [{ id: 'todos', label: 'Todos' }, ...agendaTracks];
+const trackById = new Map(agendaTracks.map((t) => [t.id, t]));
+---
+
+<section class="bg-cream pb-16 lg:pb-20" aria-labelledby="agenda-title">
+  <Container width="normal">
+    <div class="reveal">
+      <SectionHeading
+        eyebrow="Agenda"
+        title="Programa"
+        accent="2026."
+        accentColor="magenta"
+        as={headingLevel}
+        id="agenda-title"
+      />
+      <p class="mt-6 max-w-[58ch] text-body text-night/75">
+        Cuatro días de rondas de negocios, charlas, talleres y experiencias para crecer juntos.
+      </p>
+    </div>
+
+    {/*
+      TODO(Sprint 4.3): la agenda oficial con horarios y sesiones no está en el repo.
+      El filtro queda operativo sobre los temas diarios reales; ver src/data/agenda.ts.
+    */}
+    <div class="reveal mt-10 flex flex-col gap-6" style="--reveal-delay:120ms">
+      <div class="flex flex-col gap-3">
+        <p class="eyebrow text-night/60">Filtrar por día</p>
+        <div
+          class="rail -mx-gutter px-gutter sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
+          role="group"
+          aria-label="Filtrar agenda por día"
+          id="agenda-days"
+        >
+          {
+            dayFilters.map((filter, i) => (
+              <button
+                type="button"
+                aria-pressed={i === 0 ? 'true' : 'false'}
+                aria-controls="agenda-grid"
+                data-day={filter.id}
+                class={pillClass}
+              >
+                {filter.label}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <p class="eyebrow text-night/60">Filtrar por jornada</p>
+        <div
+          class="rail -mx-gutter px-gutter sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
+          role="group"
+          aria-label="Filtrar agenda por jornada"
+          id="agenda-tracks"
+        >
+          {
+            trackFilters.map((filter, i) => (
+              <button
+                type="button"
+                aria-pressed={i === 0 ? 'true' : 'false'}
+                aria-controls="agenda-grid"
+                data-track={filter.id}
+                class={pillClass}
+              >
+                {filter.label}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <p id="agenda-count" class="sr-only" role="status" aria-live="polite"></p>
+
+      <ul id="agenda-grid" class="mt-2 grid gap-3 sm:grid-cols-2">
+        {
+          agendaItems.map((item, i) => {
+            const track = trackById.get(item.trackId);
+            return (
+              <li
+                data-day={item.day}
+                data-track={item.trackId}
+                class="reveal flex flex-col gap-3 rounded-card border border-night/10 bg-cream-deep/60 p-6"
+                style={`--reveal-delay:${i * 70}ms`}
+              >
+                <div class="flex items-baseline gap-3">
+                  <span class="font-display text-2xl leading-none font-semibold text-night">{item.day}</span>
+                  <span class="eyebrow text-night/55">{item.month}</span>
+                  {track && (
+                    <span class="ml-auto rounded-full border border-night/15 px-3 py-1 text-[0.56rem] font-bold tracking-[0.14em] text-night/70 uppercase">
+                      {track.label}
+                    </span>
+                  )}
+                </div>
+                <h2 class="font-display text-title text-night">{item.title}</h2>
+                {item.time && <p class="text-[0.7rem] font-bold tracking-[0.14em] text-magenta uppercase">{item.time}</p>}
+                <p class="text-body text-night/70">{item.note}</p>
+              </li>
+            );
+          })
+        }
+      </ul>
+
+      {/* TODO(Sprint 4.3): horarios y sesiones aún no confirmados; no se inventan. */}
+      <p class="mt-6 text-[0.78rem] leading-relaxed text-night/55">
+        La agenda oficial con horarios y sesiones se publicará próximamente.
+      </p>
+    </div>
+  </Container>
+</section>

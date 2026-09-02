@@ -19,6 +19,9 @@ const routes = [
   '/preguntas-frecuentes',
   '/noticias',
   '/noticias/se-lanza-el-desafio-digital',
+  '/mapa',
+  '/entradas',
+  '/agenda',
 ];
 
 for (const route of routes) {
