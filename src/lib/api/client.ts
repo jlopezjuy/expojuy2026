@@ -33,6 +33,12 @@ export interface RequestOptions extends Omit<RequestInit, 'headers'> {
 
 function resolveUrl(path: string): string {
   const base = import.meta.env.PUBLIC_API_BASE_URL;
+  if (!base || base === '/' || base.startsWith('/')) {
+    if (typeof window !== 'undefined') {
+      return new URL(path, window.location.origin).toString();
+    }
+    return path;
+  }
   return new URL(path, base).toString();
 }
 
