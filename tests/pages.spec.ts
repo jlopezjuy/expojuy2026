@@ -211,3 +211,46 @@ test('expositores search and rubro filter works interactively', async ({ page })
   const counter = page.locator('#expositores-counter');
   await expect(counter).toContainText('Mostrando 1 de 18 expositores');
 });
+
+test('agenda filters sessions by day and track', async ({ page }) => {
+  await page.goto('/agenda', { waitUntil: 'networkidle' });
+
+  const allSessions = page.locator('#agenda-grid > li');
+  await expect(allSessions).toHaveCount(18);
+
+  // Filter day 17
+  const day17Btn = page.locator('#agenda-days button[data-day="17"]');
+  await day17Btn.click();
+  await expect(day17Btn).toHaveAttribute('aria-pressed', 'true');
+
+  const day17Visible = page.locator('#agenda-grid > li:not([hidden])');
+  await expect(day17Visible).toHaveCount(5);
+
+  // Filter day 18
+  const day18Btn = page.locator('#agenda-days button[data-day="18"]');
+  await day18Btn.click();
+
+  const day18Visible = page.locator('#agenda-grid > li:not([hidden])');
+  await expect(day18Visible).toHaveCount(4);
+});
+
+test('venue map updates detail card on zone click', async ({ page }) => {
+  await page.goto('/mapa', { waitUntil: 'networkidle' });
+
+  const detailCard = page.locator('#zone-detail-card');
+  await expect(detailCard).toBeVisible();
+
+  // Click on zone "mineria"
+  const mineriaZoneBtn = page.locator('button[data-zone="mineria"]');
+  await mineriaZoneBtn.click();
+  await expect(mineriaZoneBtn).toHaveAttribute('aria-pressed', 'true');
+
+  const title = page.locator('#zone-card-title');
+  await expect(title).toContainText('Pabellón Minería');
+
+  const stands = page.locator('#zone-card-stands');
+  await expect(stands).toContainText('M-01');
+
+  const expositores = page.locator('#zone-card-expositores');
+  await expect(expositores).toContainText('Minera Exar');
+});

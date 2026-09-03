@@ -185,16 +185,40 @@ function initVenueMap(): void {
   const buttons = Array.from(wrapper.querySelectorAll<HTMLButtonElement>('[data-zone]'));
   if (!buttons.length) return;
 
+  const cardBadge = document.getElementById('zone-card-badge');
+  const cardTitle = document.getElementById('zone-card-title');
+  const cardNote = document.getElementById('zone-card-note');
+  const cardStands = document.getElementById('zone-card-stands');
+  const cardExpositores = document.getElementById('zone-card-expositores');
+
   const select = (button: HTMLButtonElement) => {
     for (const b of buttons) {
       const active = b === button;
       b.setAttribute('aria-pressed', String(active));
-      if (active) b.setAttribute('aria-current', 'true');
-      else b.removeAttribute('aria-current');
+      if (active) {
+        b.setAttribute('aria-current', 'true');
+        b.className =
+          'absolute z-10 grid h-8 w-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white font-display text-xs font-bold shadow-md transition-all duration-200 bg-magenta text-white ring-2 ring-magenta/40 scale-110 focus:outline-none focus:ring-2 focus:ring-magenta';
+      } else {
+        b.removeAttribute('aria-current');
+        b.className =
+          'absolute z-10 grid h-8 w-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white font-display text-xs font-bold shadow-md transition-all duration-200 bg-night text-cream hover:bg-magenta hover:scale-110 focus:outline-none focus:ring-2 focus:ring-magenta';
+      }
     }
+
     const name = button.getAttribute('data-zone-name') ?? '';
     const note = button.getAttribute('data-zone-note') ?? '';
+    const badge = button.getAttribute('data-zone-badge') ?? '';
+    const stands = button.getAttribute('data-zone-stands') ?? '';
+    const expositores = button.getAttribute('data-zone-expositores') ?? '';
+
     info.textContent = name ? `${name}: ${note}` : '';
+
+    if (cardBadge) cardBadge.textContent = badge;
+    if (cardTitle) cardTitle.textContent = name;
+    if (cardNote) cardNote.textContent = note;
+    if (cardStands) cardStands.textContent = stands;
+    if (cardExpositores) cardExpositores.textContent = expositores;
   };
 
   wrapper.addEventListener('click', (e) => {

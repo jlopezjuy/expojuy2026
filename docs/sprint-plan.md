@@ -53,19 +53,16 @@ Ejecutado y verificado:
 
 **DoD:** Contenidos alineados a ExpoJuy 2026, directorio interactivo funcional, cero errores en `astro check`, build estático en 650 ms y 195/195 tests en verde.
 
-### Sprint 2 · Cerrar todo lo roto + pulido
+### Sprint 2 · Cronograma detallado, navegación espacial y pulido de header — ✅ COMPLETADO
 
-| # | Tarea | Archivos | Esfuerzo |
-|---|---|---|---|
-| 2.1 | CTA "Quiero exponer" → enlazar a destino real o a la sección de contacto | `src/components/sections/CtaBanner.astro:36` | S |
-| 2.2 | 5 iconos de redes sociales → URLs reales o quitarlos hasta tenerlas | `src/data/site.ts:141-147` | S |
-| 2.3 | 11 links del footer en `href: '#'` → destino real o retirarlos del listado | `src/data/site.ts:111-152` | M |
-| 2.4 | Nav "VISITAR" → ocultar del menú hasta que exista la sección (`placeholder: true`) | `src/data/site.ts:31` | S |
-| 2.5 | Reemplazar el placeholder `"[Párrafo pendiente — ilegible en la referencia]"` por copy real aprobado | `src/components/sections/Emprendimientos.astro:28` | S |
-| 2.6 | `npm run check` (astro check) en 0 errores/warnings | — | S |
-| 2.7 | Playwright completo + revisión visual manual en mobile/tablet/desktop | `tests/homepage.spec.ts` | M |
+Ejecutado y verificado:
+- **Cronograma oficial de 4 días:** 18 sesiones completas en `src/data/agenda.ts` cubriendo desde las 10:00 hasta las 21:30 hs (Apertura, Rondas Internacionales B2B con CFI, Foros de Litio y Minería, Talleres TICs de ClusteAR, Masterclasses Gastronómicas y Festival Folclórico de Cierre).
+- **Detalle horario y salas:** Cada sesión renderiza sala asignada (Auditorio Principal, Sala Belgrano, Espacio Innovación, etc.), oradores e instituciones a cargo, y nota descriptiva en `AgendaSection.astro`.
+- **Plano del predio con 8 zonas interactivas:** `src/data/plano.ts` y `PredioMap.astro` con mapa vectorial SVG zonificado, marcadores dinámicos y panel interactivo (`#zone-detail-card`) que vincula zonas con los stands y expositores correspondientes.
+- **Unificación de Header Nav:** Menú reorganizado en 9 accesos directos coherentes en `site.ts`: `LA EXPO`, `REGIONES`, `EXPOSITORES`, `AGENDA`, `MAPA`, `ENTRADAS`, `NOTICIAS`, `FAQ`, `CONTACTO`.
+- **Suite Playwright ampliada:** Pruebas interactivas de filtrado de agenda y reactividad del mapa vectorial integradas, alcanzando **201 tests aprobados (100% verde)**.
 
-**DoD:** cero `href="#"` sin justificar, cero copy placeholder visible, build + check + tests en verde.
+**DoD:** Agenda oficial con 18 eventos y horarios, plano interactivo con panel de detalles, navegación unificada en 1280px y 201/201 tests en verde.
 
 ---
 

@@ -28,16 +28,13 @@ export interface NavItem {
 export const nav: NavItem[] = [
   { label: 'LA EXPO', href: '#la-expo' },
   { label: 'REGIONES', href: '#territorios' },
-  { label: 'EMPRENDIMIENTOS', href: '#emprendimientos' },
-  { label: 'AGENDA', href: '/agenda' },
-  { label: 'VISITAR', href: '/mapa' },
-  { label: 'ENTRADAS', href: '/entradas' },
-  { label: 'EXPOSITOR', href: '#participar', placeholder: true },
-  // Sprint 3: páginas propias de las secciones mínimas (Consignas Técnicas §5).
   { label: 'EXPOSITORES', href: '/expositores' },
+  { label: 'AGENDA', href: '/agenda' },
+  { label: 'MAPA', href: '/mapa' },
+  { label: 'ENTRADAS', href: '/entradas' },
   { label: 'NOTICIAS', href: '/noticias' },
+  { label: 'FAQ', href: '/preguntas-frecuentes' },
   { label: 'CONTACTO', href: '/contacto' },
-  { label: 'PREGUNTAS', href: '/preguntas-frecuentes' },
 ];
 
 export const heroCategories = ['NEGOCIOS', 'TURISMO', 'CULTURA', 'EXPERIENCIA'] as const;
