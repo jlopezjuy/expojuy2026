@@ -17,6 +17,38 @@
 
 ---
 
+### 🔄 Nota de Actualización — 3 de septiembre de 2026
+
+Segunda pasada de **verificación en vivo** (`astro dev`, `localhost:4321`) sobre el estado actual del repositorio, sin repetir la auditoría completa desde cero:
+
+- **WOW-001 (Hero cinematográfico, sección 10):** ✅ **Implementado y confirmado en vivo.** Se resolvió con CSS puro (keyframes + `prefers-reduced-motion`), sin sumar Motion ni ninguna dependencia nueva — cero JS adicional, incluso mejor que la propuesta original. Evidencia: `wow-001-hero-cinematic.png`, `wow-001-hero-mobile.png`, `wow-001-hero-reduced-motion.png`, `wow-001-hero-scrolled.png`.
+- **Bug de opacidad en `/agenda` (sección 4.2):** ❌ **Sigue presente.** Re-verificado en vivo alternando filtros (`Todos los días` → `Día 19` → `Todos los días`): 8 tarjetas `<li class="reveal ...">` quedan con `opacity: 0` en estilo computado pese a tener el contenido completo en el DOM. Confirmado por inspección de estilos, no sólo a simple vista.
+- **Colisión de pines en `/mapa` (sección 4.4):** ❌ **Sigue presente.** Re-verificado en vivo: el pin numérico "1" se superpone directamente sobre el texto "INGRESO OFICIAL", partiéndolo visualmente.
+- **WOW-002 (Relieve topográfico 3D, sección 10):** Se prototipó (`TopographicViewer.astro` + `territorios.ts`), se capturó evidencia visual (`wow-002-*.png`) y se evaluó tal como recomendaba este documento (estado **EVALUAR**, no **IMPLEMENTAR**). Tras la evaluación se decidió no incorporarlo todavía al código de producción; se revirtió del working tree para no dejar deuda técnica sin uso. El concepto queda documentado en la sección 10 con su evidencia visual como referencia para una futura implementación planificada.
+- Cambios detectados en `ContactSection.astro` y `FaqSection.astro` (padding y tipografía del heading) son ajustes manuales ajenos a esta auditoría — no requieren acción aquí.
+
+---
+
+### 🔍 Verificación Independiente en Vivo — Segunda Revisión
+
+Lo que sigue es inspección propia y directa de la aplicación, no una repetición de lo ya escrito arriba. Cada punto dice cómo lo comprobé y si **confirma**, **matiza** o es **hallazgo nuevo** respecto del análisis original.
+
+**Metodología de esta pasada:** `astro dev` en `localhost:4321`, interacción real (click, type, cambio de selects) más inspección de estilos computados por consola — no solo lectura de código ni confianza ciega en capturas. A mitad de la revisión el panel de navegador quedó oculto del lado del cliente y las capturas dejaron de renderizar contenido (fondo crema sin texto, pese a que `getComputedStyle` confirmaba `opacity: 1` en los mismos elementos). Antes de reportar eso como bug, lo descarté cruzando con DOM — y en efecto era un problema de captura, no de la app. A partir de ese punto dependí de inspección de DOM/estilos en vez de píxeles. Por eso **Login, Mi Cuenta, Noticias, 404 y la pasada mobile quedan `NO VERIFICADO` en esta segunda revisión** — me apoyo en la evidencia visual que ya había capturado la sesión original, no en un chequeo propio fresco.
+
+- **Home → Territorios (`#territorios`):** el documento dice "enlace muerto". Hice click real sobre la tarjeta "PUNA" e inspeccioné la cadena de ancestros: **matizo** el hallazgo. No es un `<a href>` roto — es un `<li>` sin `href` en ningún ancestro; el salto a `#territorios` lo dispara un listener de JS que empuja el hash. Para el usuario el efecto es el mismo (no pasa nada útil), pero la causa técnica cambia la solución: no hay que "arreglar un link", hay que decidir qué debería hacer ese click (¿detalle de región? ¿scroll a Emprendimientos ya filtrado por esa región?).
+- **Home → Emprendimientos, filtro por categoría:** **confirmo** con evidencia directa. Filtré por "Artesanías" e inspeccioné las 8 tarjetas por consola: 7 pasan a `hidden = true` / `display: none` en el mismo tick, sin transición. Queda 1 sola tarjeta en una grilla pensada para varias — el hueco vacío es tan grande como decía el documento.
+- **Home → Franja de Sponsors:** **confirmo** que es estática, sin `animation-name` en el contenedor. No hay ninguna animación previa que remover; una marquesina se construye desde cero.
+- **Home → Imagen de "La Expo":** **hallazgo nuevo**, no estaba en el documento original. El `alt` de la fotografía dice textualmente *"Imagen de referencia pendiente de reemplazo por la fotografía oficial del arco de acceso"*. No es un tema de animación, pero sí de prioridad: no tiene sentido coreografiar la entrada de una imagen marcada como placeholder en el propio código.
+- **`/agenda` → bug de opacidad:** **confirmo** con evidencia más fuerte que la original. No me quedé en "se ve raro en una captura": alterné filtros (`Todos` → `Día 19` → `Todos`) e inspeccioné los 18 `<li class="reveal">` por consola — 8 quedan con `opacity: 0` computado, con el texto completo presente en el DOM. Reproducible, no intermitente.
+- **`/mapa` → colisión de pines:** **confirmo** visualmente, y **matizo** el alcance. El pin "1" parte en dos el texto "INGRESO OFICIAL". Los pines 5, 6 y 7 quedan al borde superior de su zona pisando el límite, pero sin cortar el texto central — la severidad varía por zona, el documento original generalizaba un poco.
+- **`/expositores` → búsqueda y filtro:** **confirmo**. Escribí "litio" y el contador bajó de 18 a 4 expositores en el mismo tick en que las tarjetas se ocultan — mismo patrón de corte duro que en Emprendimientos, coherente con que comparten lógica de filtrado.
+- **`/entradas` → calculadora:** **confirmo**, con precisión técnica adicional. Cambié el tipo de entrada a "Abono Completo" y el total saltó de $3.500 a $10.000 en el mismo frame. El `transition: all` presente en el elemento es el reset genérico de Tailwind — no anima el texto, porque **ningún navegador interpola contenido de texto vía CSS transitions**; esa propiedad no hace nada en este caso puntual, con o sin librería.
+- **`/preguntas-frecuentes` → acordeón:** **confirmo** por estructura: son `<details>/<summary>` nativos. Es comportamiento de plataforma, no de la app — el navegador no anima la apertura de `<details>` salvo que se lo fuerce explícitamente.
+
+**Mi lectura sobre el reparto Motion / Anime.js:** coincido en que Motion es la pieza central — los dos cortes duros que confirmé arriba (Emprendimientos y Expositores) son exactamente el caso de uso de `layout`/`AnimatePresence`. Donde **me separo** del documento original: no reservaría Anime.js para el odómetro de `/entradas`. Si Motion ya entra al bundle para las grillas, el mismo `animate()` de Motion interpola un valor numérico sin sumar una segunda librería para un solo contador — Anime.js sólo se justifica en `/mapa`, donde sí hay trazos SVG reales (`stroke-dashoffset`) que Motion no resuelve tan bien. Es la misma regla de "no duplicar responsabilidades" del documento, aplicada un poco más estricta.
+
+---
+
 ## 1. Resumen Ejecutivo
 
 ExpoJuy 2026 es el evento multisectorial más relevante del noroeste argentino, combinando industria minera (litio), agroindustria, tecnología, turismo y cultura de las cuatro regiones de la provincia de Jujuy (Puna, Quebrada, Valles y Yungas).
@@ -356,7 +388,7 @@ Basadas **exclusivamente** en los componentes e información real observada en e
 - **Desktop:** Secuencia completa con zoom fotográfico y collage en tres profundidades.
 - **Mobile:** Versión reducida (solo reveal tipográfico y fade suave del fondo; sin rotaciones 3D).
 - **Impacto UX:** 7/10 | **Impacto Visual:** 10/10 | **Performance:** Bajo impacto (< 5KB JS si se hace con Motion) | **Complejidad:** Media.
-- **Recomendación:** **IMPLEMENTAR** (versión Motion).
+- **Recomendación:** ✅ **IMPLEMENTADO** (ver Nota de Actualización) — versión CSS puro (keyframes + `prefers-reduced-motion`), sin sumar Motion ni JS adicional.
 
 ---
 
@@ -370,7 +402,7 @@ Basadas **exclusivamente** en los componentes e información real observada en e
 - **Desktop:** Canvas WebGL con sombras y nubes procedurales sutiles.
 - **Mobile:** Carrusel fotográfico enriquecido con microanimaciones Motion (WebGL desactivado).
 - **Impacto UX:** 9/10 | **Impacto Visual:** 10/10 | **Performance:** Alto coste (requiere lazy loading estricto) | **Complejidad:** Alta.
-- **Recomendación:** **EVALUAR** (como hito para la versión final del evento).
+- **Recomendación:** **EVALUAR** (como hito para la versión final del evento). Prototipo construido y evaluado visualmente (ver Nota de Actualización); no incorporado a producción ni conservado en el repositorio — se eliminó del working tree tras la evaluación sin llegar a commitearse. Si se retoma, hay que reconstruirlo desde cero; el concepto y su evidencia visual quedan documentados arriba.
 
 ---
 
