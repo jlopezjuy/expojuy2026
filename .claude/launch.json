@@ -7,6 +7,13 @@
       "runtimeArgs": ["run", "preview"],
       "port": 4321,
       "autoPort": true
+    },
+    {
+      "name": "expojuy-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 4321,
+      "autoPort": true
     }
   ]
 }
