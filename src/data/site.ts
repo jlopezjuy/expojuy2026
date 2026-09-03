@@ -4,6 +4,8 @@
  * Nothing here is invented copy; anything unreadable in the reference is
  * flagged with a TODO comment instead of being made up.
  */
+import type { ImageMetadata } from 'astro';
+import sponsorCamcomext from '../assets/sponsor-camcomext.png';
 
 export const event = {
   name: 'ExpoJuy',
@@ -99,23 +101,31 @@ export const agendaDays = [
   { day: '20', month: 'SEPT.', label: 'Cierre & Experiencias' },
 ] as const;
 
+export interface Sponsor {
+  name: string;
+  /** Only set when a real logo file exists in `src/assets/` (Sprint P1-4). */
+  logo?: ImageMetadata;
+}
+
 /**
  * Institutional supporters read off the sponsor strip in 00.png.
- * No official logo files exist in this repo, so they render as text wordmarks.
- * TODO(Sprint 5.2): logos reales de sponsors pendientes de confirmación de la
- * organización; solo existe el logo institucional de la Cámara de Comercio
- * Exterior en recursos/. Mantener wordmarks de texto, no inventar el set.
+ * No official logo files exist in this repo for most of them, so they render
+ * as text wordmarks. The Cámara de Comercio Exterior logo was found in
+ * `recursos/EXPOJUY_Logo2026/logo_camcomext.png` and is used as a real image.
+ * TODO(Sprint 5.2): logos reales de los otros sponsors pendientes de
+ * confirmación de la organización. Mantener wordmarks de texto para ellos,
+ * no inventar el set.
  */
-export const sponsors = [
-  'Gobierno de Jujuy',
-  'CFI · Consejo Federal de Inversiones',
-  'Cámara de Comercio Exterior de Jujuy',
-  'BANCOR',
-  'Macro',
-  'YPF',
-  'JEMSE',
-  'Jujuy Energía',
-] as const;
+export const sponsors: Sponsor[] = [
+  { name: 'Gobierno de Jujuy' },
+  { name: 'CFI · Consejo Federal de Inversiones' },
+  { name: 'Cámara de Comercio Exterior de Jujuy', logo: sponsorCamcomext },
+  { name: 'BANCOR' },
+  { name: 'Macro' },
+  { name: 'YPF' },
+  { name: 'JEMSE' },
+  { name: 'Jujuy Energía' },
+];
 
 export const footerColumns = [
   {

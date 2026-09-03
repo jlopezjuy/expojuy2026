@@ -23,7 +23,7 @@ import SectionHeading from '../ui/SectionHeading.astro';
   <div class="mt-10 lg:mt-12">
     <Container class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_13rem] lg:items-end">
       <!-- Rail on phones, four-up grid from `sm`. -->
-      <ul class="rail -mx-gutter px-gutter sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-3 sm:overflow-visible sm:px-0 lg:grid-cols-4">
+      <ul class="rail -mx-gutter px-gutter sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-3 sm:overflow-visible sm:px-0 sm:[mask-image:none] sm:[-webkit-mask-image:none] lg:grid-cols-4">
         {
           regions.map((region, i) => (
             <li>

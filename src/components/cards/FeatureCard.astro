@@ -6,8 +6,10 @@ import Photo from '../ui/Photo.astro';
 interface Props {
   eyebrow: string;
   title: string;
-  cta: string;
-  ctaHref: string;
+  /** Omit `cta`/`ctaHref` together when there is no real destination yet — the
+      card renders as image + editorial copy, without a button (Sprint P1-2). */
+  cta?: string;
+  ctaHref?: string;
   photo: PhotoType;
   /** `right` keeps the photo on the right half, `cover` fills the whole card. */
   imageMode?: 'right' | 'cover';
@@ -63,7 +65,13 @@ const hasAside = Astro.slots.has('aside');
         <p class="eyebrow text-white/55">{eyebrow}</p>
         <h3 id={headingId} class="text-title mt-4 text-white text-balance">{title}</h3>
       </div>
-      <ButtonLink href={ctaHref} variant="ghost" class="w-full sm:w-fit">{cta}</ButtonLink>
+      {
+        cta && ctaHref && (
+          <ButtonLink href={ctaHref} variant="ghost" class="w-full sm:w-fit">
+            {cta}
+          </ButtonLink>
+        )
+      }
     </div>
 
     {

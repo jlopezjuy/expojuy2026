@@ -211,6 +211,15 @@ html:not(.js) .reveal {
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 
+  /* P2-2: fade the right edge so a rail with more content off-screen reads as
+     scrollable at a glance, instead of looking like a hard-cropped end. Purely
+     decorative — harmless if the rail's content already fits. Components that
+     switch a rail to a wrapping/grid layout at some breakpoint (`sm:overflow-visible`,
+     `lg:overflow-visible`, etc.) cancel this at the same breakpoint with
+     `[mask-image:none]` so the fade never clips wrapped rows. */
+  mask-image: linear-gradient(to right, black calc(100% - 2.5rem), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black calc(100% - 2.5rem), transparent 100%);
+
   &::-webkit-scrollbar {
     display: none;
   }

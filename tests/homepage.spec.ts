@@ -10,6 +10,33 @@ async function settle(page: Page) {
       await new Promise((r) => setTimeout(r, 100));
     }
     window.scrollTo({ top: 0, behavior: 'instant' });
+    // Horizontal card rails (agenda/products/sponsors, @utility rail) clip most of
+    // their images off to the right of their own scroll container, independently of
+    // page scroll. `el.scrollLeft = el.scrollWidth` alone is not reliable here — some
+    // images never get a settled frame to recompute as visible — so scroll each
+    // image individually into view with a small stagger between them instead.
+    for (const img of document.querySelectorAll<HTMLImageElement>('.rail img')) {
+      img.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      await new Promise((r) => setTimeout(r, 20));
+    }
+    // Wait for every now-triggered image to actually finish loading (or fail)
+    // instead of a fixed delay — network latency varies a lot per viewport.
+    await Promise.all(
+      [...document.images]
+        .filter((img) => !img.complete)
+        .map(
+          (img) =>
+            new Promise<void>((resolve) => {
+              img.addEventListener('load', () => resolve(), { once: true });
+              img.addEventListener('error', () => resolve(), { once: true });
+              setTimeout(resolve, 4000);
+            }),
+        ),
+    );
+    document.querySelectorAll<HTMLElement>('.rail').forEach((el) => {
+      el.scrollLeft = 0;
+    });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   });
   await page.waitForLoadState('networkidle');
 }

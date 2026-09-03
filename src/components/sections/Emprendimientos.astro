@@ -20,19 +20,22 @@ import SectionHeading from '../ui/SectionHeading.astro';
         breakBeforeAccent
         id="emprendimientos-title"
       />
-      {/* TODO: texto ilegible en la referencia (00.png). No se inventa copy:
-          reemplazar este marcador por el párrafo real cuando esté disponible. */}
+      {/* COPY BORRADOR — redactado en base a los rubros/regiones reales del
+          proyecto (src/data/site.ts), pendiente de aprobación del equipo antes
+          de la entrega final. Reemplaza al placeholder que dejaba el mockup
+          original ilegible en 00.png. */}
       <p
-        class="mt-6 max-w-[34ch] border-l-2 border-magenta/40 pl-4 text-[0.85rem] leading-relaxed text-night/65 italic"
+        class="mt-6 max-w-[34ch] border-l-2 border-magenta/40 pl-4 text-[0.85rem] leading-relaxed text-night/65"
       >
-        [Párrafo pendiente — ilegible en la referencia]
+        De la miel de la Quebrada a los textiles de telar de la Puna: acá se cruzan alimentos,
+        artesanías, diseño y bienestar hechos por manos jujeñas, listos para mostrarse al mundo.
       </p>
     </div>
 
     <div class="min-w-0">
       <!-- Filter tabs: the only genuinely interactive control in this section. -->
       <div
-        class="rail -mx-gutter px-gutter sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
+        class="rail -mx-gutter px-gutter sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:[mask-image:none] sm:[-webkit-mask-image:none]"
         role="group"
         aria-label="Filtrar emprendimientos por rubro"
         id="product-filters"

@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import axe from 'axe-core';
 
 /** Scroll the whole page so IntersectionObserver reveals fire and lazy images load. */
 async function settle(page: Page) {
@@ -9,8 +10,54 @@ async function settle(page: Page) {
       await new Promise((r) => setTimeout(r, 100));
     }
     window.scrollTo({ top: 0, behavior: 'instant' });
+    // Horizontal card rails (agenda/products/sponsors, @utility rail) clip most of
+    // their images off to the right of their own scroll container, independently of
+    // page scroll. `el.scrollLeft = el.scrollWidth` alone is not reliable here — some
+    // images never get a settled frame to recompute as visible — so scroll each
+    // image individually into view with a small stagger between them instead.
+    // Mirrors tests/homepage.spec.ts.
+    for (const img of document.querySelectorAll<HTMLImageElement>('.rail img')) {
+      img.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      await new Promise((r) => setTimeout(r, 20));
+    }
+    // Wait for every now-triggered image to actually finish loading (or fail)
+    // instead of a fixed delay — network latency varies a lot per viewport.
+    await Promise.all(
+      [...document.images]
+        .filter((img) => !img.complete)
+        .map(
+          (img) =>
+            new Promise<void>((resolve) => {
+              img.addEventListener('load', () => resolve(), { once: true });
+              img.addEventListener('error', () => resolve(), { once: true });
+              setTimeout(resolve, 4000);
+            }),
+        ),
+    );
+    document.querySelectorAll<HTMLElement>('.rail').forEach((el) => {
+      el.scrollLeft = 0;
+    });
+    window.scrollTo({ top: 0, behavior: 'instant' });
   });
   await page.waitForLoadState('networkidle');
+}
+
+/**
+ * Put every `.reveal` element at its resting state before an axe scan. The
+ * scroll-reveal is a 0.85s opacity+translate transition; sampling it mid-fade
+ * makes axe-core report a false color-contrast failure (text at a
+ * semi-transparent midpoint). This only affects the test — production keeps
+ * the fade (see src/styles/global.css @utility reveal). Mirrors
+ * tests/homepage.spec.ts.
+ */
+async function settleReveals(page: Page) {
+  await page.evaluate(() => {
+    document.querySelectorAll<HTMLElement>('.reveal').forEach((el) => {
+      el.style.transition = 'none';
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+  });
 }
 
 const routes = [
@@ -75,6 +122,26 @@ for (const route of routes) {
     await settle(page);
     expect(errors).toEqual([]);
   });
+
+  test(`${route} — WCAG AA con axe-core sin violaciones`, async ({ page }) => {
+    await page.goto(route, { waitUntil: 'networkidle' });
+    await settle(page);
+    await settleReveals(page);
+    await page.addScriptTag({ content: axe.source });
+    const violations = await page.evaluate(async () => {
+      const result = await (window as any).axe.run(document, {
+        runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'] },
+      });
+      return result.violations.map((v: any) => ({
+        id: v.id,
+        impact: v.impact,
+        help: v.help,
+        count: v.nodes.length,
+        targets: v.nodes.slice(0, 3).map((n: any) => n.target.join(' ')),
+      }));
+    });
+    expect(violations).toEqual([]);
+  });
 }
 
 test('FAQ accordion toggles open/closed and syncs aria-expanded', async ({ page }) => {
@@ -99,7 +166,9 @@ test('FAQ accordion toggles open/closed and syncs aria-expanded', async ({ page 
 test('contact form exposes accessible fields with a honeypot', async ({ page }) => {
   await page.goto('/contacto', { waitUntil: 'networkidle' });
 
-  const form = page.locator('form[method="POST"]');
+  // Scoped to `main`: the footer's newsletter form (Sprint P1-3) also matches
+  // `form[method="POST"]` and is rendered on every page.
+  const form = page.locator('main form[method="POST"]');
   await expect(form).toHaveCount(1);
 
   for (const name of ['nombre', 'email', 'asunto', 'mensaje']) {

@@ -24,7 +24,7 @@ const headerBackdrop = isHome ? '' : 'border-b border-white/10 bg-night/90 backd
     <Logo href="#top" tone="light" />
 
     <nav aria-label="Navegación principal" class="hidden xl:block">
-      <ul class="flex items-center gap-8 2xl:gap-10">
+      <ul class="flex items-center gap-5 min-[1680px]:gap-10">
         {
           // Sprint 2.4: los items con `placeholder: true` aún no tienen sección en
           // esta página — se ocultan del menú hasta que existan (p. ej. VISITAR).
@@ -34,7 +34,7 @@ const headerBackdrop = isHome ? '' : 'border-b border-white/10 bg-night/90 backd
               <li>
                 <a
                   href={href(item.href)}
-                  class="relative block py-2 text-[0.68rem] font-bold tracking-[0.16em] text-white/85 uppercase transition-colors duration-300 hover:text-white after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-gold-bright after:transition-transform after:duration-300 after:content-[''] hover:after:scale-x-100"
+                  class="relative block py-2 text-[0.62rem] font-bold tracking-[0.1em] whitespace-nowrap text-white/85 uppercase transition-colors duration-300 hover:text-white after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-gold-bright after:transition-transform after:duration-300 after:content-[''] hover:after:scale-x-100 min-[1680px]:text-[0.68rem] min-[1680px]:tracking-[0.16em]"
                 >
                   {item.label}
                 </a>
