@@ -1,0 +1,71 @@
+---
+import { getCollection, render } from 'astro:content';
+import Footer from '../../components/navigation/Footer.astro';
+import Header from '../../components/navigation/Header.astro';
+import Container from '../../components/layout/Container.astro';
+import ButtonLink from '../../components/ui/ButtonLink.astro';
+import Icon from '../../components/ui/Icon.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const noticias = await getCollection('noticias');
+  return noticias.map((articulo) => ({
+    params: { slug: articulo.id },
+    props: { articulo },
+  }));
+}
+
+const { articulo } = Astro.props;
+const { Content } = await render(articulo);
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<BaseLayout title={`${articulo.data.title} — ExpoJuy 2026`} description={articulo.data.description}>
+  <Header />
+
+  <main id="main">
+    <article class="bg-cream pb-16 lg:pb-20">
+      <Container width="normal">
+        <header class="reveal">
+          <ButtonLink href="/noticias" variant="outline" class="w-fit">
+            <span class="inline-flex items-center gap-2">
+              <Icon name="arrow-right" class="h-4 w-4 rotate-180" />
+              Volver a noticias
+            </span>
+          </ButtonLink>
+          <p class="eyebrow mt-8 text-night/70">
+            <time datetime={articulo.data.date.toISOString()}>{formatDate(articulo.data.date)}</time>
+          </p>
+          <h1 class="mt-4 max-w-[24ch] text-display text-night text-balance">
+            {articulo.data.title}
+          </h1>
+          <p class="mt-5 max-w-[62ch] text-body text-night/70">{articulo.data.description}</p>
+        </header>
+
+        <div class="news-body reveal mt-10 max-w-[72ch] border-t border-night/10 pt-8" style="--reveal-delay:120ms">
+          <Content />
+        </div>
+      </Container>
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .news-body :global(p) {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: color-mix(in srgb, var(--color-night) 78%, transparent);
+    font-size: var(--text-body);
+    line-height: 1.7;
+  }
+  .news-body :global(p) strong {
+    color: var(--color-night);
+    font-weight: 700;
+  }
+  .news-body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>

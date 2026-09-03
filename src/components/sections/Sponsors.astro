@@ -1,0 +1,47 @@
+---
+import { Image } from 'astro:assets';
+import { sponsors } from '../../data/site';
+import Container from '../layout/Container.astro';
+---
+
+<section class="border-t border-night/10 bg-cream py-8" aria-labelledby="sponsors-title">
+  <Container class="flex flex-col items-center gap-6 lg:flex-row lg:gap-10">
+    <h2
+      id="sponsors-title"
+      class="shrink-0 font-sans text-[0.7rem] font-bold tracking-[0.14em] text-night/70 uppercase"
+    >
+      Acompañan
+    </h2>
+
+    {/* Most institutional supporters have no official logo file in this repo — they
+        render as text wordmarks until the real files are provided. See docs/design-spec.md.
+        TODO(Sprint 5.2): logos reales de los sponsors restantes pendientes de
+        confirmación de la organización; solo existe el logo institucional de la
+        Cámara de Comercio Exterior en recursos/. Mantener wordmarks de texto para
+        el resto, no inventar el set. */}
+    <ul
+      class="rail -mx-gutter w-full items-center gap-8 px-gutter lg:mx-0 lg:flex-wrap lg:justify-between lg:overflow-visible lg:px-0 lg:[mask-image:none] lg:[-webkit-mask-image:none]"
+      tabindex="0"
+      aria-label="Acompañan"
+    >
+      {
+        sponsors.map((sponsor) => (
+          <li class="flex items-center">
+            {sponsor.logo ? (
+              <Image
+                src={sponsor.logo}
+                alt={sponsor.name}
+                width={120}
+                class="h-8 w-auto object-contain grayscale transition-[filter] duration-300 hover:grayscale-0"
+              />
+            ) : (
+              <span class="text-center text-[0.72rem] leading-tight font-bold tracking-[0.05em] whitespace-nowrap text-night/70 uppercase grayscale transition-colors duration-300 hover:text-night/85">
+                {sponsor.name}
+              </span>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+</section>

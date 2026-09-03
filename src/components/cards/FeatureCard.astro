@@ -1,0 +1,85 @@
+---
+import type { Photo as PhotoType } from '../../data/photos';
+import ButtonLink from '../ui/ButtonLink.astro';
+import Photo from '../ui/Photo.astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  /** Omit `cta`/`ctaHref` together when there is no real destination yet — the
+      card renders as image + editorial copy, without a button (Sprint P1-2). */
+  cta?: string;
+  ctaHref?: string;
+  photo: PhotoType;
+  /** `right` keeps the photo on the right half, `cover` fills the whole card. */
+  imageMode?: 'right' | 'cover';
+  index?: number;
+  id?: string;
+  class?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  cta,
+  ctaHref,
+  photo,
+  imageMode = 'right',
+  index = 0,
+  id,
+  class: className = '',
+} = Astro.props;
+
+const headingId = `${(id ?? eyebrow).toLowerCase().replace(/[^a-z0-9]+/g, '-')}-title`;
+const hasAside = Astro.slots.has('aside');
+---
+
+<article
+  id={id}
+  class={`reveal group relative isolate overflow-hidden rounded-[3px] bg-night ${className}`}
+  style={`--reveal-delay:${index * 110}ms`}
+  aria-labelledby={headingId}
+>
+  <!-- Photography sits behind the copy. -->
+  <div class={`absolute inset-y-0 right-0 -z-20 ${imageMode === 'right' ? 'w-[64%]' : 'w-full'}`}>
+    <Photo
+      photo={photo}
+      ratio={4 / 3}
+      sizes="(min-width: 1024px) 34vw, 92vw"
+      maxWidth={900}
+      class="h-full w-full object-cover transition-transform duration-[1.2s] ease-[var(--ease-out-expo)] group-hover:scale-[1.06]"
+    />
+  </div>
+
+  <div
+    class="absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(6,14,22,0.95)_0%,rgba(6,14,22,0.88)_30%,rgba(6,14,22,0.42)_64%,rgba(6,14,22,0.18)_100%)]"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div
+    class={`flex min-h-[15rem] gap-5 p-6 lg:min-h-[15.5rem] lg:p-6 ${hasAside ? 'flex-col xl:flex-row xl:items-stretch' : 'flex-col'}`}
+  >
+    <div class="flex flex-1 flex-col justify-between gap-8">
+      <div class="max-w-[13rem]">
+        <p class="eyebrow text-white/55">{eyebrow}</p>
+        <h3 id={headingId} class="text-title mt-4 text-white text-balance">{title}</h3>
+      </div>
+      {
+        cta && ctaHref && (
+          <ButtonLink href={ctaHref} variant="ghost" class="w-full sm:w-fit">
+            {cta}
+          </ButtonLink>
+        )
+      }
+    </div>
+
+    {
+      hasAside && (
+        <div class="shrink-0 xl:w-[48%] xl:self-center">
+          <slot name="aside" />
+        </div>
+      )
+    }
+  </div>
+</article>

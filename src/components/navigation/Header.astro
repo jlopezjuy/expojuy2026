@@ -1,0 +1,119 @@
+---
+import { nav } from '../../data/site';
+import { resolveHref } from '../../lib/links';
+import Container from '../layout/Container.astro';
+import ButtonLink from '../ui/ButtonLink.astro';
+import Logo from '../ui/Logo.astro';
+import AuthNav from '../islands/AuthNav';
+
+const pathname = Astro.url.pathname;
+const href = (value: string) => resolveHref(value, pathname);
+
+// Sprint 6.3 — a11y (color-contrast): en la home el hero es oscuro y el header
+// puede quedar transparente hasta el estado `stuck`. En las sub-páginas el tope es
+// claro (bg-cream), así que el nav blanco falla contraste. Se reutilizan las mismas
+// clases oscuras del estado `stuck` como estáticas fuera de la home.
+const isHome = pathname === '/';
+const headerBackdrop = isHome ? '' : 'border-b border-white/10 bg-night/90 backdrop-blur-md';
+---
+
+<header
+  id="site-header"
+  class={`fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-500 ease-out data-[stuck]:border-b data-[stuck]:border-white/10 data-[stuck]:bg-night/90 data-[stuck]:backdrop-blur-md ${headerBackdrop}`}
+>
+  <Container class="flex items-center justify-between gap-6 py-4 lg:py-5">
+    <Logo href="#top" tone="light" />
+
+    <nav aria-label="Navegación principal" class="hidden xl:block">
+      <ul class="flex items-center gap-3.5 min-[1440px]:gap-5 min-[1680px]:gap-10">
+        {
+          // Sprint 2.4: los items con `placeholder: true` aún no tienen sección en
+          // esta página — se ocultan del menú hasta que existan (p. ej. VISITAR).
+          nav
+            .filter((item) => !item.placeholder)
+            .map((item) => (
+              <li>
+                <a
+                  href={href(item.href)}
+                  class="relative block py-2 text-[0.62rem] font-bold tracking-[0.1em] whitespace-nowrap text-white/85 uppercase transition-colors duration-300 hover:text-white after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:origin-left after:scale-x-0 after:bg-gold-bright after:transition-transform after:duration-300 after:content-[''] hover:after:scale-x-100 min-[1680px]:text-[0.68rem] min-[1680px]:tracking-[0.16em]"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+        }
+        <li class="flex items-center">
+          <AuthNav client:only="preact" variant="desktop" />
+        </li>
+      </ul>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      {/* Wrapped rather than class-toggled: ButtonLink's own `inline-flex`
+          would win the display cascade against a `hidden` utility. */}
+      <div class="hidden md:block">
+        <ButtonLink href={href('#participar')} variant="pill">Quiero participar</ButtonLink>
+      </div>
+
+      <button
+        type="button"
+        id="nav-toggle"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        class="grid h-11 w-11 place-items-center text-white xl:hidden"
+      >
+        <span class="sr-only">Abrir menú</span>
+        <span aria-hidden="true" class="flex w-6 flex-col gap-[5px]">
+          <span class="h-px w-full bg-current transition-transform duration-300"></span>
+          <span class="h-px w-full bg-current transition-opacity duration-300"></span>
+          <span class="h-px w-full bg-current transition-transform duration-300"></span>
+        </span>
+      </button>
+    </div>
+  </Container>
+
+  <!-- Mobile panel. Hidden from AT and pointer events until opened. -->
+  <div
+    id="mobile-nav"
+    hidden
+    class="border-t border-white/10 bg-night/97 backdrop-blur-lg xl:hidden"
+  >
+    <Container class="py-8">
+      <ul class="flex flex-col gap-1">
+        {
+          // Sprint 2.4: ocultamos también del panel mobile los items placeholder.
+          nav
+            .filter((item) => !item.placeholder)
+            .map((item) => (
+              <li>
+                <a
+                  href={href(item.href)}
+                  class="block border-b border-white/10 py-4 text-sm font-bold tracking-[0.16em] text-white uppercase"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+        }
+        <li class="border-b border-white/10">
+          <AuthNav client:only="preact" variant="mobile" />
+        </li>
+      </ul>
+      <ButtonLink href={href('#participar')} variant="solid" class="mt-8 w-full">
+        Quiero participar
+      </ButtonLink>
+    </Container>
+  </div>
+</header>
+
+<style>
+  #nav-toggle[aria-expanded='true'] span[aria-hidden] > span:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+  }
+  #nav-toggle[aria-expanded='true'] span[aria-hidden] > span:nth-child(2) {
+    opacity: 0;
+  }
+  #nav-toggle[aria-expanded='true'] span[aria-hidden] > span:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+</style>

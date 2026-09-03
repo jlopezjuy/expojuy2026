@@ -1,0 +1,83 @@
+---
+import { getCollection } from 'astro:content';
+import Footer from '../../components/navigation/Footer.astro';
+import Header from '../../components/navigation/Header.astro';
+import Container from '../../components/layout/Container.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import Icon from '../../components/ui/Icon.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const noticias = (await getCollection('noticias')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const formatDate = (date: Date) =>
+  date.toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<BaseLayout
+  title="Noticias y Actualidad — ExpoJuy 2026"
+  description="Toda la actualidad, anuncios oficiales y novedades sobre la feria ExpoJuy 2026 en el Predio Ferial Jujuy."
+>
+  <Header />
+
+  <main id="main">
+    <section class="bg-cream pb-16 lg:pb-20" aria-labelledby="noticias-title">
+      <Container width="normal">
+        <div class="reveal">
+          <SectionHeading
+            eyebrow="Noticias y Prensa"
+            title="Actualidad de la"
+            accent="Expo 2026."
+            accentColor="magenta"
+            as="h1"
+            id="noticias-title"
+          />
+          <p class="mt-6 max-w-[58ch] text-body text-night/75">
+            Toda la actualidad, anuncios oficiales, acuerdos comerciales y preparativos de la muestra multisectorial más importante del Norte Grande.
+          </p>
+        </div>
+
+        {
+          noticias.length === 0 ? (
+            <p class="mt-12 max-w-[46ch] text-title text-night">
+              Próximamente publicaremos novedades institucionales de la feria.
+            </p>
+          ) : (
+            <ul class="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {
+                noticias.map((articulo, i) => (
+                  <li>
+                    <article
+                      class="reveal group flex h-full flex-col gap-3 rounded-card border border-night/10 bg-cream-deep/60 p-6 transition-colors duration-300 hover:border-night/25"
+                      style={`--reveal-delay:${i * 70}ms`}
+                    >
+                      <time datetime={articulo.data.date.toISOString()} class="eyebrow text-night/70">
+                        {formatDate(articulo.data.date)}
+                      </time>
+                      <h2 class="font-display text-title text-night text-balance">
+                        <a
+                          href={`/noticias/${articulo.id}`}
+                          class="transition-colors duration-300 hover:text-magenta"
+                        >
+                          {articulo.data.title}
+                        </a>
+                      </h2>
+                      <p class="text-body text-night/70">{articulo.data.description}</p>
+                      <span class="mt-auto inline-flex items-center gap-2 pt-1 text-[0.66rem] font-bold tracking-[0.16em] text-night/70 uppercase transition-colors duration-300 group-hover:text-night">
+                        Leer nota
+                        <Icon name="arrow-right" class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                      </span>
+                    </article>
+                  </li>
+                ))
+              }
+            </ul>
+          )
+        }
+      </Container>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

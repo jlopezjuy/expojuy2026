@@ -1,0 +1,44 @@
+---
+import { regions } from '../../data/site';
+import RegionCard from '../cards/RegionCard.astro';
+import Container from '../layout/Container.astro';
+import ArrowCircle from '../ui/ArrowCircle.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+---
+
+<section id="territorios" class="bg-night py-16 lg:py-20" aria-labelledby="territorios-title">
+  <Container>
+    <SectionHeading
+      eyebrow="Nuestros territorios"
+      title="Cuatro mundos,"
+      accent="una misma esencia."
+      accentColor="teal"
+      tone="light"
+      breakBeforeAccent
+      id="territorios-title"
+      class="reveal"
+    />
+  </Container>
+
+  <div class="mt-10 lg:mt-12">
+    <Container class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_13rem] lg:items-end">
+      <!-- Rail on phones, four-up grid from `sm`. -->
+      <ul class="rail -mx-gutter px-gutter sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-3 sm:overflow-visible sm:px-0 sm:[mask-image:none] sm:[-webkit-mask-image:none] lg:grid-cols-4">
+        {
+          regions.map((region, i) => (
+            <li>
+              <RegionCard region={region} index={i} />
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="reveal flex items-center justify-between gap-6 lg:flex-col lg:items-start lg:gap-5 lg:pb-5">
+        <p class="max-w-[24ch] text-sm leading-relaxed text-white/75">
+          Explorá cada región y descubrí sus emprendimientos
+        </p>
+        <ArrowCircle href="#emprendimientos" label="Ver todos los emprendimientos" tone="light" />
+      </div>
+    </Container>
+  </div>
+</section>

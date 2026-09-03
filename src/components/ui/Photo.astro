@@ -1,0 +1,50 @@
+---
+/**
+ * Responsive local photograph with fallback.
+ *
+ * Sprint 0: Assets localized in /images/photos/${photo.id}.jpg to eliminate
+ * external network dependencies, ensuring 100% offline autonomy and reliable
+ * fast rendering for the jury during Demo Day.
+ */
+import type { Photo } from '../../data/photos';
+
+interface Props {
+  photo: Photo;
+  /** `sizes` attribute — always pass a real value, the default is a fallback. */
+  sizes?: string;
+  /** Rendered aspect ratio; defaults to the photo's own ratio. */
+  ratio?: number;
+  /** Widest rendition to generate. */
+  maxWidth?: number;
+  priority?: boolean;
+  class?: string;
+  /** Overrides the alt text from the data layer (e.g. decorative usage). */
+  alt?: string;
+}
+
+const {
+  photo,
+  sizes = '100vw',
+  ratio,
+  maxWidth = 1920,
+  priority = false,
+  class: className = '',
+  alt,
+} = Astro.props;
+
+const aspect = ratio ?? photo.ratio;
+const fallbackWidth = Math.min(1280, maxWidth);
+const localSrc = `/images/photos/${photo.id}.jpg`;
+---
+
+<img
+  src={localSrc}
+  sizes={sizes}
+  width={fallbackWidth}
+  height={Math.round(fallbackWidth / aspect)}
+  alt={alt ?? photo.alt}
+  loading={priority ? 'eager' : 'lazy'}
+  decoding={priority ? 'sync' : 'async'}
+  fetchpriority={priority ? 'high' : 'auto'}
+  class={className}
+/>

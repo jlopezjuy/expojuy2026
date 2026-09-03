@@ -1,0 +1,130 @@
+---
+import { event, footerColumns, socials, legalLinks } from '../../data/site';
+import { resolveHref } from '../../lib/links';
+import Container from '../layout/Container.astro';
+import Icon from '../ui/Icon.astro';
+import Logo from '../ui/Logo.astro';
+
+const pathname = Astro.url.pathname;
+const href = (value: string) => resolveHref(value, pathname);
+
+// TODO(Sprint P1-3): no hay proveedor de newsletter real (Mailchimp/Buttondown/
+// Formspree). No inventar. Mientras esté vacío, el formulario queda visible pero
+// con el envío deshabilitado y una nota de pendiente — mismo patrón que
+// ContactSection.astro/EntradasSection.astro.
+const NEWSLETTER_ENDPOINT = '';
+const newsletterReady = NEWSLETTER_ENDPOINT.trim().length > 0;
+---
+
+<footer class="bg-night pt-14 pb-8 text-white lg:pt-16">
+  <Container>
+    {/* Three columns only from `xl`: below that the middle nav needs the full
+        width for its own three sub-columns. */}
+    <div class="grid gap-12 xl:grid-cols-[minmax(0,15rem)_minmax(0,1fr)_minmax(0,20rem)] xl:gap-14">
+      <!-- Brand -->
+      <div>
+        <Logo href={href('#top')} tone="light" />
+        <p class="mt-6 max-w-[22ch] text-sm leading-relaxed text-white/65">{event.tagline}</p>
+
+        {
+          socials.length > 0 && (
+            <div class="mt-6 flex items-center gap-3">
+              {socials.map((social) => (
+                <a
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Seguinos en ${social.name}`}
+                  class="grid h-8 w-8 place-items-center rounded-full border border-white/20 text-white/75 transition-all duration-300 hover:border-gold-bright hover:bg-white/5 hover:text-gold-bright"
+                >
+                  <Icon name={social.icon} class="h-4 w-4" />
+                </a>
+              ))}
+            </div>
+          )
+        }
+      </div>
+
+      <!-- Link columns -->
+      <nav aria-label="Enlaces del sitio" class="grid gap-10 sm:grid-cols-3">
+        {
+          footerColumns.map((column) => (
+            <div>
+              <h2 class="eyebrow font-sans text-white/50">{column.title}</h2>
+              <ul class="mt-5 flex flex-col gap-3">
+                {column.links.map((link) => (
+                  <li>
+                    <a
+                      href={href(link.href)}
+                      class="text-[0.85rem] text-white/80 transition-colors duration-300 hover:text-gold-bright"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </nav>
+
+      <!-- Newsletter -->
+      <div class="max-w-[28rem] xl:max-w-none xl:border-l xl:border-white/12 xl:pl-14">
+        <h2 class="font-sans text-base font-bold text-white">Recibí novedades de ExpoJuy</h2>
+        <form
+          method="POST"
+          action={NEWSLETTER_ENDPOINT}
+          class="mt-5 flex items-center gap-2 border border-white/25 p-1.5 transition-colors focus-within:border-white/70"
+        >
+          <label for="newsletter-email" class="sr-only">Tu email</label>
+          <input
+            id="newsletter-email"
+            name="email"
+            type="email"
+            required
+            autocomplete="email"
+            placeholder="Tu email"
+            class="min-w-0 flex-1 bg-transparent px-3 py-2.5 text-sm text-white placeholder:text-white/45 focus:outline-none"
+          />
+          <button
+            type="submit"
+            disabled={!newsletterReady}
+            class="grid h-10 w-10 shrink-0 place-items-center text-white transition-colors duration-300 hover:text-gold-bright disabled:cursor-not-allowed disabled:text-white/35 disabled:hover:text-white/35"
+          >
+            <span class="sr-only">Suscribirme</span>
+            <Icon name="arrow-right" class="h-4 w-4" />
+          </button>
+        </form>
+        {/* TODO(Sprint P1-3): el envío se habilita cuando exista un proveedor de
+            newsletter real. No se inventa un endpoint. */}
+        {!newsletterReady && (
+          <p class="mt-3 text-[0.72rem] leading-relaxed text-white/55">
+            Muy pronto vas a poder suscribirte.
+          </p>
+        )}
+      </div>
+    </div>
+
+    <div
+      class="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-center sm:flex-row"
+    >
+      <p class="text-[0.72rem] text-white/50">
+        © 2026 ExpoJuy. Todos los derechos reservados.
+      </p>
+      {
+        legalLinks.length > 0 && (
+          <div class="flex flex-wrap items-center justify-center gap-6">
+            {legalLinks.map((link) => (
+              <a
+                href={link.href}
+                class="text-[0.72rem] text-white/50 transition-colors hover:text-white/80"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </Container>
+</footer>

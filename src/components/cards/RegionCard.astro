@@ -1,0 +1,45 @@
+---
+import { photos } from '../../data/photos';
+import type { Region } from '../../data/site';
+import Icon from '../ui/Icon.astro';
+import Photo from '../ui/Photo.astro';
+
+interface Props {
+  region: Region;
+  index: number;
+}
+
+const { region, index } = Astro.props;
+---
+
+<a
+  href="#territorios"
+  class="reveal group relative block w-[72vw] overflow-hidden rounded-[3px] sm:w-auto"
+  style={`--reveal-delay:${index * 90}ms`}
+>
+  <div class="aspect-[4/5] overflow-hidden sm:aspect-[5/4]">
+    <Photo
+      photo={photos[region.photo]}
+      ratio={5 / 4}
+      sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 72vw"
+      maxWidth={800}
+      class="h-full w-full object-cover transition-transform duration-[1.1s] ease-[var(--ease-out-expo)] group-hover:scale-[1.07]"
+    />
+  </div>
+
+  <div
+    class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgba(4,12,20,0.8)_0%,rgba(4,12,20,0.12)_48%,rgba(4,12,20,0)_72%)]"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="absolute inset-x-0 bottom-0 flex items-center justify-between gap-3 p-4 lg:p-5">
+    <span class="font-sans text-base font-medium tracking-wide text-white sm:text-lg xl:text-xl">
+      {region.name}
+    </span>
+    <Icon
+      name="arrow-right"
+      class="h-5 w-5 shrink-0 text-white transition-transform duration-500 ease-[var(--ease-out-expo)] group-hover:translate-x-1.5"
+    />
+  </div>
+</a>

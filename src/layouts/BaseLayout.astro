@@ -1,0 +1,95 @@
+---
+import '../styles/global.css';
+// Preload the two Ambit weights used for first paint (body Regular, heading
+// SemiBold). Astro fingerprints them; the @font-face url() resolves to the
+// same hashed asset.
+import ambitRegular from '../fonts/ambit-regular.woff2';
+import ambitSemibold from '../fonts/ambit-semibold.woff2';
+import { event } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  lang?: string;
+}
+
+const { title, description, lang = 'es-AR' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://expojuy.com.ar');
+
+// Sprint 6.2 — Schema.org Event, only on the page that represents the event.
+// Field order matches the mockup-approved data in src/data/site.ts; nothing is
+// invented. Dates derive from `event.datesLong` ("SEPTIEMBRE 2026") and
+// `event.datesShort` ("17 AL 20"). The day numbers come from `agendaDays`.
+// TODO(Sprint 6.2): `organizer` y `offers` quedan fuera: la organización oficial
+// (Cámara de Comercio Exterior de Jujuy) y la URL de venta de entradas no están
+// confirmadas como datos de entidad del evento en el repo. Introducirlos cuando
+// la organización los provea.
+const isHome = Astro.url.pathname === '/';
+const eventLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: `${event.name} ${event.year}`,
+  startDate: '2026-09-17',
+  endDate: '2026-09-20',
+  eventStatus: 'https://schema.org/EventScheduled',
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  location: {
+    '@type': 'Place',
+    name: event.venue,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: event.city,
+      addressCountry: 'AR',
+    },
+  },
+  description: event.tagline,
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#07121e" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {
+      isHome && (
+        <script type="application/ld+json" is:inline set:html={JSON.stringify(eventLd)} />
+      )
+    }
+
+    <!-- Photography is hot-linked while placeholders are in place. -->
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+
+    <!-- Local Ambit fonts (see src/styles/global.css @font-face). -->
+    <link rel="preload" href={ambitRegular} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={ambitSemibold} as="font" type="font/woff2" crossorigin />
+
+    {/* Set before first paint so scroll-reveal elements never flash for no-JS users. */}
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+
+  <body>
+    <a href="#main" class="skip-link">Saltar al contenido</a>
+
+    <slot />
+
+    <script>
+      import '../scripts/enhance';
+    </script>
+  </body>
+</html>

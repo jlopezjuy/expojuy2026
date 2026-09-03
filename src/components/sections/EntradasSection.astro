@@ -1,0 +1,151 @@
+---
+import { event } from '../../data/site';
+import Container from '../layout/Container.astro';
+import SectionHeading from '../ui/SectionHeading.astro';
+import Icon from '../ui/Icon.astro';
+
+interface Props {
+  /** Heading level, since this section is its own page (h1) yet reuse-safe. */
+  headingLevel?: 'h1' | 'h2';
+}
+
+const { headingLevel = 'h1' } = Astro.props;
+
+// TODO(Sprint 4.2): reemplazar con la plataforma de venta oficial (enlace a
+// plataforma externa o endpoint de reserva). No inventar. Mientras esté vacío, el
+// formulario queda visible pero con el envío deshabilitado y una nota de pendiente:
+// no se produce una reserva real falsa.
+const TICKET_ENDPOINT = '';
+const ready = TICKET_ENDPOINT.trim().length > 0;
+
+const fields = [
+  { label: 'Nombre', name: 'nombre', type: 'text', autocomplete: 'name', maxlength: 120, required: true },
+  { label: 'Email', name: 'email', type: 'email', autocomplete: 'email', maxlength: 200, required: true },
+  { label: 'Cantidad de entradas', name: 'cantidad', type: 'number', autocomplete: 'off', maxlength: 3, required: true },
+  { label: 'Fecha', name: 'fecha', type: 'date', autocomplete: 'off', maxlength: 20, required: true },
+] as const;
+
+// TODO(Sprint 4.2): categorías ilustrativas y pendientes de confirmación. No se
+// inventan precios ni tipologías definitivas; se ajustan a la plataforma oficial.
+const ticketTypes = [
+  { value: 'general', label: 'General' },
+  { value: 'menor', label: 'Menor' },
+  { value: 'expositor', label: 'Expositor' },
+] as const;
+---
+
+<section class="bg-cream pb-16 lg:pb-20" aria-labelledby="entradas-title">
+  <Container class="grid gap-12 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-16">
+    <div class="reveal">
+      <SectionHeading
+        eyebrow="Entradas"
+        title="Reservá"
+        accent="tu lugar."
+        accentColor="magenta"
+        as={headingLevel}
+        id="entradas-title"
+      />
+      <p class="mt-6 max-w-[44ch] text-body text-night/75">
+        Reservá tus entradas para ExpoJuy 2026 desde la plataforma oficial.
+      </p>
+
+      <dl class="mt-10 flex flex-col gap-6">
+        <div>
+          <dt class="eyebrow text-night/60">Fechas</dt>
+          <dd class="mt-2 font-display text-title text-night">17 al 20 de septiembre de 2026</dd>
+        </div>
+        <div>
+          <dt class="eyebrow text-night/60">Lugar</dt>
+          <dd class="mt-2 font-display text-title text-night">{event.venue}</dd>
+          <dd class="mt-1 text-body text-night/70">{event.city}</dd>
+        </div>
+        <div>
+          <dt class="eyebrow text-night/60">Sitio oficial</dt>
+          <dd class="mt-2">
+            <a
+              href="https://expojuy.camcomexjujuy.com.ar/"
+              class="text-body text-night underline decoration-magenta/50 underline-offset-4 transition-colors duration-300 hover:text-magenta"
+            >
+              expojuy.camcomexjujuy.com.ar
+            </a>
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="reveal" style="--reveal-delay:120ms">
+      <form
+        method="POST"
+        action={TICKET_ENDPOINT}
+        class="relative flex flex-col gap-5 rounded-card border border-night/10 bg-cream-deep/60 p-6 sm:p-8"
+      >
+        {
+          fields.map((field) => (
+            <div class="flex flex-col gap-1.5">
+              <label for={`${field.name}-field`} class="text-[0.68rem] font-bold tracking-[0.14em] text-night/70 uppercase">
+                {field.label}
+              </label>
+              <input
+                id={`${field.name}-field`}
+                name={field.name}
+                type={field.type}
+                autocomplete={field.autocomplete}
+                maxlength={field.maxlength}
+                min={field.name === 'cantidad' ? 1 : undefined}
+                max={field.name === 'cantidad' ? 10 : undefined}
+                required={field.required}
+                class="min-w-0 rounded-[3px] border border-night/25 bg-cream px-4 py-3 text-body text-night placeholder:text-night/40 transition-colors duration-300 focus:border-night/60 focus:outline-none"
+              />
+            </div>
+          ))
+        }
+
+        <div class="flex flex-col gap-1.5">
+          <label for="tipo-field" class="text-[0.68rem] font-bold tracking-[0.14em] text-night/70 uppercase">
+            Tipo de entrada
+          </label>
+          <select
+            id="tipo-field"
+            name="tipo"
+            required
+            class="min-w-0 rounded-[3px] border border-night/25 bg-cream px-4 py-3 text-body text-night transition-colors duration-300 focus:border-night/60 focus:outline-none"
+          >
+            <option value="" disabled selected>Seleccioná una opción</option>
+            {ticketTypes.map((type) => <option value={type.value}>{type.label}</option>)}
+          </select>
+        </div>
+
+        {/* Honeypot: hidden from people and assistive tech; only bots fill it. */}
+        <div class="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
+          <label for="website-field">No completar este campo</label>
+          <input id="website-field" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div class="flex flex-col gap-3 border-t border-night/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <button
+            type="submit"
+            disabled={!ready}
+            class="group inline-flex items-center justify-center gap-3 text-[0.7rem] font-bold tracking-[0.16em] text-night uppercase transition duration-300 ease-out bg-gold-bright px-7 py-3.5 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)] hover:bg-white disabled:cursor-not-allowed disabled:bg-night/15 disabled:text-night/45 disabled:shadow-none"
+          >
+            Reservar entradas
+            <Icon name="arrow-right" class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+          </button>
+
+          {/* TODO(Sprint 4.2): el envío se habilita cuando la organización defina la
+              plataforma de venta oficial. No se inventa una URL ni un endpoint. */}
+          {!ready && (
+            <p class="max-w-[28ch] text-[0.68rem] leading-relaxed text-night/70">
+              La venta online se habilitará en la plataforma oficial próximamente.
+            </p>
+          )}
+        </div>
+      </form>
+
+      {/* TODO(Sprint 4.2): la venta oficial aún no está operativa; no se inventan
+          precios ni plataformas de pago. */}
+      <p class="mt-4 text-[0.78rem] leading-relaxed text-night/70">
+        La venta online se habilitará en la plataforma oficial próximamente.
+      </p>
+    </div>
+  </Container>
+</section>

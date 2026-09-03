@@ -1,0 +1,31 @@
+---
+import Hero from '../components/hero/Hero.astro';
+import Footer from '../components/navigation/Footer.astro';
+import Header from '../components/navigation/Header.astro';
+import CtaBanner from '../components/sections/CtaBanner.astro';
+import Emprendimientos from '../components/sections/Emprendimientos.astro';
+import FeatureTrio from '../components/sections/FeatureTrio.astro';
+import LaExpo from '../components/sections/LaExpo.astro';
+import Sponsors from '../components/sections/Sponsors.astro';
+import Territorios from '../components/sections/Territorios.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="ExpoJuy 2026 — Jujuy produce. Jujuy crea. Jujuy emprende."
+  description="Del 17 al 20 de septiembre de 2026 en el Predio Ferial Jujuy, San Salvador de Jujuy. Negocios, turismo, cultura y experiencia: conocé lo que nace en nuestra tierra."
+>
+  <Header />
+
+  <main id="main">
+    <Hero />
+    <LaExpo />
+    <Territorios />
+    <Emprendimientos />
+    <FeatureTrio />
+    <CtaBanner />
+    <Sponsors />
+  </main>
+
+  <Footer />
+</BaseLayout>

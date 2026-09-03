@@ -1,0 +1,33 @@
+---
+import Footer from '../components/navigation/Footer.astro';
+import Header from '../components/navigation/Header.astro';
+import Container from '../components/layout/Container.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import LoginForm from '../components/islands/LoginForm';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Iniciar sesión — ExpoJuy 2026"
+  description="Iniciá sesión para acceder a tu cuenta de ExpoJuy 2026."
+>
+  <Header />
+
+  <main id="main">
+    <section class="bg-cream pt-40 pb-20 lg:pt-48 lg:pb-28" aria-labelledby="login-title">
+      <Container width="normal" class="flex flex-col items-center">
+        <SectionHeading
+          eyebrow="Cuenta"
+          title="Iniciá sesión."
+          accentColor="magenta"
+          as="h1"
+          id="login-title"
+          class="mb-10 text-center"
+        />
+        <LoginForm client:load />
+      </Container>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,52 @@
+---
+/**
+ * Editorial section heading: small tracked eyebrow above a serif display
+ * title whose last words carry a brand accent, exactly as in the mockup
+ * ("El encuentro que impulsa a *Jujuy.*").
+ */
+interface Props {
+  eyebrow?: string;
+  /** Plain part of the title. */
+  title: string;
+  /** Coloured tail of the title. */
+  accent?: string;
+  accentColor?: 'magenta' | 'teal' | 'gold';
+  tone?: 'light' | 'dark';
+  /** Force the accent onto its own line, as the mockup sets some headings. */
+  breakBeforeAccent?: boolean;
+  as?: 'h1' | 'h2' | 'h3';
+  class?: string;
+  id?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  accent,
+  accentColor = 'magenta',
+  tone = 'dark',
+  breakBeforeAccent = false,
+  as: Tag = 'h2',
+  class: className = '',
+  id,
+}: Props = Astro.props;
+
+const accents = { magenta: 'text-magenta', teal: 'text-teal', gold: 'text-gold' } as const;
+const eyebrowTone = tone === 'light' ? 'text-white/70' : 'text-night/70';
+const titleTone = tone === 'light' ? 'text-white' : 'text-night';
+---
+
+<div class={className}>
+  {eyebrow && <p class={`eyebrow mb-4 ${eyebrowTone}`}>{eyebrow}</p>}
+  <Tag id={id} class={`text-display ${breakBeforeAccent ? '' : 'text-balance'} ${titleTone}`}>
+    {title}{
+      accent && (
+        <>
+          {' '}
+          {breakBeforeAccent && <br class="hidden sm:inline" />}
+          <span class={accents[accentColor]}>{accent}</span>
+        </>
+      )
+    }
+  </Tag>
+</div>

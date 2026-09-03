@@ -1,0 +1,38 @@
+---
+import Footer from '../components/navigation/Footer.astro';
+import Header from '../components/navigation/Header.astro';
+import Container from '../components/layout/Container.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import ButtonLink from '../components/ui/ButtonLink.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Página no encontrada — ExpoJuy 2026"
+  description="La página que buscás no existe o cambió de dirección. Volvé al inicio de ExpoJuy 2026."
+>
+  <Header />
+
+  <main id="main">
+    <section class="bg-cream pt-36 pb-20 lg:pt-44 lg:pb-24" aria-labelledby="404-title">
+      <Container width="normal" class="text-center">
+        <p class="eyebrow text-night/60">Error 404</p>
+        <SectionHeading
+          title="Esta página"
+          accent="no existe."
+          accentColor="magenta"
+          as="h1"
+          id="404-title"
+          class="mt-4"
+        />
+        <p class="mx-auto mt-6 max-w-[48ch] text-body text-night/75">
+          Puede que la dirección esté mal escrita o que la página haya cambiado. Volvé al inicio
+          para seguir explorando ExpoJuy 2026.
+        </p>
+        <ButtonLink href="/" variant="solid" class="mt-10">Volver al inicio</ButtonLink>
+      </Container>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
