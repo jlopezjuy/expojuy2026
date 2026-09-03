@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
+import preact from '@astrojs/preact';
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,6 +12,8 @@ export default defineConfig({
     // route tree, using `site` as the canonical origin. Pre-rendered routes
     // (including the static /noticias/[slug] posts) are included automatically.
     sitemap(),
+    // Login / mi-cuenta islands only — the rest of the site stays plain Astro/SSG.
+    preact(),
   ],
   vite: {
     plugins: [tailwindcss()],

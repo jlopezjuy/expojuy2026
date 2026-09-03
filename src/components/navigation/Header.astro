@@ -4,6 +4,7 @@ import { resolveHref } from '../../lib/links';
 import Container from '../layout/Container.astro';
 import ButtonLink from '../ui/ButtonLink.astro';
 import Logo from '../ui/Logo.astro';
+import AuthNav from '../islands/AuthNav';
 
 const pathname = Astro.url.pathname;
 const href = (value: string) => resolveHref(value, pathname);
@@ -41,6 +42,7 @@ const headerBackdrop = isHome ? '' : 'border-b border-white/10 bg-night/90 backd
               </li>
             ))
         }
+        <AuthNav client:only="preact" variant="desktop" />
       </ul>
     </nav>
 
@@ -91,6 +93,7 @@ const headerBackdrop = isHome ? '' : 'border-b border-white/10 bg-night/90 backd
               </li>
             ))
         }
+        <AuthNav client:only="preact" variant="mobile" />
       </ul>
       <ButtonLink href={href('#participar')} variant="solid" class="mt-8 w-full">
         Quiero participar
