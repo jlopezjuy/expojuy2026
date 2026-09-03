@@ -1,9 +1,11 @@
 ---
+import { Image } from 'astro:assets';
 import { event, footerColumns, socials, legalLinks } from '../../data/site';
 import { resolveHref } from '../../lib/links';
 import Container from '../layout/Container.astro';
 import Icon from '../ui/Icon.astro';
 import Logo from '../ui/Logo.astro';
+import logoCamcomext from '../../assets/sponsor-camcomext.png';
 
 const pathname = Astro.url.pathname;
 const href = (value: string) => resolveHref(value, pathname);
@@ -38,6 +40,24 @@ const NEWSLETTER_ENDPOINT = '#newsletter';
             </div>
           )
         }
+
+        <div class="mt-8 border-t border-white/10 pt-5">
+          <p class="text-[0.62rem] font-bold tracking-[0.14em] text-white/50 uppercase">Organiza</p>
+          <a
+            href="https://expojuy.camcomexjujuy.com.ar/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-2.5 inline-flex items-center rounded-[3px] bg-white px-3 py-2 shadow-sm transition-opacity duration-300 hover:opacity-90"
+            title="Cámara de Comercio Exterior de Jujuy"
+          >
+            <Image
+              src={logoCamcomext}
+              alt="Cámara de Comercio Exterior de Jujuy"
+              width={140}
+              class="h-10 w-auto object-contain"
+            />
+          </a>
+        </div>
       </div>
 
       <!-- Link columns -->
