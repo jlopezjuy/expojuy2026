@@ -92,13 +92,25 @@ Ejecutado y verificado:
 
 ---
 
-## Resumen Final del Proyecto
+### Sprint 5 · Kit de Presentación Demo Day y Checklist de Entrega Oficial — ✅ COMPLETADO
+
+Ejecutado y verificado:
+- **Guion de presentación para el Demo Day:** Documento estructurado minuto a minuto en `frontend/docs/guion-demo-day.md` para exposición de 5 minutos, con pautas para operador de pantalla y FAQ defensiva técnica ante preguntas complejas del tribunal.
+- **Checklist formal de entrega (mesa de entradas):** Matriz de control en `frontend/docs/checklist-entrega.md` que homologa punto por punto el cumplimiento de los Artículos 6, 8, 9, 11, 21 y 24 de las Bases, y las 10 secciones obligatorias.
+- **Pipeline editorial ampliado:** `scripts/generate-docs-pdf.mjs` actualizado para compilar automáticamente `Guion-Demo-Day-ExpoJuy-2026.pdf` (430 KB) y `Checklist-Entrega-ExpoJuy-2026.pdf` (414 KB), sincronizados en `docs/` y `public/docs/`.
+- **Integración legal en el Footer:** Enlaces institucionales incorporados en `legalLinks` de `src/data/site.ts` y `Footer.astro`.
+- **Certificación integral:** **213 tests en verde (100% aprobados)** en Playwright cubriendo Desktop, Tablet y Mobile.
+
+---
+
+## Resumen Final del Proyecto (Ciclo Completo)
 
 | Hito / Sprint | Estado | Cobertura |
-| :--- | :--- | :--- |
+| :--- | :---: | :--- |
 | **Sprint 0 · Bloqueantes y Salvaguarda** | ✅ COMPLETADO | PDFs oficiales Anexo III, fin de hotlinking (20 fotos locales), fix WCAG Header. |
 | **Sprint 1 · Contenidos Obligatorios** | ✅ COMPLETADO | 4 noticias feriales, FAQs de visitantes, catálogo de 18 expositores y redes sociales. |
 | **Sprint 2 · Cronograma y Plano** | ✅ COMPLETADO | Agenda oficial de 18 sesiones, plano vectorial de 8 zonas con panel dinámico y header unificado. |
 | **Sprint 3 · Formularios Interactivos** | ✅ COMPLETADO | Formulario de Contacto, Calculador de Entradas con voucher de reserva y Newsletter. |
-| **Sprint 4 · Auditoría Final y SEO** | ✅ COMPLETADO | Schema.org Event/Organizer/Offers, OG tags, limpieza de TODOs, README raíz y 213 tests E2E. |
+| **Sprint 4 · Auditoría Final y SEO** | ✅ COMPLETADO | Schema.org Event/Organizer/Offers, OG tags, limpieza de TODOs, README raíz. |
+| **Sprint 5 · Demo Day y Homologación** | ✅ COMPLETADO | Guión de 5 min, Checklist normativo, 4 PDFs oficiales y 213 tests E2E en verde. |
 

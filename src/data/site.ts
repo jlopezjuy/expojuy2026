@@ -186,4 +186,6 @@ export const legalLinks: LegalLink[] = [
   { label: 'Bases y Condiciones', href: '/docs/bases-y-condiciones.pdf' },
   { label: 'Memoria Descriptiva', href: '/docs/Memoria-Descriptiva-ExpoJuy-2026.pdf' },
   { label: 'Declaración de IA', href: '/docs/Declaracion-Uso-IA-ExpoJuy-2026.pdf' },
+  { label: 'Guion Demo Day', href: '/docs/Guion-Demo-Day-ExpoJuy-2026.pdf' },
+  { label: 'Checklist de Entrega', href: '/docs/Checklist-Entrega-ExpoJuy-2026.pdf' },
 ];
