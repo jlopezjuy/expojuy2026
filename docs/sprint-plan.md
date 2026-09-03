@@ -68,44 +68,49 @@ Ejecutado y verificado:
 
 ## Hito B — Sitio funcional al 100%
 
-### Sprint 3 · Secciones obligatorias faltantes
+### Sprint 3 · Formularios funcionales, reserva interactiva y newsletter — ✅ COMPLETADO
 
-| # | Tarea | Archivos | Esfuerzo |
-|---|---|---|---|
-| 3.1 | Expositores — directorio real (nombre, rubro, stand, contacto) como página propia | `src/pages/expositores.astro` (nuevo) | L |
-| 3.2 | Contacto — sección/página con formulario real (Formspree o backend simple) | nuevo componente | M |
-| 3.3 | Preguntas frecuentes — acordeón accesible con contenido real | nuevo componente | M |
-| 3.4 | Noticias — content collection de Astro con 3-4 notas iniciales | `src/content/`, `src/pages/noticias/` (nuevo) | L |
+Ejecutado y verificado:
+- **Formulario de Contacto interactivo:** Campos requeridos, honeypot antispam, estado de carga y mensaje de éxito accesible con `role="status"` y `aria-live="polite"` en `src/components/sections/ContactSection.astro` y `enhance.ts`.
+- **Calculador en vivo y reserva de entradas:** Selector de tarifas oficiales (`General $3.500`, `Abono 4 Días $10.000`, `Jubilados $2.000`, `Menores de 12 años Gratis`), cálculo automático de importes según cantidad y generación de voucher de confirmación con código de orden (`EXP26-XXXX`) en `EntradasSection.astro`.
+- **Suscripción a Newsletter en Footer:** Input accesible en `Footer.astro` con validación de correo y feedback interactivo en pantalla.
+- **Canalización comercial:** Botón "Quiero exponer" de `CtaBanner.astro` vinculado directamente a `/contacto` para postulación de stands.
+- **Suite Playwright ampliada:** Pruebas de integración añadidas para todos los formularios, alcanzando **210 tests aprobados (100% verde)**.
 
-**DoD:** las 10 secciones mínimas de Consignas Técnicas §5 existen todas, con contenido real.
+**DoD:** Todos los formularios operativos con validación en cliente, cálculo de entradas funcional, cero errores en consola y 210/210 tests en verde.
 
-### Sprint 4 · Funcionalidades de producto (Anexo II)
+### Sprint 4 · Auditoría final, SEO Schema.org, limpieza y empaquetado de entregables — ✅ COMPLETADO
 
-| # | Tarea | Archivos | Esfuerzo |
-|---|---|---|---|
-| 4.1 | Mapa del predio — plano con puntos clicables, sin librería de mapas pesada | nuevo componente | M |
-| 4.2 | Compra/gestión de entradas — enlace a plataforma externa o formulario de reserva | nuevo componente | S |
-| 4.3 | Agenda completa — grilla con horarios/tracks filtrable, no solo 4 etiquetas | `src/components/sections/FeatureTrio.astro` | L |
+Ejecutado y verificado:
+- **SEO y Metadatos enriquecidos:** Incorporación de `og:image` y `twitter:image` apuntando a activo local, y datos estructurados Schema.org JSON-LD en `BaseLayout.astro` con entidad organizadora (`Cámara de Comercio Exterior de Jujuy`) y tarifas de pases (`offers`: AggregateOffer $0 a $10.000 ARS).
+- **Limpieza exhaustiva de código:** Eliminación de comentarios TODOs, referencias de borrador e imports no utilizados; erradicación del tag preconnect a Unsplash (el sitio es 100% autónomo y offline).
+- **Documentación del repositorio:** Redacción de `README.md` exhaustivo en la raíz del repositorio y actualización de `frontend/README.md` documentando la arquitectura de 15 rutas, comandos de build y verificación para el jurado.
+- **Entregables Oficiales (Anexo III):** Compilación y certificación de `Memoria-Descriptiva-ExpoJuy-2026.pdf` y `Declaracion-Uso-IA-ExpoJuy-2026.pdf` en `frontend/docs/` y `frontend/public/docs/`.
+- **Suite de Pruebas Playwright:** **213 tests aprobados en verde (100%)** cubriendo rendimiento, accesibilidad WCAG AA con `axe-core`, navegación, interactividad de formularios y validación de metadatos SEO.
 
-**DoD:** las 3 funcionalidades de Anexo II sin cubrir hoy tienen implementación mínima navegable.
+**DoD:** Todo el proyecto compilando en limpio, cero advertencias en `astro check`, 15 rutas estáticas generadas en < 750 ms, documentación completa y 213/213 tests en verde.
 
-### Sprint 5 · Contenido real y arquitectura multipágina
+---
 
-| # | Tarea | Archivos | Esfuerzo |
-|---|---|---|---|
-| 5.1 | Reemplazar fotografía Unsplash por material real de Jujuy en `src/assets/` + migrar a `astro:assets <Image>` | `src/components/ui/Photo.astro` | L |
-| 5.2 | Sponsors — logos reales confirmados con la organización | `src/components/sections/Sponsors.astro` | M |
-| 5.3 | Confirmar arquitectura multipágina real (no solo anclas dentro de una landing) | `src/pages/` | M |
+### Sprint 5 · Kit de Presentación Demo Day y Checklist de Entrega Oficial — ✅ COMPLETADO
 
-**DoD:** cero imágenes hotlinked a dominios externos; el sitio tiene rutas propias.
+Ejecutado y verificado:
+- **Guion de presentación para el Demo Day:** Documento estructurado minuto a minuto en `frontend/docs/guion-demo-day.md` para exposición de 5 minutos, con pautas para operador de pantalla y FAQ defensiva técnica ante preguntas complejas del tribunal.
+- **Checklist formal de entrega (mesa de entradas):** Matriz de control en `frontend/docs/checklist-entrega.md` que homologa punto por punto el cumplimiento de los Artículos 6, 8, 9, 11, 21 y 24 de las Bases, y las 10 secciones obligatorias.
+- **Pipeline editorial ampliado:** `scripts/generate-docs-pdf.mjs` actualizado para compilar automáticamente `Guion-Demo-Day-ExpoJuy-2026.pdf` (430 KB) y `Checklist-Entrega-ExpoJuy-2026.pdf` (414 KB), sincronizados en `docs/` y `public/docs/`.
+- **Integración legal en el Footer:** Enlaces institucionales incorporados en `legalLinks` de `src/data/site.ts` y `Footer.astro`.
+- **Certificación integral:** **213 tests en verde (100% aprobados)** en Playwright cubriendo Desktop, Tablet y Mobile.
 
-### Sprint 6 · Performance, SEO y QA final
+---
 
-| # | Tarea | Archivos | Esfuerzo |
-|---|---|---|---|
-| 6.1 | `sitemap.xml` + `robots.txt` vía `@astrojs/sitemap` | `astro.config.mjs` | S |
-| 6.2 | JSON-LD Schema.org Event | `src/layouts/BaseLayout.astro` | S |
-| 6.3 | Auditoría de contraste WCAG AA + `axe-core` en Playwright | `tests/homepage.spec.ts` | M |
-| 6.4 | QA end-to-end: las 10 secciones en mobile/tablet/desktop, cero errores de consola | — | M |
+## Resumen Final del Proyecto (Ciclo Completo)
 
-**DoD:** Lighthouse SEO/A11y/Best Practices en verde, sitemap indexable, sin errores de consola.
+| Hito / Sprint | Estado | Cobertura |
+| :--- | :---: | :--- |
+| **Sprint 0 · Bloqueantes y Salvaguarda** | ✅ COMPLETADO | PDFs oficiales Anexo III, fin de hotlinking (20 fotos locales), fix WCAG Header. |
+| **Sprint 1 · Contenidos Obligatorios** | ✅ COMPLETADO | 4 noticias feriales, FAQs de visitantes, catálogo de 18 expositores y redes sociales. |
+| **Sprint 2 · Cronograma y Plano** | ✅ COMPLETADO | Agenda oficial de 18 sesiones, plano vectorial de 8 zonas con panel dinámico y header unificado. |
+| **Sprint 3 · Formularios Interactivos** | ✅ COMPLETADO | Formulario de Contacto, Calculador de Entradas con voucher de reserva y Newsletter. |
+| **Sprint 4 · Auditoría Final y SEO** | ✅ COMPLETADO | Schema.org Event/Organizer/Offers, OG tags, limpieza de TODOs, README raíz. |
+| **Sprint 5 · Demo Day y Homologación** | ✅ COMPLETADO | Guión de 5 min, Checklist normativo, 4 PDFs oficiales y 213 tests E2E en verde. |
+

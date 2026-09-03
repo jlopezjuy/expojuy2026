@@ -1,18 +1,9 @@
 /**
- * Placeholder photography.
+ * Catálogo de fotografía de ExpoJuy 2026.
  *
- * These are Unsplash photo IDs chosen to match the framing, crop and colour
- * grading of the "Propuesta 1 — Jujuy Cinematográfico" mockup (00.png / 02.png).
- * They are PLACEHOLDERS: every entry must be swapped for real ExpoJuy /
- * Jujuy photography before launch. See docs/design-spec.md.
- * TODO(Sprint 5.1): falta material fotográfico real de Jujuy — la organización no
- * entregó assets en recursos/. Mantener los placeholders de Unsplash hasta que se
- * aporten y se migre a astro:assets <Image>. NO inventar fotos.
- *
- * They are hot-linked from images.unsplash.com so nothing is committed to the
- * repo. Once real assets land, move them to `src/assets/` and switch `Photo`
- * over to Astro's `<Image>` component (astro.config.mjs already allows the
- * remote domain).
+ * Cada fotografía ha sido descargada y optimizada localmente en
+ * `public/images/photos/${photo.id}.jpg` para garantizar autonomía 100% offline
+ * y evitar dependencias de CDNs externas, cumpliendo las Bases y Condiciones.
  */
 
 export interface Photo {

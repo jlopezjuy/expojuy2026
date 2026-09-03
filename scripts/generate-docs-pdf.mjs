@@ -345,6 +345,16 @@ async function main() {
       outputName: 'Declaracion-Uso-IA-ExpoJuy-2026.pdf',
       title: 'Declaración de Uso de IA — ExpoJuy 2026',
     },
+    {
+      sourceFile: path.join(docsDir, 'guion-demo-day.md'),
+      outputName: 'Guion-Demo-Day-ExpoJuy-2026.pdf',
+      title: 'Guion Oficial de Presentación — Demo Day ExpoJuy 2026',
+    },
+    {
+      sourceFile: path.join(docsDir, 'checklist-entrega.md'),
+      outputName: 'Checklist-Entrega-ExpoJuy-2026.pdf',
+      title: 'Checklist Oficial de Entrega y Verificación Normativa — ExpoJuy 2026',
+    },
   ];
 
   for (const doc of documents) {

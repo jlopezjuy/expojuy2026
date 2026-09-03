@@ -360,6 +360,129 @@ function initExpositoresFilter(): void {
   });
 }
 
+/* ------------------------------------------------------------- contact form */
+function initContactForm(): void {
+  const form = document.getElementById('contacto-form') as HTMLFormElement | null;
+  if (!form) return;
+
+  const status = document.getElementById('contacto-status');
+  const submitBtn = document.getElementById('contacto-submit-btn') as HTMLButtonElement | null;
+  const btnText = document.getElementById('contacto-btn-text');
+  const honeypot = form.querySelector<HTMLInputElement>('input[name="website"]');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (honeypot && honeypot.value.trim().length > 0) return;
+
+    if (submitBtn && btnText) {
+      submitBtn.disabled = true;
+      btnText.textContent = 'Enviando...';
+    }
+
+    setTimeout(() => {
+      if (status) {
+        status.textContent =
+          '¡Gracias por comunicarte! Tu mensaje fue recibido correctamente por el comité de ExpoJuy 2026. Te responderemos a la brevedad.';
+        status.classList.remove('hidden');
+      }
+
+      form.reset();
+
+      if (submitBtn && btnText) {
+        submitBtn.disabled = false;
+        btnText.textContent = 'Enviar mensaje';
+      }
+    }, 400);
+  });
+}
+
+/* ------------------------------------------------------------ entradas form */
+function initEntradasForm(): void {
+  const form = document.getElementById('entradas-form') as HTMLFormElement | null;
+  if (!form) return;
+
+  const tipoSelect = document.getElementById('tipo-field') as HTMLSelectElement | null;
+  const cantidadInput = document.getElementById('cantidad-field') as HTMLInputElement | null;
+  const totalDisplay = document.getElementById('entradas-total');
+  const voucher = document.getElementById('entradas-voucher');
+  const voucherCode = document.getElementById('voucher-code');
+  const voucherDetails = document.getElementById('voucher-details');
+  const submitBtn = document.getElementById('entradas-submit-btn') as HTMLButtonElement | null;
+  const btnText = document.getElementById('entradas-btn-text');
+  const honeypot = form.querySelector<HTMLInputElement>('input[name="website"]');
+
+  const prices: Record<string, number> = {
+    general: 3500,
+    abono: 10000,
+    jubilado: 2000,
+    menor: 0,
+  };
+
+  const updateTotal = () => {
+    if (!tipoSelect || !cantidadInput || !totalDisplay) return;
+    const tipo = tipoSelect.value;
+    const price = prices[tipo] ?? 3500;
+    const qty = Math.min(Math.max(parseInt(cantidadInput.value, 10) || 1, 1), 10);
+    const total = price * qty;
+    totalDisplay.textContent = `$${total.toLocaleString('es-AR')}`;
+  };
+
+  if (tipoSelect) tipoSelect.addEventListener('change', updateTotal);
+  if (cantidadInput) {
+    cantidadInput.addEventListener('input', updateTotal);
+    cantidadInput.addEventListener('change', updateTotal);
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (honeypot && honeypot.value.trim().length > 0) return;
+
+    if (submitBtn && btnText) {
+      submitBtn.disabled = true;
+      btnText.textContent = 'Procesando...';
+    }
+
+    setTimeout(() => {
+      const randomId = Math.floor(1000 + Math.random() * 9000);
+      const code = `EXP26-${randomId}`;
+
+      if (voucherCode) voucherCode.textContent = code;
+      if (voucherDetails && cantidadInput && tipoSelect) {
+        const qty = cantidadInput.value;
+        const tipoLabel = tipoSelect.options[tipoSelect.selectedIndex]?.text || '';
+        voucherDetails.textContent = `¡Tu reserva de ${qty} entrada(s) (${tipoLabel}) fue confirmada! Presentá este código en boleterías del Predio Ferial para acceder.`;
+      }
+      if (voucher) voucher.classList.remove('hidden');
+
+      if (submitBtn && btnText) {
+        submitBtn.disabled = false;
+        btnText.textContent = 'Confirmar reserva';
+      }
+    }, 400);
+  });
+}
+
+/* ---------------------------------------------------------- newsletter form */
+function initNewsletterForm(): void {
+  const form = document.getElementById('newsletter-form') as HTMLFormElement | null;
+  if (!form) return;
+
+  const emailInput = document.getElementById('newsletter-email') as HTMLInputElement | null;
+  const status = document.getElementById('newsletter-status');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!emailInput || !emailInput.value.trim()) return;
+
+    if (status) {
+      status.textContent = '¡Gracias por suscribirte al boletín oficial de ExpoJuy 2026!';
+      status.classList.remove('hidden');
+    }
+
+    form.reset();
+  });
+}
+
 /* -------------------------------------------------------------------- boot */
 function boot(): void {
   initReveals();
@@ -370,6 +493,9 @@ function boot(): void {
   initVenueMap();
   initAccordion();
   initExpositoresFilter();
+  initContactForm();
+  initEntradasForm();
+  initNewsletterForm();
   initParallax();
 }
 

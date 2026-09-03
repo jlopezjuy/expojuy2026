@@ -254,3 +254,63 @@ test('venue map updates detail card on zone click', async ({ page }) => {
   const expositores = page.locator('#zone-card-expositores');
   await expect(expositores).toContainText('Minera Exar');
 });
+
+test('contact form submits and renders accessible success status', async ({ page }) => {
+  await page.goto('/contacto', { waitUntil: 'networkidle' });
+
+  await page.fill('#nombre-field', 'Martina Gomez');
+  await page.fill('#email-field', 'martina@example.com');
+  await page.fill('#asunto-field', 'Consulta Stand Comercial');
+  await page.fill('#mensaje-field', 'Buenas tardes, quisiera consultar por disponibilidad de stands en el Pabellón Agroindustrial.');
+
+  const submitBtn = page.locator('#contacto-submit-btn');
+  await submitBtn.click();
+
+  const statusMsg = page.locator('#contacto-status');
+  await expect(statusMsg).toBeVisible();
+  await expect(statusMsg).toContainText('Tu mensaje fue recibido correctamente');
+});
+
+test('ticket form updates subtotal dynamically and generates reservation voucher', async ({ page }) => {
+  await page.goto('/entradas', { waitUntil: 'networkidle' });
+
+  // Select 'abono' ($10.000) and quantity 2 -> total $20.000
+  const tipoSelect = page.locator('#tipo-field');
+  await tipoSelect.selectOption('abono');
+
+  const cantidadInput = page.locator('#cantidad-field');
+  await cantidadInput.fill('2');
+
+  const total = page.locator('#entradas-total');
+  await expect(total).toHaveText('$20.000');
+
+  // Fill user info
+  await page.fill('#nombre-field', 'Carlos Albarracin');
+  await page.fill('#email-field', 'carlos@example.com');
+
+  const submitBtn = page.locator('#entradas-submit-btn');
+  await submitBtn.click();
+
+  const voucher = page.locator('#entradas-voucher');
+  await expect(voucher).toBeVisible();
+
+  const voucherCode = page.locator('#voucher-code');
+  await expect(voucherCode).toContainText('EXP26-');
+
+  const voucherDetails = page.locator('#voucher-details');
+  await expect(voucherDetails).toContainText('2 entrada(s)');
+});
+
+test('newsletter in footer validates and shows confirmation message', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  const emailInput = page.locator('#newsletter-email');
+  await emailInput.fill('visitante@expojuy.com.ar');
+
+  const submitBtn = page.locator('#newsletter-submit-btn');
+  await submitBtn.click();
+
+  const status = page.locator('#newsletter-status');
+  await expect(status).toBeVisible();
+  await expect(status).toContainText('¡Gracias por suscribirte');
+});
