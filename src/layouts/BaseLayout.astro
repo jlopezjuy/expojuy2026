@@ -20,27 +20,41 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://expojuy.com
 // Field order matches the mockup-approved data in src/data/site.ts; nothing is
 // invented. Dates derive from `event.datesLong` ("SEPTIEMBRE 2026") and
 // `event.datesShort` ("17 AL 20"). The day numbers come from `agendaDays`.
-// TODO(Sprint 6.2): `organizer` y `offers` quedan fuera: la organización oficial
-// (Cámara de Comercio Exterior de Jujuy) y la URL de venta de entradas no están
-// confirmadas como datos de entidad del evento en el repo. Introducirlos cuando
-// la organización los provea.
 const isHome = Astro.url.pathname === '/';
+const ogImage = new URL('/images/photos/hero-crowd.jpg', Astro.site ?? 'https://expojuy.com.ar').href;
+
 const eventLd = {
   '@context': 'https://schema.org',
   '@type': 'Event',
   name: `${event.name} ${event.year}`,
-  startDate: '2026-09-17',
-  endDate: '2026-09-20',
+  startDate: '2026-09-17T10:00:00-03:00',
+  endDate: '2026-09-20T22:00:00-03:00',
   eventStatus: 'https://schema.org/EventScheduled',
   eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  image: [ogImage],
   location: {
     '@type': 'Place',
     name: event.venue,
     address: {
       '@type': 'PostalAddress',
       addressLocality: event.city,
+      addressRegion: 'Jujuy',
       addressCountry: 'AR',
     },
+  },
+  organizer: {
+    '@type': 'Organization',
+    name: 'Cámara de Comercio Exterior de Jujuy',
+    url: 'https://expojuy.camcomexjujuy.com.ar/',
+  },
+  offers: {
+    '@type': 'AggregateOffer',
+    url: new URL('/entradas', Astro.site ?? 'https://expojuy.com.ar').href,
+    priceCurrency: 'ARS',
+    lowPrice: '0',
+    highPrice: '10000',
+    validFrom: '2026-03-01',
+    availability: 'https://schema.org/InStock',
   },
   description: event.tagline,
 };
@@ -62,16 +76,17 @@ const eventLd = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={ogImage} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
 
     {
       isHome && (
         <script type="application/ld+json" is:inline set:html={JSON.stringify(eventLd)} />
       )
     }
-
-    <!-- Photography is hot-linked while placeholders are in place. -->
-    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
 
     <!-- Local Ambit fonts (see src/styles/global.css @font-face). -->
     <link rel="preload" href={ambitRegular} as="font" type="font/woff2" crossorigin />

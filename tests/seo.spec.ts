@@ -33,3 +33,28 @@ test('robots.txt y el sitemap se sirven y son indexables', async ({ request }) =
     expect(sitemapText, `el sitemap debe incluir ${url}`).toContain(url);
   }
 });
+
+test('la portada incluye metadatos OpenGraph, Twitter y Schema.org enriquecidos', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'networkidle' });
+
+  // OpenGraph image
+  const ogImage = page.locator('meta[property="og:image"]');
+  await expect(ogImage).toHaveCount(1);
+  const ogImageSrc = await ogImage.getAttribute('content');
+  expect(ogImageSrc).toContain('/images/photos/hero-crowd.jpg');
+
+  // Twitter card
+  const twitterCard = page.locator('meta[name="twitter:card"]');
+  await expect(twitterCard).toHaveAttribute('content', 'summary_large_image');
+
+  // Schema.org Event JSON-LD
+  const scriptLd = page.locator('script[type="application/ld+json"]');
+  await expect(scriptLd).toHaveCount(1);
+  const ldJson = JSON.parse((await scriptLd.textContent()) || '{}');
+
+  expect(ldJson['@type']).toBe('Event');
+  expect(ldJson.name).toContain('ExpoJuy 2026');
+  expect(ldJson.organizer?.name).toBe('Cámara de Comercio Exterior de Jujuy');
+  expect(ldJson.offers?.priceCurrency).toBe('ARS');
+  expect(ldJson.offers?.highPrice).toBe('10000');
+});

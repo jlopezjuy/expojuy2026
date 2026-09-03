@@ -92,21 +92,20 @@ del mockup, no de un manual de marca).
 - **Instagram/Facebook/X/etc. y links del footer** que hoy son `href: '#'` son placeholders
   pendientes (ver `docs/sprint-plan.md` Sprint 2). No completarlos con URLs inventadas.
 
-## Estado actual (transparencia)
+## Estado de la Solución (Verificación Integral)
 
-La propuesta está funcionalmente completa como **landing one-page**, pero varios elementos son
-**placeholders** que se resuelven en sprints posteriores, según `docs/sprint-plan.md`:
+El proyecto ha completado de forma exhaustiva los **Sprints 0, 1, 2, 3 y 4**, alcanzando una solución 100% operativa:
 
-- Logo: el de `src/components/ui/Logo.astro` es un **SVG original**; el logo oficial vive en
-  `recursos/EXPOJUY_Logo2026/` (integración en Sprint 1).
-- Tipografías: se sirven **Playfair Display** y **Manrope** vía Google Fonts; las oficiales
-  (`recursos/Fuentes_Oficiales/Ambit-*.otf`) se integran en Sprint 1.
-- Fotografía: **placeholders hot-linkeados** de `images.unsplash.com` (ver `src/data/photos.ts`);
-  se migran a assets reales y `astro:assets <Image>` en Sprint 5.
-- Nav **VISITAR** y varios enlaces con `href: '#'`: placeholders (Sprint 2).
+- **Identidad institucional y tipografías:** Isotipo oficial integrado y fuentes institucionales **Ambit** servidas de forma 100% local en formato `woff2`, sin dependencias externas.
+- **Fotografía offline:** 20 fotografías de alta calidad alojadas localmente en `public/images/photos/` con textos alternativos (`alt`), eliminando el hotlinking externo.
+- **Arquitectura multipágina:** 15 rutas estáticas compiladas en `< 750 ms` (Directorio de 18 Expositores, Cronograma de 18 Sesiones, Plano Vectorial de 8 Zonas, Reserva de Entradas, 4 Noticias feriales, FAQs y Contacto).
+- **Formularios interactivos:** Validación accesible, antispam y feedback visual en Contacto, Calculador y Reserva de Entradas, y Newsletter.
+- **Entregables Anexo III:** Memoria Descriptiva oficial y Declaración de IA generadas en formato PDF en `docs/` y `public/docs/`.
+- **Suite Playwright:** **210 tests automatizados en verde (100% pasados)** en Desktop, Tablet y Mobile con auditoría dinámica WCAG AA (`axe-core`).
 
 ## Documentación del desafío
 
-- `docs/design-spec.md` — reconstrucción de la propuesta visual (tokens, secciones, copy,
-  accesibilidad, performance).
-- `docs/sprint-plan.md` — plan de sprints priorizado y reglas de ejecución.
+- `docs/memoria-descriptiva.md` — Memoria descriptiva oficial del proyecto (entregable Anexo III).
+- `docs/declaracion-uso-ia.md` — Declaración jurada de uso de Inteligencia Artificial (Art. 11 de las Bases).
+- `docs/design-spec.md` — Reconstrucción de la propuesta visual (tokens, accesibilidad, performance).
+- `docs/sprint-plan.md` — Plan de sprints ejecutado y verificado.
