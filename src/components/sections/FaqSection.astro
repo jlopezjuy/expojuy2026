@@ -12,7 +12,7 @@ interface Props {
 const { headingLevel = 'h1' } = Astro.props;
 ---
 
-<section class="bg-cream pb-16 lg:pb-20" aria-labelledby="faq-title">
+<section class="bg-cream pt-28 pb-16 sm:pt-32 lg:pt-36 lg:pb-24" aria-labelledby="faq-title">
   <Container width="normal">
     <div class="reveal">
       <SectionHeading
@@ -44,7 +44,7 @@ const { headingLevel = 'h1' } = Astro.props;
                 id={`faq-toggle-${i}`}
                 data-accordion-toggle
                 aria-controls={panelId}
-                class="flex cursor-pointer items-center justify-between gap-4 p-5 text-display/[0.62] font-semibold text-night transition-opacity duration-300 [&::-webkit-details-marker]:hidden sm:p-6"
+                class="flex cursor-pointer items-center justify-between gap-4 p-5 font-display text-title leading-snug font-semibold text-night transition-opacity duration-300 hover:text-night/80 [&::-webkit-details-marker]:hidden sm:p-6"
               >
                 <span>{item.question}</span>
                 <span
