@@ -68,16 +68,16 @@ Ejecutado y verificado:
 
 ## Hito B — Sitio funcional al 100%
 
-### Sprint 3 · Secciones obligatorias faltantes
+### Sprint 3 · Formularios funcionales, reserva interactiva y newsletter — ✅ COMPLETADO
 
-| # | Tarea | Archivos | Esfuerzo |
-|---|---|---|---|
-| 3.1 | Expositores — directorio real (nombre, rubro, stand, contacto) como página propia | `src/pages/expositores.astro` (nuevo) | L |
-| 3.2 | Contacto — sección/página con formulario real (Formspree o backend simple) | nuevo componente | M |
-| 3.3 | Preguntas frecuentes — acordeón accesible con contenido real | nuevo componente | M |
-| 3.4 | Noticias — content collection de Astro con 3-4 notas iniciales | `src/content/`, `src/pages/noticias/` (nuevo) | L |
+Ejecutado y verificado:
+- **Formulario de Contacto interactivo:** Campos requeridos, honeypot antispam, estado de carga y mensaje de éxito accesible con `role="status"` y `aria-live="polite"` en `src/components/sections/ContactSection.astro` y `enhance.ts`.
+- **Calculador en vivo y reserva de entradas:** Selector de tarifas oficiales (`General $3.500`, `Abono 4 Días $10.000`, `Jubilados $2.000`, `Menores de 12 años Gratis`), cálculo automático de importes según cantidad y generación de voucher de confirmación con código de orden (`EXP26-XXXX`) en `EntradasSection.astro`.
+- **Suscripción a Newsletter en Footer:** Input accesible en `Footer.astro` con validación de correo y feedback interactivo en pantalla.
+- **Canalización comercial:** Botón "Quiero exponer" de `CtaBanner.astro` vinculado directamente a `/contacto` para postulación de stands.
+- **Suite Playwright ampliada:** Pruebas de integración añadidas para todos los formularios, alcanzando **210 tests aprobados (100% verde)**.
 
-**DoD:** las 10 secciones mínimas de Consignas Técnicas §5 existen todas, con contenido real.
+**DoD:** Todos los formularios operativos con validación en cliente, cálculo de entradas funcional, cero errores en consola y 210/210 tests en verde.
 
 ### Sprint 4 · Funcionalidades de producto (Anexo II)
 

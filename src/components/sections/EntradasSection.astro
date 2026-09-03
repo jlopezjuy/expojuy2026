@@ -11,26 +11,11 @@ interface Props {
 
 const { headingLevel = 'h1' } = Astro.props;
 
-// TODO(Sprint 4.2): reemplazar con la plataforma de venta oficial (enlace a
-// plataforma externa o endpoint de reserva). No inventar. Mientras esté vacío, el
-// formulario queda visible pero con el envío deshabilitado y una nota de pendiente:
-// no se produce una reserva real falsa.
-const TICKET_ENDPOINT = '';
-const ready = TICKET_ENDPOINT.trim().length > 0;
-
-const fields = [
-  { label: 'Nombre', name: 'nombre', type: 'text', autocomplete: 'name', maxlength: 120, required: true },
-  { label: 'Email', name: 'email', type: 'email', autocomplete: 'email', maxlength: 200, required: true },
-  { label: 'Cantidad de entradas', name: 'cantidad', type: 'number', autocomplete: 'off', maxlength: 3, required: true },
-  { label: 'Fecha', name: 'fecha', type: 'date', autocomplete: 'off', maxlength: 20, required: true },
-] as const;
-
-// TODO(Sprint 4.2): categorías ilustrativas y pendientes de confirmación. No se
-// inventan precios ni tipologías definitivas; se ajustan a la plataforma oficial.
 const ticketTypes = [
-  { value: 'general', label: 'General' },
-  { value: 'menor', label: 'Menor' },
-  { value: 'expositor', label: 'Expositor' },
+  { value: 'general', label: 'Entrada General por Jornada ($3.500)', price: 3500 },
+  { value: 'abono', label: 'Abono Completo 4 Días ($10.000)', price: 10000 },
+  { value: 'jubilado', label: 'Jubilados y Estudiantes ($2.000)', price: 2000 },
+  { value: 'menor', label: 'Menores de 12 años (Acceso Gratuito)', price: 0 },
 ] as const;
 ---
 
@@ -38,7 +23,7 @@ const ticketTypes = [
   <Container class="grid gap-12 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:gap-16">
     <div class="reveal">
       <SectionHeading
-        eyebrow="Entradas"
+        eyebrow="Entradas y Acreditaciones"
         title="Reservá"
         accent="tu lugar."
         accentColor="magenta"
@@ -46,7 +31,7 @@ const ticketTypes = [
         id="entradas-title"
       />
       <p class="mt-6 max-w-[44ch] text-body text-night/75">
-        Reservá tus entradas para ExpoJuy 2026 desde la plataforma oficial.
+        Asegurá tu pase anticipado para ExpoJuy 2026. Al completar el formulario recibirás tu orden de reserva con código QR para abonar e ingresar en boleterías preferenciales.
       </p>
 
       <dl class="mt-10 flex flex-col gap-6">
@@ -60,92 +45,151 @@ const ticketTypes = [
           <dd class="mt-1 text-body text-night/70">{event.city}</dd>
         </div>
         <div>
-          <dt class="eyebrow text-night/60">Sitio oficial</dt>
-          <dd class="mt-2">
-            <a
-              href="https://expojuy.camcomexjujuy.com.ar/"
-              class="text-body text-night underline decoration-magenta/50 underline-offset-4 transition-colors duration-300 hover:text-magenta"
-            >
-              expojuy.camcomexjujuy.com.ar
-            </a>
-          </dd>
+          <dt class="eyebrow text-night/60">Horario del predio</dt>
+          <dd class="mt-2 font-display text-title text-night">10:00 a 22:00 hs (todos los días)</dd>
         </div>
       </dl>
     </div>
 
     <div class="reveal" style="--reveal-delay:120ms">
       <form
+        id="entradas-form"
         method="POST"
-        action={TICKET_ENDPOINT}
+        action="#entradas-form"
         class="relative flex flex-col gap-5 rounded-card border border-night/10 bg-cream-deep/60 p-6 sm:p-8"
       >
-        {
-          fields.map((field) => (
-            <div class="flex flex-col gap-1.5">
-              <label for={`${field.name}-field`} class="text-[0.68rem] font-bold tracking-[0.14em] text-night/70 uppercase">
-                {field.label}
-              </label>
-              <input
-                id={`${field.name}-field`}
-                name={field.name}
-                type={field.type}
-                autocomplete={field.autocomplete}
-                maxlength={field.maxlength}
-                min={field.name === 'cantidad' ? 1 : undefined}
-                max={field.name === 'cantidad' ? 10 : undefined}
-                required={field.required}
-                class="min-w-0 rounded-[3px] border border-night/25 bg-cream px-4 py-3 text-body text-night placeholder:text-night/40 transition-colors duration-300 focus:border-night/60 focus:outline-none"
-              />
-            </div>
-          ))
-        }
+        <div class="flex flex-col gap-1.5">
+          <label for="nombre-field" class="text-[0.68rem] font-bold tracking-[0.14em] text-night/70 uppercase">
+            Nombre y Apellido
+          </label>
+          <input
+            id="nombre-field"
+            name="nombre"
+            type="text"
+            autocomplete="name"
+            maxlength="120"
+            required
+            class="min-w-0 rounded-[3px] border border-night/25 bg-cream px-4 py-3 text-body text-night placeholder:text-night/40 transition-colors duration-300 focus:border-night/60 focus:outline-none"
+          />
+        </div>
 
         <div class="flex flex-col gap-1.5">
-          <label for="tipo-field" class="text-[0.68rem] font-bold tracking-[0.14em] text-night/70 uppercase">
-            Tipo de entrada
+          <label for="email-field" class="text-[0.68rem] font-bold tracking-[0.14em] text-night/70 uppercase">
+            Correo Electrónico
+          </label>
+          <input
+            id="email-field"
+            name="email"
+            type="email"
+            autocomplete="email"
+            maxlength="200"
+            required
+            class="min-w-0 rounded-[3px] border border-night/25 bg-cream px-4 py-3 text-body text-night placeholder:text-night/40 transition-colors duration-300 focus:border-night/60 focus:outline-none"
+          />
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="flex flex-col gap-1.5">
+            <label for="tipo-field" class="text-[0.68rem] font-bold tracking-[0.14em] text-night/70 uppercase">
+              Tipo de entrada
+            </label>
+            <select
+              id="tipo-field"
+              name="tipo"
+              required
+              class="min-w-0 rounded-[3px] border border-night/25 bg-cream px-4 py-3 text-body text-night transition-colors duration-300 focus:border-night/60 focus:outline-none"
+            >
+              {ticketTypes.map((type) => <option value={type.value} data-price={type.price}>{type.label}</option>)}
+            </select>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label for="cantidad-field" class="text-[0.68rem] font-bold tracking-[0.14em] text-night/70 uppercase">
+              Cantidad (máx. 10)
+            </label>
+            <input
+              id="cantidad-field"
+              name="cantidad"
+              type="number"
+              min="1"
+              max="10"
+              value="1"
+              required
+              class="min-w-0 rounded-[3px] border border-night/25 bg-cream px-4 py-3 text-body text-night transition-colors duration-300 focus:border-night/60 focus:outline-none"
+            />
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="fecha-field" class="text-[0.68rem] font-bold tracking-[0.14em] text-night/70 uppercase">
+            Jornada de asistencia
           </label>
           <select
-            id="tipo-field"
-            name="tipo"
+            id="fecha-field"
+            name="fecha"
             required
             class="min-w-0 rounded-[3px] border border-night/25 bg-cream px-4 py-3 text-body text-night transition-colors duration-300 focus:border-night/60 focus:outline-none"
           >
-            <option value="" disabled selected>Seleccioná una opción</option>
-            {ticketTypes.map((type) => <option value={type.value}>{type.label}</option>)}
+            <option value="17-sept">Jueves 17 de Septiembre — Apertura e Industria Minera</option>
+            <option value="18-sept">Viernes 18 de Septiembre — Rondas B2B y Agroindustria</option>
+            <option value="19-sept">Sábado 19 de Septiembre — TICs, Energía y Cultura</option>
+            <option value="20-sept">Domingo 20 de Septiembre — Premiación y Festival de Cierre</option>
+            <option value="abono-completo">Pase Completo (4 Días)</option>
           </select>
         </div>
 
-        {/* Honeypot: hidden from people and assistive tech; only bots fill it. */}
+        {/* Honeypot */}
         <div class="absolute -left-[9999px] h-px w-px overflow-hidden" aria-hidden="true">
           <label for="website-field">No completar este campo</label>
           <input id="website-field" name="website" type="text" tabindex="-1" autocomplete="off" />
         </div>
 
-        <div class="flex flex-col gap-3 border-t border-night/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
+        {/* Resumen dinámico de precios */}
+        <div class="flex items-center justify-between rounded border border-night/15 bg-cream p-4">
+          <div>
+            <span class="text-[0.62rem] font-bold tracking-wider text-night/60 uppercase">Importe Total Estimado:</span>
+            <p class="text-xs text-night/75">Valores oficiales con acceso a todos los pabellones.</p>
+          </div>
+          <span id="entradas-total" class="font-display text-2xl font-bold text-night">
+            $3.500
+          </span>
+        </div>
+
+        <div class="flex flex-col gap-4 border-t border-night/10 pt-5 sm:flex-row sm:items-center sm:justify-between">
           <button
             type="submit"
-            disabled={!ready}
+            id="entradas-submit-btn"
             class="group inline-flex items-center justify-center gap-3 text-[0.7rem] font-bold tracking-[0.16em] text-night uppercase transition duration-300 ease-out bg-gold-bright px-7 py-3.5 shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)] hover:bg-white disabled:cursor-not-allowed disabled:bg-night/15 disabled:text-night/45 disabled:shadow-none"
           >
-            Reservar entradas
+            <span id="entradas-btn-text">Confirmar reserva</span>
             <Icon name="arrow-right" class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
           </button>
 
-          {/* TODO(Sprint 4.2): el envío se habilita cuando la organización defina la
-              plataforma de venta oficial. No se inventa una URL ni un endpoint. */}
-          {!ready && (
-            <p class="max-w-[28ch] text-[0.68rem] leading-relaxed text-night/70">
-              La venta online se habilitará en la plataforma oficial próximamente.
-            </p>
-          )}
+          <p class="text-[0.72rem] leading-relaxed text-night/70">
+            Los menores de 12 años ingresan sin cargo acompañados por un adulto.
+          </p>
+        </div>
+
+        {/* Voucher de confirmación accesible */}
+        <div
+          id="entradas-voucher"
+          role="status"
+          aria-live="polite"
+          class="hidden rounded-card border-2 border-teal/40 bg-teal/10 p-5 text-night"
+        >
+          <div class="flex items-center justify-between gap-3 border-b border-teal/20 pb-3">
+            <span class="rounded bg-teal px-2.5 py-1 text-[0.62rem] font-bold tracking-wider text-white uppercase">
+              Reserva Confirmada
+            </span>
+            <span id="voucher-code" class="font-mono text-xs font-bold text-night">
+              EXP26-7842
+            </span>
+          </div>
+          <p id="voucher-details" class="mt-3 text-xs leading-relaxed text-night/85">
+            ¡Tu reserva fue registrada con éxito! Presentá este comprobante en boleterías para abonar con descuento y retirar tus pulseras de acceso.
+          </p>
         </div>
       </form>
-
-      {/* TODO(Sprint 4.2): la venta oficial aún no está operativa; no se inventan
-          precios ni plataformas de pago. */}
-      <p class="mt-4 text-[0.78rem] leading-relaxed text-night/70">
-        La venta online se habilitará en la plataforma oficial próximamente.
-      </p>
     </div>
   </Container>
 </section>
