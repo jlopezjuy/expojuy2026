@@ -24,26 +24,20 @@ export default function AuthNav({ variant }: Props) {
 
   if (!session) {
     return (
-      <li>
-        <a href="/login" class={linkClass}>
-          Iniciar sesión
-        </a>
-      </li>
+      <a href="/login" class={linkClass}>
+        Iniciar sesión
+      </a>
     );
   }
 
   return (
-    <>
-      <li>
-        <a href="/mi-cuenta" class={linkClass}>
-          Mi cuenta
-        </a>
-      </li>
-      <li>
-        <button type="button" onClick={handleLogout} class={buttonClass}>
-          Cerrar sesión
-        </button>
-      </li>
-    </>
+    <div class={variant === 'desktop' ? 'flex items-center gap-3' : 'flex flex-col'}>
+      <a href="/mi-cuenta" class={linkClass}>
+        Mi cuenta
+      </a>
+      <button type="button" onClick={handleLogout} class={buttonClass}>
+        Cerrar sesión
+      </button>
+    </div>
   );
 }

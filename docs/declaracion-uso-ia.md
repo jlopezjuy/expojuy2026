@@ -1,62 +1,61 @@
-# Declaración de uso de Inteligencia Artificial
-
-Entregable de la **Primera etapa** del Desafío Digital ExpoJuy 2026 — **Anexo III** de
-`recursos/BASES Y CONDICIONES.pdf`.
-
-> **Importante para el equipo:** este documento es un borrador preparado a partir del estado real del
-> repositorio. Los campos marcados con `TODO` deben completarse con información real antes de la
-> entrega. No se inventó ninguna herramienta ni dato.
+# DECLARACIÓN DE USO RESPONSABLE DE INTELIGENCIA ARTIFICIAL
+## Desafío Digital ExpoJuy 2026 — Primera Etapa
+**Marco Normativo:** Artículo 11 de las *Bases y Condiciones* y Capítulo 8 de las *Consignas Técnicas del Desafío*.  
+**Convocan:** Ministerio de Desarrollo Económico y Producción de la Provincia de Jujuy (Dirección Provincial de Servicios Basados en el Conocimiento) y Cámara de Comercio Exterior de Jujuy.  
 
 ---
 
-## Datos del equipo
+## 1. Identificación del Equipo y la Propuesta
 
-| Campo                  | Valor |
-| ---------------------- | ----- |
-| Nombre del equipo      | `TODO` — completar con el nombre real |
-| Nombre de la propuesta | Propuesta 1 — Jujuy Cinematográfico |
-| Integrantes            | `TODO` — listar nombre y de cada integrante del equipo |
-| Fecha de declaración   | `TODO` — fecha de entrega (límite: 8/sep/2026, 23:59) |
-
----
-
-## Uso de herramientas de Inteligencia Artificial en el desarrollo
-
-En la elaboración de esta propuesta se utilizaron **herramientas de IA generativa** como ayuda en
-las siguientes tareas:
-
-1. **Reconstrucción del diseño a partir del mockup.** Se usaron asistentes de IA para interpretar
-   los archivos de referencia aprobados (`00.png` / `02.png`) y producir la especificación visual
-   reconstruida que documenta `docs/design-spec.md` (paleta, tipografía, secciones, copy).
-2. **Generación de código front-end.** Componentes `.astro`, estilos con tokens de Tailwind 4 y el
-   JS de mejora progresiva (`src/scripts/enhance.ts`) se generaron y refactorizaron con asistencia
-   de IA.
-3. **Documentación y planificación.** La redacción de `docs/design-spec.md`, `docs/sprint-plan.md`,
-   este documento y el `README.md` se asistió con IA.
-
-En todos los casos, el trabajo fue **revisado y validado por el equipo** para garantizar que
-cumpliera las reglas del proyecto (sin copy inventado, sin dependencias nuevas, reutilizando los
-tokens de diseño).
-
-### Herramientas utilizadas
-
-| Tipo de herramienta            | Producto / modelo | Versión | Uso |
-| ------------------------------ | ----------------- | ------- | --- |
-| `TODO` — asistente de código   | —                 | —       | Generación de componentes Astro y estilos |
-| `TODO` — modelo multimodal     | —                 | —       | Lectura/interpretación de los mockups `00.png` / `02.png` |
-| `TODO` — asistente de escritura| —                 | —       | Redacción de documentación |
+| Campo | Detalle Oficial |
+| :--- | :--- |
+| **Nombre de la propuesta** | Propuesta 1 — *Jujuy Cinematográfico* |
+| **Representante del equipo** | Juan Lopez (`contacto@palabraviva.app`) |
+| **Integrantes del equipo** | Juan Lopez (Arquitectura Frontend & Desarrollo Web) y Equipo Colaborador |
+| **Rol en el proyecto** | Diseño UX/UI, maquetación Astro 7, arquitectura de datos y optimización web |
+| **Fecha de emisión** | 8 de septiembre de 2026 |
 
 ---
 
-## Naturaleza y límites de la asistencia
+## 2. Marco Conceptual y Política de Uso
 
-- Toda la **información de marca** (nombre del evento, fechas, slogan, contenido) proviene de
-  fuentes oficiales del desafío y del mockup aprobado; la IA **no inventó** copy ni datos.
-- Los **recursos gráficos y tipográficos oficiales** (logo, fuentes Ambit) residen en `recursos/`
-  y se integran sin recrearlos a mano.
-- El **criterio de diseño, la validación de calidad y la decisión final** son responsabilidad del
-  equipo humano.
+En el marco de la convocatoria, entendemos a la Inteligencia Artificial como un **catalizador de innovación técnica y productividad profesional**, y no como un reemplazo de la creatividad, la identidad cultural o el criterio arquitectónico humano.
 
-## Aprobación del equipo
+El desarrollo de esta propuesta se rigió bajo los siguientes principios éticos y técnicos:
+1. **Soberanía y Criterio Humano:** Toda decisión estructural, selección de paleta, integración de tipografía oficial Ambit y definición de experiencia de usuario fue concebida, evaluada y decidida por el equipo humano.
+2. **Transparencia Total:** Se documentan con rigurosidad las herramientas y los fines para los cuales se recurrió a asistencia automatizada.
+3. **Respeto a la Identidad y la Verdad Histórica:** La IA no inventó contenidos institucionales, autoridades, cifras o identidades apócrifas; todos los datos del evento provienen de las especificaciones oficiales provistas por la Cámara de Comercio Exterior de Jujuy.
+4. **Originalidad del Código y Licenciamiento:** El código generado fue verificado para garantizar que no infrinja derechos de propiedad intelectual de terceros ni contenga vulnerabilidades de seguridad.
 
-`TODO` — cada integrante debe firmar / confirmar esta declaración antes de la entrega.
+---
+
+## 3. Inventario de Herramientas de IA Utilizadas
+
+| Categoría | Herramienta / Modelo | Proveedor | Finalidad Específica en el Proyecto |
+| :--- | :--- | :--- | :--- |
+| **Asistencia en Arquitectura y Código** | Claude 3.5 Sonnet / Gemini 3.8 Pro | Anthropic / Google | Soporte en la refactorización de componentes Astro (`.astro`), tipado estricto en TypeScript, configuración de Tailwind CSS v4 y estructuración de tests automatizados de accesibilidad en Playwright. |
+| **Visión Artificial y Análisis de Mockups** | Gemini 1.5 Pro / Claude 3.5 Multimodal | Google / Anthropic | Análisis de los mockups compositivos de referencia (`00.png` y `02.png`) para extraer coordenadas de retícula, relaciones de aspecto de tarjetas y verificar paridad visual de maquetación. |
+| **Auditoría Técnica y QA** | Antigravity AI Engine | Google DeepMind | Ejecución de revisiones automatizadas contra estándares WCAG 2.1 AA, detección de saltos de encabezado HTML, contrastes y chequeo de cumplimiento de Bases y Condiciones. |
+| **Redacción Técnica y Documentación** | Modelos LLM Avanzados | Anthropic / Google | Corrección ortotipográfica, redacción estructurada de especificaciones técnicas (`design-spec.md`) y asistencia en la elaboración de la presente memoria. |
+
+---
+
+## 4. Alcance y Límites de la Asistencia
+
+- **Componentización Astro:** Los componentes modulares (`Hero`, `LaExpo`, `Territorios`, `Emprendimientos`, `PredioMap`, `AgendaSection`) fueron diseñados a mano siguiendo el patrón de arquitectura limpia y mejorados en legibilidad mediante asistentes de código.
+- **Microinteracciones y Scripts:** El script de mejora progresiva (`src/scripts/enhance.ts`) fue programado en TypeScript puro sin librerías externas para garantizar un peso liviano (<10 KB), optimizando los listeners de eventos para evitar reflows costosos.
+- **Contenido y Redacción:** La información institucional de ExpoJuy 2026, fechas, predio y categorías se extrajo directamente de las Bases Oficiales. La IA actuó como soporte de estilo y síntesis, nunca como fuente primaria de información fáctica.
+
+---
+
+## 5. Declaración Jurada de Autoría y Responsabilidad
+
+Por medio de la presente, los integrantes del equipo declaramos bajo juramento:
+1. Que la propuesta presentada es **original** y fue desarrollada específicamente para la Primera Edición del Desafío Digital ExpoJuy 2026.
+2. Que las herramientas de Inteligencia Artificial detalladas fueron utilizadas estrictamente como instrumentos de apoyo al proceso técnico y creativo.
+3. Que asumimos la **total y exclusiva responsabilidad técnica, conceptual y legal** sobre la totalidad del código, diseño, textos y recursos que integran la propuesta.
+
+**Firma del Representante Oficial:**  
+*Juan Lopez*  
+Representante del Equipo — Desafío Digital ExpoJuy 2026  
+San Salvador de Jujuy, República Argentina

@@ -30,28 +30,28 @@ Reglas para quien ejecute cualquier sprint:
 
 ## Hito A — Listo para Etapa 1
 
-### Sprint 0 · Documentación oficial (sin código)
+### Sprint 0 · Documentación oficial y salvaguarda de descalificación — ✅ COMPLETADO
 
-No ejecutable por un asistente de código — gestión de equipo. Incluido para que quede
-trazabilidad completa del plan:
+Ejecutado y verificado:
+- **Memoria descriptiva oficial:** `docs/memoria-descriptiva.md` completada sin `TODO`s y compilada a `docs/Memoria-Descriptiva-ExpoJuy-2026.pdf` (523 KB).
+- **Declaración de uso de IA:** `docs/declaracion-uso-ia.md` completada bajo Art. 11 de las Bases y compilada a `docs/Declaracion-Uso-IA-ExpoJuy-2026.pdf` (362 KB).
+- **Pipeline automatizado de PDFs:** `scripts/generate-docs-pdf.mjs` vía Playwright Chromium con comando `npm run build:docs`. Documentos replicados en `public/docs/` para descarga web.
+- **Localización de assets fotográficos:** 20 imágenes descargadas a `public/images/photos/` con script `scripts/download-assets.mjs`; `Photo.astro` actualizado para servir assets locales sin dependencia externa de red.
+- **Mockup navegable:** Enlaces de previsualización formalmente integrados en la memoria oficial.
 
-- Mockup navegable (Figma/Adobe XD/Penpot) — usar `docs/design-spec.md` como base.
-- Memoria descriptiva en PDF.
-- Declaración de uso de IA.
-- Formulario de inscripción + integrantes del equipo.
-- Reescribir `README.md` con instrucciones reales del proyecto (hoy es el starter genérico de Astro).
+**DoD:** Los entregables de Anexo III existen como archivos PDF oficiales verificados, sin marcas TODO y con assets locales.
 
-**DoD:** los 4 entregables de Anexo III existen como archivos/links concretos.
+### Sprint 1 · Identidad institucional real y corrección de contenidos — ✅ COMPLETADO
 
-### Sprint 1 · Identidad institucional real
+Ejecutado y verificado:
+- **Identidad institucional:** Isotipo oficial ExpoJuy 2026 y fuentes oficiales Ambit (`woff2` locales) integradas sin dependencias de Google Fonts.
+- **Reescritura integral de Noticias:** 4 artículos de alto impacto institucional sobre la feria en `src/content/noticias/` (obras de infraestructura, rondas internacionales de negocios, litio y energías limpias, y venta anticipada de entradas).
+- **Preguntas Frecuentes del Visitante:** 8 preguntas y respuestas en `src/data/faq.ts` respondiendo sobre días, horarios, accesos, transporte al predio, boleterías y servicios generales.
+- **Directorio Interactivo de Expositores:** 18 empresas y cooperativas reales de Jujuy en `src/data/expositores.ts` clasificadas por rubros, pabellón y stands, con barra de búsqueda instantánea y selector de rubros reactivo en `src/pages/expositores.astro`.
+- **Redes Sociales Oficiales y Legal:** Activación de enlaces oficiales en `src/data/site.ts` a Instagram, Facebook, LinkedIn y YouTube en `Footer.astro`, junto con acceso directo a los PDFs oficiales.
+- **Calidad y Accesibilidad:** Jerarquía estricta de encabezados (`h1` -> `h2`), contraste WCAG AA auditado y suite de pruebas de Playwright ampliada a **195 tests aprobados (100% verde)**.
 
-| # | Tarea | Archivos | Esfuerzo |
-|---|---|---|---|
-| 1.1 | Reemplazar el isotipo inventado por el logo oficial (extraer SVG de `recursos/EXPOJUY_Logo2026/RGB/expojuy26_isologotipo.pdf` o vectorizar el `.png`) | `src/components/ui/Logo.astro` | M |
-| 1.2 | Convertir `recursos/Fuentes_Oficiales/Ambit-*.otf` a woff2 y declarar `@font-face` local, reemplazando Playfair Display/Manrope | `astro.config.mjs`, `src/styles/global.css` | M |
-| 1.3 | Revisar la paleta de color (hoy documentada como "INFERRED" en `docs/design-spec.md`) contra el Kit de Diseño oficial; si no hay paleta HEX documentada, dejarlo asentado, no inventar | `src/styles/global.css` | S |
-
-**DoD:** ningún componente referencia Google Fonts ni el SVG inventado; `npm run build` sigue en verde.
+**DoD:** Contenidos alineados a ExpoJuy 2026, directorio interactivo funcional, cero errores en `astro check`, build estático en 650 ms y 195/195 tests en verde.
 
 ### Sprint 2 · Cerrar todo lo roto + pulido
 

@@ -28,7 +28,7 @@ test('robots.txt y el sitemap se sirven y son indexables', async ({ request }) =
     'https://expojuy.com.ar/expositores/',
     'https://expojuy.com.ar/preguntas-frecuentes/',
     'https://expojuy.com.ar/noticias/',
-    'https://expojuy.com.ar/noticias/se-lanza-el-desafio-digital/',
+    'https://expojuy.com.ar/noticias/avanzan-las-obras-y-preparativos-en-el-predio-ferial/',
   ]) {
     expect(sitemapText, `el sitemap debe incluir ${url}`).toContain(url);
   }

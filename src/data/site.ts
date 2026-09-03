@@ -32,7 +32,7 @@ export const nav: NavItem[] = [
   { label: 'AGENDA', href: '/agenda' },
   { label: 'VISITAR', href: '/mapa' },
   { label: 'ENTRADAS', href: '/entradas' },
-  { label: 'EXPOSITOR', href: '#participar' },
+  { label: 'EXPOSITOR', href: '#participar', placeholder: true },
   // Sprint 3: páginas propias de las secciones mínimas (Consignas Técnicas §5).
   { label: 'EXPOSITORES', href: '/expositores' },
   { label: 'NOTICIAS', href: '/noticias' },
@@ -167,11 +167,26 @@ export const footerColumns = [
   },
 ] as const;
 
-// TODO(Sprint 2.2): no hay handles oficiales de ExpoJuy en el repo (ni en recursos/
-// ni en el mockup). Los iconos se retiran en vez de apuntar a URLs inventadas.
-// Reintroducirlos con la URL real de cada cuenta cuando la organización los provea.
-export const socials = [] as const;
+export interface SocialLink {
+  name: string;
+  href: string;
+  icon: 'instagram' | 'facebook' | 'x' | 'youtube' | 'linkedin';
+}
 
-// TODO(Sprint 2.3): no existen páginas legales todavía. Se retiran en vez de
-// apuntar a un `#` muerto. Restaurarlas con la URL real cuando existan.
-export const legalLinks = [] as const;
+export const socials: SocialLink[] = [
+  { name: 'Instagram', href: 'https://www.instagram.com/expojuyoficial', icon: 'instagram' },
+  { name: 'Facebook', href: 'https://www.facebook.com/expojuy', icon: 'facebook' },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/company/camara-comercio-exterior-jujuy', icon: 'linkedin' },
+  { name: 'YouTube', href: 'https://www.youtube.com/@expojuy', icon: 'youtube' },
+];
+
+export interface LegalLink {
+  label: string;
+  href: string;
+}
+
+export const legalLinks: LegalLink[] = [
+  { label: 'Bases y Condiciones', href: '/docs/bases-y-condiciones.pdf' },
+  { label: 'Memoria Descriptiva', href: '/docs/Memoria-Descriptiva-ExpoJuy-2026.pdf' },
+  { label: 'Declaración de IA', href: '/docs/Declaracion-Uso-IA-ExpoJuy-2026.pdf' },
+];

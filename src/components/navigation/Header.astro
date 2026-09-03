@@ -25,7 +25,7 @@ const headerBackdrop = isHome ? '' : 'border-b border-white/10 bg-night/90 backd
     <Logo href="#top" tone="light" />
 
     <nav aria-label="Navegación principal" class="hidden xl:block">
-      <ul class="flex items-center gap-5 min-[1680px]:gap-10">
+      <ul class="flex items-center gap-3.5 min-[1440px]:gap-5 min-[1680px]:gap-10">
         {
           // Sprint 2.4: los items con `placeholder: true` aún no tienen sección en
           // esta página — se ocultan del menú hasta que existan (p. ej. VISITAR).
@@ -42,7 +42,9 @@ const headerBackdrop = isHome ? '' : 'border-b border-white/10 bg-night/90 backd
               </li>
             ))
         }
-        <AuthNav client:only="preact" variant="desktop" />
+        <li class="flex items-center">
+          <AuthNav client:only="preact" variant="desktop" />
+        </li>
       </ul>
     </nav>
 
@@ -93,7 +95,9 @@ const headerBackdrop = isHome ? '' : 'border-b border-white/10 bg-night/90 backd
               </li>
             ))
         }
-        <AuthNav client:only="preact" variant="mobile" />
+        <li class="border-b border-white/10">
+          <AuthNav client:only="preact" variant="mobile" />
+        </li>
       </ul>
       <ButtonLink href={href('#participar')} variant="solid" class="mt-8 w-full">
         Quiero participar

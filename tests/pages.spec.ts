@@ -65,7 +65,7 @@ const routes = [
   '/contacto',
   '/preguntas-frecuentes',
   '/noticias',
-  '/noticias/se-lanza-el-desafio-digital',
+  '/noticias/avanzan-las-obras-y-preparativos-en-el-predio-ferial',
   '/mapa',
   '/entradas',
   '/agenda',
@@ -179,4 +179,35 @@ test('contact form exposes accessible fields with a honeypot', async ({ page }) 
 
   const action = await form.evaluate((el) => el.getAttribute('action'));
   expect(action).not.toBeNull();
+});
+
+test('expositores search and rubro filter works interactively', async ({ page }) => {
+  await page.goto('/expositores', { waitUntil: 'networkidle' });
+
+  const cards = page.locator('[data-expositor-card]');
+  await expect(cards).toHaveCount(18);
+
+  // Click on 'Minería y Energía' filter button
+  const mineriaBtn = page.locator('button[data-rubro-filter="Minería y Energía"]');
+  await mineriaBtn.click();
+  await expect(mineriaBtn).toHaveAttribute('aria-pressed', 'true');
+
+  const visibleCards = page.locator('[data-expositor-card]:visible');
+  await expect(visibleCards).toHaveCount(4);
+
+  // Search for 'Ledesma'
+  const searchInput = page.locator('#search-expositores');
+  await searchInput.fill('Ledesma');
+
+  // Reset to 'Todos'
+  const todosBtn = page.locator('button[data-rubro-filter="Todos"]');
+  await todosBtn.click();
+
+  const ledesmaCard = page.locator('[data-expositor-card]:visible');
+  await expect(ledesmaCard).toHaveCount(1);
+  await expect(ledesmaCard).toContainText('Ledesma S.A.A.I.');
+
+  // Counter check
+  const counter = page.locator('#expositores-counter');
+  await expect(counter).toContainText('Mostrando 1 de 18 expositores');
 });

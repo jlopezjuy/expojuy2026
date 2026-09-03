@@ -1,5 +1,5 @@
 ---
-import { event, footerColumns } from '../../data/site';
+import { event, footerColumns, socials, legalLinks } from '../../data/site';
 import { resolveHref } from '../../lib/links';
 import Container from '../layout/Container.astro';
 import Icon from '../ui/Icon.astro';
@@ -26,8 +26,23 @@ const newsletterReady = NEWSLETTER_ENDPOINT.trim().length > 0;
         <Logo href={href('#top')} tone="light" />
         <p class="mt-6 max-w-[22ch] text-sm leading-relaxed text-white/65">{event.tagline}</p>
 
-        {/* Sprint 2.2: iconos de redes retirados hasta que la organización provea
-            los handles reales (ver `socials` en src/data/site.ts). */}
+        {
+          socials.length > 0 && (
+            <div class="mt-6 flex items-center gap-3">
+              {socials.map((social) => (
+                <a
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`Seguinos en ${social.name}`}
+                  class="grid h-8 w-8 place-items-center rounded-full border border-white/20 text-white/75 transition-all duration-300 hover:border-gold-bright hover:bg-white/5 hover:text-gold-bright"
+                >
+                  <Icon name={social.icon} class="h-4 w-4" />
+                </a>
+              ))}
+            </div>
+          )
+        }
       </div>
 
       <!-- Link columns -->
@@ -91,14 +106,25 @@ const newsletterReady = NEWSLETTER_ENDPOINT.trim().length > 0;
     </div>
 
     <div
-      class="mt-14 flex flex-col items-center gap-4 border-t border-white/10 pt-6 text-center sm:flex-row sm:justify-center sm:gap-10"
+      class="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-center sm:flex-row"
     >
       <p class="text-[0.72rem] text-white/50">
         © 2026 ExpoJuy. Todos los derechos reservados.
       </p>
-      {/* Sprint 2.3: enlaces legales ("Términos y condiciones", "Política de
-          privacidad") retirados — no existen las páginas todavía (ver `legalLinks`
-          en src/data/site.ts). */}
+      {
+        legalLinks.length > 0 && (
+          <div class="flex flex-wrap items-center justify-center gap-6">
+            {legalLinks.map((link) => (
+              <a
+                href={link.href}
+                class="text-[0.72rem] text-white/50 transition-colors hover:text-white/80"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        )
+      }
     </div>
   </Container>
 </footer>

@@ -264,6 +264,78 @@ function initParallax(): void {
   window.addEventListener('resize', onScroll, { passive: true });
 }
 
+/* ------------------------------------------------------ expositores filter */
+function initExpositoresFilter(): void {
+  const searchInput = document.getElementById('search-expositores') as HTMLInputElement | null;
+  const filterButtons = document.querySelectorAll<HTMLButtonElement>('[data-rubro-filter]');
+  const cards = document.querySelectorAll<HTMLElement>('[data-expositor-card]');
+  const counter = document.getElementById('expositores-counter');
+  const emptyState = document.getElementById('no-expositores');
+
+  if (cards.length === 0) return;
+
+  let activeRubro = 'Todos';
+  let searchTerm = '';
+
+  const applyFilters = () => {
+    let visibleCount = 0;
+
+    cards.forEach((card) => {
+      const cardRubro = card.getAttribute('data-rubro') || '';
+      const searchText = card.getAttribute('data-search-text') || '';
+
+      const matchesRubro = activeRubro === 'Todos' || cardRubro === activeRubro;
+      const matchesSearch = !searchTerm || searchText.includes(searchTerm);
+
+      if (matchesRubro && matchesSearch) {
+        card.style.display = '';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    if (counter) {
+      counter.textContent = `Mostrando ${visibleCount} de ${cards.length} expositores`;
+    }
+
+    if (emptyState) {
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+    }
+  };
+
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      searchTerm = searchInput.value.trim().toLowerCase();
+      applyFilters();
+    });
+  }
+
+  filterButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      activeRubro = button.getAttribute('data-rubro-filter') || 'Todos';
+
+      filterButtons.forEach((btn) => {
+        const isCurrent = btn === button;
+        btn.setAttribute('aria-pressed', String(isCurrent));
+        if (isCurrent) {
+          btn.className =
+            'rounded-full px-4 py-2 text-[0.68rem] font-bold tracking-[0.14em] uppercase transition-all duration-300 bg-night text-cream shadow-sm';
+        } else {
+          btn.className =
+            'rounded-full px-4 py-2 text-[0.68rem] font-bold tracking-[0.14em] uppercase transition-all duration-300 border border-night/15 bg-cream-deep/60 text-night/80 hover:border-night/40 hover:bg-cream-deep';
+        }
+      });
+
+      applyFilters();
+    });
+  });
+}
+
 /* -------------------------------------------------------------------- boot */
 function boot(): void {
   initReveals();
@@ -273,6 +345,7 @@ function boot(): void {
   initAgendaFilter();
   initVenueMap();
   initAccordion();
+  initExpositoresFilter();
   initParallax();
 }
 
