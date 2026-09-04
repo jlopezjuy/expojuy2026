@@ -33,8 +33,8 @@ import HeroCollage from './HeroCollage.astro';
   <Container class="relative z-10 flex flex-1 flex-col pt-28 pb-8 sm:pt-32 lg:pt-[8vh] lg:pb-10">
     <!-- Title block: sits high and runs across the photograph with balanced scale. -->
     <div class="lg:mx-auto lg:w-[88%]">
-      <p class="eyebrow hero-animate-eyebrow flex flex-col gap-x-7 gap-y-0.5 text-white/90 sm:flex-row sm:justify-center tracking-[0.2em]">
-        {event.eyebrow.map((line) => <span>{line}</span>)}
+      <p class="eyebrow hero-animate-eyebrow text-center text-white/90 tracking-[0.2em]">
+        {event.eyebrow}
       </p>
 
       <div class="hero-title-mask mt-1 pb-2">
@@ -46,6 +46,13 @@ import HeroCollage from './HeroCollage.astro';
           JUJUY
         </h1>
       </div>
+
+      <p
+        class="hero-animate-pillars mt-4 text-center font-display text-title font-semibold text-cream"
+        style="text-shadow: 0 1px 3px rgba(0,0,0,0.85), 0 6px 20px rgba(0,0,0,0.6), 0 18px 44px rgba(0,0,0,0.45);"
+      >
+        {event.pillars.map((line) => <span class="block">{line}</span>)}
+      </p>
     </div>
 
     <!-- Collage: positioned on the right shoulder with breathing room so it never touches the title -->
@@ -75,7 +82,7 @@ import HeroCollage from './HeroCollage.astro';
       <!-- Statement: bottom-right, under the collage. -->
       <div class="order-1 lg:order-2">
         <p class="text-title font-display text-white text-balance">
-          Conocé lo que<br class="hidden sm:inline" /> nace en nuestra tierra.
+          {event.tagline}
         </p>
         {/* Separators are pseudo-elements, and only on items that never start a
             line: two per row on phones, one continuous row from `sm`. */}
@@ -95,13 +102,13 @@ import HeroCollage from './HeroCollage.astro';
 
     <a
       href="#la-expo"
-      class="hero-animate-scroll group mx-auto mt-8 flex w-fit flex-col items-center gap-1.5 text-white/85 transition-colors duration-300 hover:text-white lg:mt-6"
+      class="hero-animate-scroll group mx-auto mt-8 flex w-fit flex-col items-center gap-1.5 rounded-sm text-white/85 transition-colors duration-300 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-bright focus-visible:ring-offset-2 focus-visible:ring-offset-night lg:mt-6"
     >
       <Icon name="arrow-down" class="h-4 w-4 motion-safe:animate-bounce" />
       <span class="flex items-center gap-3">
         <span class="eyebrow">Descubrí más</span>
         <span
-          class="grid h-7 w-7 place-items-center rounded-full border border-white/40 transition-colors duration-300 group-hover:border-white group-hover:bg-white group-hover:text-night"
+          class="grid h-7 w-7 place-items-center rounded-full border border-white/40 transition-colors duration-300 group-hover:border-white group-hover:bg-white group-hover:text-night group-focus-visible:border-white group-focus-visible:bg-white group-focus-visible:text-night"
         >
           <Icon name="arrow-right" class="h-3 w-3" />
         </span>

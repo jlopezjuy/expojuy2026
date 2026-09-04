@@ -1,8 +1,8 @@
 /**
  * Agenda oficial de actividades de ExpoJuy 2026.
  *
- * Programa oficial de las 4 jornadas (17 al 20 de septiembre de 2026) en el
- * Predio Ferial Jujuy, con horarios precisos, salas asignadas, oradores y tracks.
+ * Programa oficial de las 4 jornadas (9 al 12 de octubre de 2026) en
+ * Ciudad Cultural, con horarios precisos, salas asignadas, oradores y tracks.
  */
 
 export interface AgendaTrack {
@@ -31,11 +31,11 @@ export const agendaTracks: AgendaTrack[] = [
 ] as const;
 
 export const agendaItems: AgendaItem[] = [
-  // --- Jueves 17 de Septiembre ---
+  // --- Viernes 9 de Octubre ---
   {
     id: 'sesion-17-1',
-    day: '17',
-    month: 'SEPT.',
+    day: '9',
+    month: 'OCT.',
     trackId: 'apertura',
     time: '10:00 - 11:30 hs',
     title: 'Apertura de Puertas y Acreditación General',
@@ -44,8 +44,8 @@ export const agendaItems: AgendaItem[] = [
   },
   {
     id: 'sesion-17-2',
-    day: '17',
-    month: 'SEPT.',
+    day: '9',
+    month: 'OCT.',
     trackId: 'apertura',
     time: '11:30 - 13:00 hs',
     title: 'Acto Oficial de Apertura y Corte de Cinta',
@@ -55,8 +55,8 @@ export const agendaItems: AgendaItem[] = [
   },
   {
     id: 'sesion-17-3',
-    day: '17',
-    month: 'SEPT.',
+    day: '9',
+    month: 'OCT.',
     trackId: 'apertura',
     time: '15:00 - 16:30 hs',
     title: 'Recorrido Oficial de Autoridades y Delegaciones Diplomáticas',
@@ -65,8 +65,8 @@ export const agendaItems: AgendaItem[] = [
   },
   {
     id: 'sesion-17-4',
-    day: '17',
-    month: 'SEPT.',
+    day: '9',
+    month: 'OCT.',
     trackId: 'charlas',
     time: '17:00 - 18:30 hs',
     title: 'Panel: El Litio y la Cadena de Proveedores Locales en Jujuy',
@@ -76,8 +76,8 @@ export const agendaItems: AgendaItem[] = [
   },
   {
     id: 'sesion-17-5',
-    day: '17',
-    month: 'SEPT.',
+    day: '9',
+    month: 'OCT.',
     trackId: 'rondas',
     time: '19:30 - 21:00 hs',
     title: 'Brindis de Bienvenida y Networking Empresarial',
@@ -85,11 +85,11 @@ export const agendaItems: AgendaItem[] = [
     note: 'Espacio de vinculación exclusiva para directivos de empresas expositoras, cámaras binacionales y patrocinadores.',
   },
 
-  // --- Viernes 18 de Septiembre ---
+  // --- Sábado 10 de Octubre ---
   {
     id: 'sesion-18-1',
-    day: '18',
-    month: 'SEPT.',
+    day: '10',
+    month: 'OCT.',
     trackId: 'rondas',
     time: '10:00 - 13:00 hs',
     title: 'Rondas Internacionales de Negocios — Bloque Matutino',
@@ -99,8 +99,8 @@ export const agendaItems: AgendaItem[] = [
   },
   {
     id: 'sesion-18-2',
-    day: '18',
-    month: 'SEPT.',
+    day: '10',
+    month: 'OCT.',
     trackId: 'charlas',
     time: '14:30 - 16:00 hs',
     title: 'Foro Agroindustrial: Innovación, Riego y Bioenergías',
@@ -110,8 +110,8 @@ export const agendaItems: AgendaItem[] = [
   },
   {
     id: 'sesion-18-3',
-    day: '18',
-    month: 'SEPT.',
+    day: '10',
+    month: 'OCT.',
     trackId: 'rondas',
     time: '16:30 - 19:00 hs',
     title: 'Rondas Internacionales de Negocios — Bloque Vespertino',
@@ -120,8 +120,8 @@ export const agendaItems: AgendaItem[] = [
   },
   {
     id: 'sesion-18-4',
-    day: '18',
-    month: 'SEPT.',
+    day: '10',
+    month: 'OCT.',
     trackId: 'cierre',
     time: '19:30 - 20:30 hs',
     title: 'Cata Guiada de Vinos de Extrema Altura',
@@ -130,11 +130,11 @@ export const agendaItems: AgendaItem[] = [
     note: 'Degustación dirigida de etiquetas premiadas de la Quebrada de Humahuaca y los Valles Templados.',
   },
 
-  // --- Sábado 19 de Septiembre ---
+  // --- Domingo 11 de Octubre ---
   {
     id: 'sesion-19-1',
-    day: '19',
-    month: 'SEPT.',
+    day: '11',
+    month: 'OCT.',
     trackId: 'charlas',
     time: '10:30 - 12:00 hs',
     title: 'Conferencia: Parque Solar Cauchari y el Futuro Renovable',
@@ -144,8 +144,8 @@ export const agendaItems: AgendaItem[] = [
   },
   {
     id: 'sesion-19-2',
-    day: '19',
-    month: 'SEPT.',
+    day: '11',
+    month: 'OCT.',
     trackId: 'talleres',
     time: '14:00 - 15:30 hs',
     title: 'Taller: Transformación Digital y Exportación de Software',
@@ -155,8 +155,8 @@ export const agendaItems: AgendaItem[] = [
   },
   {
     id: 'sesion-19-3',
-    day: '19',
-    month: 'SEPT.',
+    day: '11',
+    month: 'OCT.',
     trackId: 'talleres',
     time: '16:00 - 17:30 hs',
     title: 'Panel: Tejedoras de la Puna, Fibras Andinas y Moda Internacional',
@@ -166,8 +166,8 @@ export const agendaItems: AgendaItem[] = [
   },
   {
     id: 'sesion-19-4',
-    day: '19',
-    month: 'SEPT.',
+    day: '11',
+    month: 'OCT.',
     trackId: 'cierre',
     time: '18:00 - 19:30 hs',
     title: 'Masterclass de Gastronomía Andina en Vivo',
@@ -177,8 +177,8 @@ export const agendaItems: AgendaItem[] = [
   },
   {
     id: 'sesion-19-5',
-    day: '19',
-    month: 'SEPT.',
+    day: '11',
+    month: 'OCT.',
     trackId: 'cierre',
     time: '20:00 - 21:30 hs',
     title: 'Noche de Música y Danzas Tradicionales',
@@ -186,11 +186,11 @@ export const agendaItems: AgendaItem[] = [
     note: 'Espectáculo abierto con cuerpos de danza y conjuntos de música andina de las cuatro regiones provinciales.',
   },
 
-  // --- Domingo 20 de Septiembre ---
+  // --- Lunes 12 de Octubre ---
   {
     id: 'sesion-20-1',
-    day: '20',
-    month: 'SEPT.',
+    day: '12',
+    month: 'OCT.',
     trackId: 'talleres',
     time: '11:00 - 12:30 hs',
     title: 'Taller de Cerámica y Arcillas de San Antonio para la Familia',
@@ -200,8 +200,8 @@ export const agendaItems: AgendaItem[] = [
   },
   {
     id: 'sesion-20-2',
-    day: '20',
-    month: 'SEPT.',
+    day: '12',
+    month: 'OCT.',
     trackId: 'apertura',
     time: '15:30 - 17:00 hs',
     title: 'Conferencia de Cierre: Balance Comercial y Proyecciones 2027',
@@ -211,8 +211,8 @@ export const agendaItems: AgendaItem[] = [
   },
   {
     id: 'sesion-20-3',
-    day: '20',
-    month: 'SEPT.',
+    day: '12',
+    month: 'OCT.',
     trackId: 'apertura',
     time: '17:30 - 19:00 hs',
     title: 'Entrega de Premios a los Mejores Stands y Menciones Especiales',
@@ -221,8 +221,8 @@ export const agendaItems: AgendaItem[] = [
   },
   {
     id: 'sesion-20-4',
-    day: '20',
-    month: 'SEPT.',
+    day: '12',
+    month: 'OCT.',
     trackId: 'cierre',
     time: '19:30 - 21:30 hs',
     title: 'Gran Festival Folclórico de Cierre',

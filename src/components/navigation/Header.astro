@@ -22,7 +22,7 @@ const headerBackdrop = isHome ? '' : 'border-b border-white/10 bg-night/90 backd
   class={`fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-500 ease-out data-[stuck]:border-b data-[stuck]:border-white/10 data-[stuck]:bg-night/90 data-[stuck]:backdrop-blur-md ${headerBackdrop}`}
 >
   <Container class="flex items-center justify-between gap-6 py-4 lg:py-5">
-    <Logo href="#top" tone="light" />
+    <Logo href={href('#top')} tone="light" />
 
     <nav aria-label="Navegación principal" class="hidden xl:block">
       <ul class="flex items-center gap-3.5 min-[1440px]:gap-5 min-[1680px]:gap-10">

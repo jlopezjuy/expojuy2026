@@ -1,9 +1,11 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import type { TargetedSubmitEvent } from 'preact';
 import { login, getAccount } from '../../lib/api/auth';
+import { ApiError } from '../../lib/api/client';
 import { setSession } from '../../lib/auth/session';
 
 const GENERIC_ERROR = 'Usuario o contraseña incorrectos.';
+const SERVICE_ERROR = 'No pudimos conectarnos con el servidor. Probá de nuevo en unos minutos.';
 
 const inputClass =
   'min-w-0 rounded-[3px] border border-night/25 bg-cream px-4 py-3 text-body text-night placeholder:text-night/40 transition-colors duration-300 focus:border-night/60 focus:outline-none';
@@ -15,6 +17,41 @@ export default function LoginForm() {
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Bumped on every rejection so a second identical failure shakes again.
+  const [rejections, setRejections] = useState(0);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    const form = formRef.current;
+    if (!rejections || !form) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    let cancelled = false;
+    void import('motion/mini')
+      .then(({ animate }) => {
+        if (cancelled || !formRef.current) return;
+        animate(
+          formRef.current,
+          {
+            transform: [
+              'translateX(0px)',
+              'translateX(-7px)',
+              'translateX(6px)',
+              'translateX(-4px)',
+              'translateX(0px)',
+            ],
+          },
+          { duration: 0.36, ease: 'easeOut' },
+        );
+      })
+      .catch(() => {
+        // No shake if the chunk fails — the error text already carries the message.
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [rejections]);
 
   async function handleSubmit(event: TargetedSubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -27,15 +64,21 @@ export default function LoginForm() {
       const user = await getAccount(token);
       setSession(token, user, rememberMe);
       window.location.href = '/mi-cuenta';
-    } catch {
-      // Never surface the backend's actual status/message — always the generic copy.
-      setError(GENERIC_ERROR);
+    } catch (cause) {
+      // A rejected credential and an unreachable backend are different problems:
+      // saying "wrong password" when the service is down sends someone to reset a
+      // password that was never the issue. Which 4xx it was stays deliberately
+      // generic, so this still never reveals whether a username exists.
+      const rejected = cause instanceof ApiError && cause.status >= 400 && cause.status < 500;
+      setError(rejected ? GENERIC_ERROR : SERVICE_ERROR);
+      setRejections((count) => count + 1);
       setLoading(false);
     }
   }
 
   return (
     <form
+      ref={formRef}
       onSubmit={handleSubmit}
       class="flex w-full max-w-md flex-col gap-5 rounded-card border border-night/10 bg-cream-deep/60 p-6 sm:p-8"
       noValidate

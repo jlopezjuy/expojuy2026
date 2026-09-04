@@ -7,15 +7,23 @@
 import type { ImageMetadata } from 'astro';
 import sponsorCamcomext from '../assets/sponsor-camcomext.png';
 
+/**
+ * Sprint WOW-001: actualizado con la información oficial de la 17° edición
+ * (9 al 12 de octubre de 2026, Ciudad Cultural). Reemplaza los valores
+ * anteriores transcritos del mockup "Propuesta 1" — esos ya no corresponden
+ * a la fecha/sede oficiales vigentes.
+ */
 export const event = {
   name: 'ExpoJuy',
   year: '2026',
-  datesShort: '17 AL 20',
-  datesLong: 'SEPTIEMBRE 2026',
-  venue: 'PREDIO FERIAL JUJUY',
+  edition: '17°',
+  eyebrow: 'EXPOJUY 2026 · 17° EDICIÓN',
+  pillars: ['JUJUY CONECTA.', 'JUJUY PRODUCE.', 'JUJUY CREA OPORTUNIDADES.'],
+  datesShort: '9 — 12',
+  datesLong: 'OCTUBRE 2026',
+  venue: 'CIUDAD CULTURAL',
   city: 'SAN SALVADOR DE JUJUY',
-  tagline: 'Somos desarrollo, potencia y futuro.',
-  eyebrow: ['JUJUY PRODUCE.', 'JUJUY CREA.', 'JUJUY EMPRENDE.'],
+  tagline: 'Conectando países, creando oportunidades.',
 } as const;
 
 export interface NavItem {
@@ -92,10 +100,10 @@ export const products: Product[] = [
 ];
 
 export const agendaDays = [
-  { day: '17', month: 'SEPT.', label: 'Apertura' },
-  { day: '18', month: 'SEPT.', label: 'Rondas de negocios' },
-  { day: '19', month: 'SEPT.', label: 'Charlas & Talleres' },
-  { day: '20', month: 'SEPT.', label: 'Cierre & Experiencias' },
+  { day: '9', month: 'OCT.', label: 'Apertura' },
+  { day: '10', month: 'OCT.', label: 'Rondas de negocios' },
+  { day: '11', month: 'OCT.', label: 'Charlas & Talleres' },
+  { day: '12', month: 'OCT.', label: 'Cierre & Experiencias' },
 ] as const;
 
 export interface Sponsor {
