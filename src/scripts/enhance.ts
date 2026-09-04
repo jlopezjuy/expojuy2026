@@ -78,6 +78,79 @@ function initMobileNav(): void {
   });
 }
 
+/* ------------------------------------------------- filter transitions */
+/**
+ * Shared by every filterable grid (products, agenda, expositores). Cards use
+ * `.reveal` (opacity:0 until `initReveals()`'s IntersectionObserver adds
+ * `.is-visible`) — an element in `display:none` never triggers that observer,
+ * so a card hidden before being observed stays stuck at opacity:0 forever
+ * once shown again. Each filter drives visibility explicitly with Motion
+ * instead, so the end state never depends on the observer having fired.
+ *
+ * `toggle` is the element whose `hidden` attribute controls layout removal;
+ * `target` is the element that actually carries `.reveal` (usually the same
+ * element, but product cards nest it one level in — see `initFilters`).
+ */
+interface FilterEntry {
+  toggle: HTMLElement;
+  target: HTMLElement;
+}
+
+type MotionModule = typeof import('motion/mini');
+
+function loadMotion(): Promise<MotionModule | null> | null {
+  return reduceMotion.matches ? null : import('motion/mini').catch(() => null);
+}
+
+async function transitionFilterItems(
+  entering: FilterEntry[],
+  leaving: FilterEntry[],
+  motionReady: Promise<MotionModule | null> | null,
+): Promise<void> {
+  const motion = motionReady ? await motionReady : null;
+
+  if (!motion) {
+    // Reduced motion, or the animation chunk didn't load: no transition, but
+    // every card still lands in the right state — that's the actual bug this
+    // replaces, not the absence of an animation.
+    for (const { toggle, target } of entering) {
+      toggle.hidden = false;
+      target.style.opacity = '';
+      target.style.transform = '';
+    }
+    for (const { toggle } of leaving) toggle.hidden = true;
+    return;
+  }
+
+  const { animate } = motion;
+
+  for (const { toggle, target } of leaving) {
+    const played = animate(target, { opacity: 0, y: 6 }, { duration: 0.16, ease: 'easeIn' });
+    // Race against a fallback timer: if the animation never signals completion
+    // (backgrounded tab, interrupted by a fast second filter change, driver
+    // hiccup), the card must still end up hidden — correctness can't depend
+    // on the animation succeeding, only its polish can.
+    void Promise.race([played, new Promise((resolve) => setTimeout(resolve, 400))]).then(() => {
+      toggle.hidden = true;
+    });
+  }
+
+  entering.forEach(({ toggle, target }, i) => {
+    toggle.hidden = false;
+    const played = animate(
+      target,
+      { opacity: [0, 1], y: [6, 0] },
+      { duration: 0.3, delay: Math.min(i, 8) * 0.03, ease: [0.16, 1, 0.3, 1] },
+    );
+    // Same guarantee as the exit side: whatever happens to the animation, the
+    // card must not be left visible-but-invisible — that's the original bug.
+    void Promise.race([played, new Promise((resolve) => setTimeout(resolve, 700))]).then(() => {
+      target.style.opacity = '1';
+      target.style.transform = '';
+    });
+  });
+}
+
 /* ---------------------------------------------------------- filter tabs */
 function initFilters(): void {
   const group = document.getElementById('product-filters');
@@ -87,27 +160,42 @@ function initFilters(): void {
 
   const buttons = Array.from(group.querySelectorAll<HTMLButtonElement>('[data-filter]'));
   const items = Array.from(grid.querySelectorAll<HTMLElement>(':scope > [data-category]'));
+  // `ProductCard.astro`'s <figure> — not the <li> we toggle — is what carries
+  // `.reveal`, so that's what needs to be animated.
+  const targets = items.map((item) => item.querySelector<HTMLElement>('.reveal') ?? item);
 
-  const apply = (filter: string) => {
+  const motionReady = loadMotion();
+
+  const apply = async (filter: string) => {
     for (const button of buttons) {
       button.setAttribute('aria-pressed', String(button.dataset.filter === filter));
     }
 
+    const entering: FilterEntry[] = [];
+    const leaving: FilterEntry[] = [];
     let shown = 0;
-    for (const item of items) {
+
+    items.forEach((item, i) => {
       const match = filter === 'todos' || item.dataset.category === filter;
-      item.hidden = !match;
-      if (match) shown += 1;
-    }
+      const entry = { toggle: item, target: targets[i] };
+      if (match) {
+        shown += 1;
+        if (item.hidden) entering.push(entry);
+      } else if (!item.hidden) {
+        leaving.push(entry);
+      }
+    });
 
     if (status) {
       status.textContent = `${shown} ${shown === 1 ? 'emprendimiento' : 'emprendimientos'} en pantalla.`;
     }
+
+    await transitionFilterItems(entering, leaving, motionReady);
   };
 
   group.addEventListener('click', (e) => {
     const button = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-filter]');
-    if (button?.dataset.filter) apply(button.dataset.filter);
+    if (button?.dataset.filter) void apply(button.dataset.filter);
   });
 }
 
@@ -116,13 +204,8 @@ function initFilters(): void {
  * Combiña dos grupos de filtro (día + jornada) sobre la grilla de la agenda
  * (`#agenda-grid`). Es un filtro independiente del de productos: `initFilters()`
  * queda intacto para no arriesgar su prueba. Sin JS la lista completa es visible.
- *
- * Las tarjetas llevan `.reveal` (opacity:0 hasta que el IntersectionObserver de
- * `initReveals()` agrega `.is-visible`). Un elemento en `display:none` nunca
- * dispara ese observer — si una tarjeta pasa a `hidden` antes de haber sido
- * observada, al volverla a mostrar queda trabada en opacity:0 para siempre.
- * Por eso este filtro no delega la visibilidad en `.reveal`: la anima de forma
- * explícita con Motion, así el estado final no depende del observer.
+ * Transición de entrada/salida delegada en `transitionFilterItems` — ver su
+ * comentario para el porqué de animar la opacidad explícitamente.
  */
 function initAgendaFilter(): void {
   const dayGroup = document.getElementById('agenda-days');
@@ -138,9 +221,7 @@ function initAgendaFilter(): void {
   let dayFilter = 'todos';
   let trackFilter = 'todos';
 
-  // Fetched once, in parallel with the first render — not on first click — so
-  // the chunk is usually already in cache by the time someone taps a filter.
-  const motionReady = reduceMotion.matches ? null : import('motion/mini').catch(() => null);
+  const motionReady = loadMotion();
 
   const apply = async () => {
     for (const button of dayButtons) {
@@ -150,20 +231,21 @@ function initAgendaFilter(): void {
       button.setAttribute('aria-pressed', String(button.dataset.track === trackFilter));
     }
 
-    const entering: HTMLElement[] = [];
-    const leaving: HTMLElement[] = [];
+    const entering: FilterEntry[] = [];
+    const leaving: FilterEntry[] = [];
     let shown = 0;
 
     for (const item of items) {
       const matchDay = dayFilter === 'todos' || item.dataset.day === dayFilter;
       const matchTrack = trackFilter === 'todos' || item.dataset.track === trackFilter;
       const match = matchDay && matchTrack;
+      const entry = { toggle: item, target: item };
 
       if (match) {
         shown += 1;
-        if (item.hidden) entering.push(item);
+        if (item.hidden) entering.push(entry);
       } else if (!item.hidden) {
-        leaving.push(item);
+        leaving.push(entry);
       }
     }
 
@@ -171,48 +253,7 @@ function initAgendaFilter(): void {
       status.textContent = `${shown} ${shown === 1 ? 'actividad' : 'actividades'} en pantalla.`;
     }
 
-    const motion = motionReady ? await motionReady : null;
-
-    if (!motion) {
-      // Reduced motion, or the animation chunk didn't load: no transition,
-      // but every card still lands in the right state — that's the actual
-      // bug this replaces, not the absence of an animation.
-      for (const item of entering) {
-        item.hidden = false;
-        item.style.opacity = '';
-        item.style.transform = '';
-      }
-      for (const item of leaving) item.hidden = true;
-      return;
-    }
-
-    const { animate } = motion;
-
-    for (const item of leaving) {
-      const played = animate(item, { opacity: 0, y: 6 }, { duration: 0.16, ease: 'easeIn' });
-      // Race against a fallback timer: if the animation never signals completion
-      // (backgrounded tab, interrupted by a fast second click, driver hiccup),
-      // the card must still end up hidden — correctness can't depend on the
-      // animation succeeding, only its polish can.
-      void Promise.race([played, new Promise((resolve) => setTimeout(resolve, 400))]).then(() => {
-        item.hidden = true;
-      });
-    }
-
-    entering.forEach((item, i) => {
-      item.hidden = false;
-      const played = animate(
-        item,
-        { opacity: [0, 1], y: [6, 0] },
-        { duration: 0.3, delay: Math.min(i, 8) * 0.03, ease: [0.16, 1, 0.3, 1] },
-      );
-      // Same guarantee as the exit side: whatever happens to the animation,
-      // the card must not be left visible-but-invisible — that's the original bug.
-      void Promise.race([played, new Promise((resolve) => setTimeout(resolve, 700))]).then(() => {
-        item.style.opacity = '1';
-        item.style.transform = '';
-      });
-    });
+    await transitionFilterItems(entering, leaving, motionReady);
   };
 
   dayGroup.addEventListener('click', (e) => {
@@ -354,7 +395,7 @@ function initParallax(): void {
 function initExpositoresFilter(): void {
   const searchInput = document.getElementById('search-expositores') as HTMLInputElement | null;
   const filterButtons = document.querySelectorAll<HTMLButtonElement>('[data-rubro-filter]');
-  const cards = document.querySelectorAll<HTMLElement>('[data-expositor-card]');
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-expositor-card]'));
   const counter = document.getElementById('expositores-counter');
   const emptyState = document.getElementById('no-expositores');
 
@@ -363,23 +404,28 @@ function initExpositoresFilter(): void {
   let activeRubro = 'Todos';
   let searchTerm = '';
 
-  const applyFilters = () => {
+  const motionReady = loadMotion();
+
+  const applyFilters = async () => {
+    const entering: FilterEntry[] = [];
+    const leaving: FilterEntry[] = [];
     let visibleCount = 0;
 
-    cards.forEach((card) => {
+    for (const card of cards) {
       const cardRubro = card.getAttribute('data-rubro') || '';
       const searchText = card.getAttribute('data-search-text') || '';
-
       const matchesRubro = activeRubro === 'Todos' || cardRubro === activeRubro;
       const matchesSearch = !searchTerm || searchText.includes(searchTerm);
+      const match = matchesRubro && matchesSearch;
+      const entry = { toggle: card, target: card };
 
-      if (matchesRubro && matchesSearch) {
-        card.style.display = '';
-        visibleCount++;
-      } else {
-        card.style.display = 'none';
+      if (match) {
+        visibleCount += 1;
+        if (card.hidden) entering.push(entry);
+      } else if (!card.hidden) {
+        leaving.push(entry);
       }
-    });
+    }
 
     if (counter) {
       counter.textContent = `Mostrando ${visibleCount} de ${cards.length} expositores`;
@@ -392,12 +438,14 @@ function initExpositoresFilter(): void {
         emptyState.classList.add('hidden');
       }
     }
+
+    await transitionFilterItems(entering, leaving, motionReady);
   };
 
   if (searchInput) {
     searchInput.addEventListener('input', () => {
       searchTerm = searchInput.value.trim().toLowerCase();
-      applyFilters();
+      void applyFilters();
     });
   }
 
@@ -417,7 +465,7 @@ function initExpositoresFilter(): void {
         }
       });
 
-      applyFilters();
+      void applyFilters();
     });
   });
 }
