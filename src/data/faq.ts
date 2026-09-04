@@ -14,12 +14,12 @@ export const faq: FaqItem[] = [
   {
     question: '¿Cuáles son los días y horarios de apertura de ExpoJuy 2026?',
     answer:
-      'La muestra ferial se desarrollará del jueves 17 al domingo 20 de septiembre de 2026 inclusive. El predio estará abierto al público general y comitivas comerciales todos los días de 10:00 a 22:00 hs de manera ininterrumpida.',
+      'La muestra ferial se desarrollará del viernes 9 al lunes 12 de octubre de 2026 inclusive. El predio estará abierto al público general y comitivas comerciales todos los días de 10:00 a 22:00 hs de manera ininterrumpida.',
   },
   {
     question: '¿Dónde se realiza la exposición y cómo llegar al predio?',
     answer:
-      'Tendrá lugar en el Predio Ferial Jujuy, ubicado en San Salvador de Jujuy. El recinto cuenta con conexión directa a través de las principales avenidas y autopistas de circunvalación, con paradas especiales de transporte público de pasajeros y servicios de colectivos interurbanos durante las cuatro jornadas.',
+      'Tendrá lugar en Ciudad Cultural, ubicada en San Salvador de Jujuy. El recinto cuenta con conexión directa a través de las principales avenidas y autopistas de circunvalación, con paradas especiales de transporte público de pasajeros y servicios de colectivos interurbanos durante las cuatro jornadas.',
   },
   {
     question: '¿Cómo adquirir las entradas y qué costo tienen?',
@@ -34,7 +34,7 @@ export const faq: FaqItem[] = [
   {
     question: '¿Hay estacionamiento disponible dentro del predio?',
     answer:
-      'Sí, el Predio Ferial Jujuy dispone de una amplia playa de estacionamiento custodiada con capacidad para más de 1.500 vehículos, que incluye sectores exclusivos y señalizados con prioridad para personas con movilidad reducida y comitivas oficiales.',
+      'Sí, Ciudad Cultural dispone de una amplia playa de estacionamiento custodiada con capacidad para más de 1.500 vehículos, que incluye sectores exclusivos y señalizados con prioridad para personas con movilidad reducida y comitivas oficiales.',
   },
   {
     question: '¿Qué sectores y rubros productivos se encuentran en la muestra?',

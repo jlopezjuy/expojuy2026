@@ -24,8 +24,13 @@ const formatDate = (date: Date) =>
 <BaseLayout title={`${articulo.data.title} — ExpoJuy 2026`} description={articulo.data.description}>
   <Header />
 
+  {/* Progreso de lectura, cero JavaScript: se apoya en scroll-driven animations
+      de CSS. Donde no hay soporte la barra directamente no se renderiza, en vez
+      de quedar una barra vacía que nunca avanza. */}
+  <div class="reading-progress" aria-hidden="true"></div>
+
   <main id="main">
-    <article class="bg-cream pb-16 lg:pb-20">
+    <article class="bg-cream pt-28 pb-16 sm:pt-32 lg:pt-36 lg:pb-24">
       <Container width="normal">
         <header class="reveal">
           <ButtonLink href="/noticias" variant="outline" class="w-fit">
@@ -54,6 +59,43 @@ const formatDate = (date: Date) =>
 </BaseLayout>
 
 <style>
+  /* Sin soporte de scroll timeline no se muestra nada: una barra que no avanza
+     comunica peor que la ausencia de barra. */
+  .reading-progress {
+    display: none;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .reading-progress {
+      position: fixed;
+      inset-inline: 0;
+      top: 0;
+      z-index: 60;
+      display: block;
+      height: 2px;
+      transform-origin: left center;
+      scale: 0 1;
+      background: linear-gradient(90deg, var(--color-magenta), var(--color-gold-bright));
+      animation: reading-progress linear;
+      animation-timeline: scroll();
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reading-progress {
+        display: none;
+      }
+    }
+  }
+
+  @keyframes reading-progress {
+    from {
+      scale: 0 1;
+    }
+    to {
+      scale: 1 1;
+    }
+  }
+
   .news-body :global(p) {
     margin-top: 0;
     margin-bottom: 1rem;

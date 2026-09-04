@@ -15,16 +15,22 @@ interface Props {
 const { href, variant = 'outline', class: className = '', ariaLabel } = Astro.props;
 
 const base =
-  'group inline-flex items-center justify-center gap-3 text-[0.7rem] font-bold tracking-[0.16em] uppercase transition duration-300 ease-out';
+  'group inline-flex items-center justify-center gap-3 text-[0.7rem] font-bold tracking-[0.16em] uppercase transition duration-300 ease-out focus-visible:outline-none';
 
+// Each variant's focus-visible ring reuses that variant's own hover accent
+// color, so it stays legible against the specific surface the variant is
+// actually placed on (dark header/photo surfaces for pill/ghost, cream
+// sections for outline). `solid` appears on both light and dark sections, so
+// its ring is anchored to its own gold-bright fill instead of the page
+// background — that keeps ≥3:1 contrast regardless of what's behind it.
 const variants = {
-  pill: 'rounded-full border border-white/45 bg-night/45 px-6 py-3 text-white backdrop-blur-sm hover:border-white hover:bg-white hover:text-night',
+  pill: 'rounded-full border border-white/45 bg-night/45 px-6 py-3 text-white backdrop-blur-sm hover:border-white hover:bg-white hover:text-night focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-night',
   outline:
-    'border border-night/30 px-7 py-3.5 text-night hover:border-night hover:bg-night hover:text-cream',
+    'border border-night/30 px-7 py-3.5 text-night hover:border-night hover:bg-night hover:text-cream focus-visible:ring-2 focus-visible:ring-night focus-visible:ring-offset-2 focus-visible:ring-offset-cream',
   ghost:
-    'border border-white/55 px-6 py-3 text-white hover:border-white hover:bg-white hover:text-night',
+    'border border-white/55 px-6 py-3 text-white hover:border-white hover:bg-white hover:text-night focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-night',
   solid:
-    'bg-gold-bright px-7 py-3.5 text-night shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)] hover:bg-white',
+    'bg-gold-bright px-7 py-3.5 text-night shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)] hover:bg-white focus-visible:ring-2 focus-visible:ring-night focus-visible:ring-offset-2 focus-visible:ring-offset-gold-bright',
 } as const;
 ---
 

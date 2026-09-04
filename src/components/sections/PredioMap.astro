@@ -12,7 +12,7 @@ interface Props {
 const { headingLevel = 'h1' } = Astro.props;
 ---
 
-<section class="bg-cream pb-16 lg:pb-20" aria-labelledby="plano-title">
+<section class="bg-cream pt-28 pb-16 sm:pt-32 lg:pt-36 lg:pb-24" aria-labelledby="plano-title">
   <Container width="normal">
     <div class="reveal">
       <SectionHeading
@@ -45,9 +45,10 @@ const { headingLevel = 'h1' } = Astro.props;
           {/* Límite perimetral del predio */}
           <rect x="20" y="30" width="960" height="560" rx="24" fill="var(--color-cream)" stroke="var(--color-night)" stroke-opacity="0.15" stroke-width="2" />
           
-          {/* Vías peatonales principales */}
-          <path d="M160 310H920" stroke="var(--color-night)" stroke-opacity="0.1" stroke-width="4" stroke-dasharray="10 8" fill="none" />
-          <path d="M520 180V470" stroke="var(--color-night)" stroke-opacity="0.1" stroke-width="4" stroke-dasharray="10 8" fill="none" />
+          {/* Vías peatonales principales. `data-path` las marca para el trazado
+              animado al entrar en pantalla (ver initVenueMap en enhance.ts). */}
+          <path data-venue-path d="M160 310H920" stroke="var(--color-night)" stroke-opacity="0.1" stroke-width="4" stroke-dasharray="10 8" fill="none" />
+          <path data-venue-path d="M520 180V470" stroke="var(--color-night)" stroke-opacity="0.1" stroke-width="4" stroke-dasharray="10 8" fill="none" />
 
           {/* Renderizado vectorial de cada pabellón/zona */}
           {
@@ -84,6 +85,11 @@ const { headingLevel = 'h1' } = Astro.props;
         </svg>
 
         {/* Botones/Marcadores interactivos superpuestos */}
+        {/* El pin se ancla a la esquina superior izquierda del pabellón, no a su
+            centro: `zone.x`/`zone.y` apuntan al centro del rectángulo, que es
+            exactamente donde va la etiqueta — el pin la partía al medio (se leía
+            "INGE(1)OFICIAL"). Las coordenadas salen del mismo rect del SVG, así no
+            quedan dos fuentes de verdad que se desincronicen. viewBox: 1000x620. */}
         {
           planoZones.map((zone, i) => (
             <button
@@ -99,7 +105,7 @@ const { headingLevel = 'h1' } = Astro.props;
               class={`absolute z-10 grid h-8 w-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-2 border-white font-display text-xs font-bold shadow-md transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-magenta ${
                 i === 0 ? 'bg-magenta text-white ring-2 ring-magenta/40' : 'bg-night text-cream hover:bg-magenta'
               }`}
-              style={`left:${zone.x}%; top:${zone.y}%`}
+              style={`left:${((zone.svg.x + 22) / 1000) * 100}%; top:${((zone.svg.y + 22) / 620) * 100}%`}
             >
               {i + 1}
               <span class="sr-only">{zone.name}</span>

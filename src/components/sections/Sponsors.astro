@@ -15,30 +15,112 @@ import Container from '../layout/Container.astro';
 
     {/* Entidades y patrocinadores oficiales de ExpoJuy 2026. La Cámara de Comercio Exterior
         se renderiza con su imagotipo vectorial oficial, y las restantes entidades con
-        wordmarks tipográficos institucionales de alto contraste. */}
-    <ul
-      class="rail -mx-gutter w-full items-center gap-8 px-gutter lg:mx-0 lg:flex-wrap lg:justify-between lg:overflow-visible lg:px-0 lg:[mask-image:none] lg:[-webkit-mask-image:none]"
-      tabindex="0"
-      aria-label="Acompañan"
-    >
-      {
-        sponsors.map((sponsor) => (
-          <li class="flex items-center">
-            {sponsor.logo ? (
-              <Image
-                src={sponsor.logo}
-                alt={sponsor.name}
-                width={120}
-                class="h-8 w-auto object-contain grayscale transition-[filter] duration-300 hover:grayscale-0"
-              />
-            ) : (
-              <span class="text-center text-[0.72rem] leading-tight font-bold tracking-[0.05em] whitespace-nowrap text-night/70 uppercase grayscale transition-colors duration-300 hover:text-night/85">
-                {sponsor.name}
-              </span>
-            )}
-          </li>
-        ))
-      }
-    </ul>
+        wordmarks tipográficos institucionales de alto contraste.
+
+        Desde `lg` la fila se convierte en marquesina continua: la lista real se duplica
+        una sola vez (la copia va `aria-hidden`, nunca la lee un lector de pantalla) y
+        ambas pistas se desplazan a la par, lo que da el bucle sin costura. Por debajo de
+        `lg` queda el rail original, desplazable con el dedo: movimiento permanente en
+        mobile gasta batería y no aporta nada. */}
+    <div class="sponsors-viewport w-full">
+      <ul
+        class="sponsors-track rail -mx-gutter w-full items-center gap-8 px-gutter lg:mx-0 lg:overflow-visible lg:px-0 lg:[mask-image:none] lg:[-webkit-mask-image:none]"
+        tabindex="0"
+        aria-label="Acompañan"
+      >
+        {
+          sponsors.map((sponsor) => (
+            <li class="flex items-center">
+              {sponsor.logo ? (
+                <Image
+                  src={sponsor.logo}
+                  alt={sponsor.name}
+                  width={120}
+                  class="h-8 w-auto object-contain grayscale transition-[filter] duration-300 hover:grayscale-0"
+                />
+              ) : (
+                <span class="text-center text-[0.72rem] leading-tight font-bold tracking-[0.05em] whitespace-nowrap text-night/70 uppercase grayscale transition-colors duration-300 hover:text-night/85">
+                  {sponsor.name}
+                </span>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+
+      <ul class="sponsors-track sponsors-track--clone items-center gap-8" aria-hidden="true">
+        {
+          sponsors.map((sponsor) => (
+            <li class="flex items-center">
+              {sponsor.logo ? (
+                <Image
+                  src={sponsor.logo}
+                  alt=""
+                  width={120}
+                  class="h-8 w-auto object-contain grayscale transition-[filter] duration-300 hover:grayscale-0"
+                />
+              ) : (
+                <span class="text-center text-[0.72rem] leading-tight font-bold tracking-[0.05em] whitespace-nowrap text-night/70 uppercase grayscale transition-colors duration-300 hover:text-night/85">
+                  {sponsor.name}
+                </span>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
   </Container>
 </section>
+
+<style>
+  /* La copia sólo existe para el bucle: sin marquesina, estorba. */
+  .sponsors-track--clone {
+    display: none;
+  }
+
+  @media (min-width: 64rem) {
+    .sponsors-viewport {
+      display: flex;
+      overflow: hidden;
+      gap: 2rem;
+    }
+
+    .sponsors-track {
+      display: flex;
+      flex: 0 0 auto;
+      justify-content: space-around;
+      min-width: 100%;
+      animation: sponsors-scroll 45s linear infinite;
+    }
+
+    .sponsors-track--clone {
+      display: flex;
+    }
+
+    /* Pausa al pasar el mouse o al tabular hacia un logo: si alguien quiere
+       mirar un patrocinador, el movimiento deja de pelearle. */
+    .sponsors-viewport:hover .sponsors-track,
+    .sponsors-viewport:focus-within .sponsors-track {
+      animation-play-state: paused;
+    }
+  }
+
+  @keyframes sponsors-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - 2rem));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sponsors-track {
+      animation: none;
+    }
+
+    .sponsors-track--clone {
+      display: none;
+    }
+  }
+</style>

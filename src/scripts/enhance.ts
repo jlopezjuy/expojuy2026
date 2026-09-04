@@ -52,29 +52,164 @@ function initMobileNav(): void {
   const panel = document.getElementById('mobile-nav');
   if (!toggle || !panel) return;
 
-  const setOpen = (open: boolean) => {
+  const rows = Array.from(panel.querySelectorAll<HTMLElement>('li'));
+  const motionReady = loadMotion();
+  // Opening and closing overlap if the button is tapped twice quickly; only the
+  // most recent intent may flip `hidden`, or a stale close can hide a fresh open.
+  let intent = 0;
+
+  const setOpen = async (open: boolean) => {
+    const generation = ++intent;
     toggle.setAttribute('aria-expanded', String(open));
-    panel.hidden = !open;
     toggle.querySelector('.sr-only')!.textContent = open ? 'Cerrar menú' : 'Abrir menú';
     document.documentElement.style.overflow = open ? 'hidden' : '';
+
+    const motion = motionReady ? await motionReady : null;
+    if (generation !== intent) return;
+
+    if (!motion) {
+      panel.hidden = !open;
+      for (const row of rows) {
+        row.style.opacity = '';
+        row.style.transform = '';
+      }
+      return;
+    }
+
+    const { animate } = motion;
+
+    if (open) {
+      panel.hidden = false;
+      animate(
+        panel,
+        { opacity: [0, 1], transform: ['translateY(-10px)', 'translateY(0px)'] },
+        { duration: 0.26, ease: [0.16, 1, 0.3, 1] },
+      );
+      rows.forEach((row, i) => {
+        const played = animate(
+          row,
+          { opacity: [0, 1], transform: ['translateX(-14px)', 'translateX(0px)'] },
+          { duration: 0.3, delay: 0.06 + i * 0.03, ease: [0.16, 1, 0.3, 1] },
+        );
+        void Promise.race([played, timeout(700)]).then(() => {
+          row.style.opacity = '1';
+          row.style.transform = '';
+        });
+      });
+      return;
+    }
+
+    const played = animate(
+      panel,
+      { opacity: 0, transform: 'translateY(-10px)' },
+      { duration: 0.18, ease: 'easeIn' },
+    );
+    void Promise.race([played, timeout(400)]).then(() => {
+      if (generation === intent) panel.hidden = true;
+    });
   };
 
   toggle.addEventListener('click', () => {
-    setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    void setOpen(toggle.getAttribute('aria-expanded') !== 'true');
   });
 
-  panel.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false)));
+  panel.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => void setOpen(false)));
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
-      setOpen(false);
+      void setOpen(false);
       (toggle as HTMLButtonElement).focus();
     }
   });
 
   // The panel is desktop-hidden by CSS; make sure state resets on resize.
   window.matchMedia('(min-width: 80rem)').addEventListener('change', (e) => {
-    if (e.matches) setOpen(false);
+    if (e.matches) void setOpen(false);
+  });
+}
+
+/* ------------------------------------------------- filter transitions */
+/**
+ * Shared by every filterable grid (products, agenda, expositores). Cards use
+ * `.reveal` (opacity:0 until `initReveals()`'s IntersectionObserver adds
+ * `.is-visible`) — an element in `display:none` never triggers that observer,
+ * so a card hidden before being observed stays stuck at opacity:0 forever
+ * once shown again. Each filter drives visibility explicitly with Motion
+ * instead, so the end state never depends on the observer having fired.
+ *
+ * `toggle` is the element whose `hidden` attribute controls layout removal;
+ * `target` is the element that actually carries `.reveal` (usually the same
+ * element, but product cards nest it one level in — see `initFilters`).
+ */
+interface FilterEntry {
+  toggle: HTMLElement;
+  target: HTMLElement;
+}
+
+type MotionModule = typeof import('motion/mini');
+
+function loadMotion(): Promise<MotionModule | null> | null {
+  return reduceMotion.matches ? null : import('motion/mini').catch(() => null);
+}
+
+/** Safety net for every `Promise.race` below — see `transitionFilterItems`. */
+function timeout(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function transitionFilterItems(
+  entering: FilterEntry[],
+  leaving: FilterEntry[],
+  motionReady: Promise<MotionModule | null> | null,
+): Promise<void> {
+  const motion = motionReady ? await motionReady : null;
+
+  if (!motion) {
+    // Reduced motion, or the animation chunk didn't load: no transition, but
+    // every card still lands in the right state — that's the actual bug this
+    // replaces, not the absence of an animation.
+    for (const { toggle, target } of entering) {
+      toggle.hidden = false;
+      target.style.opacity = '';
+      target.style.transform = '';
+    }
+    for (const { toggle } of leaving) toggle.hidden = true;
+    return;
+  }
+
+  const { animate } = motion;
+
+  // NOTE: `motion/mini` maps keys straight to CSS/SVG attributes — `x`/`y` there
+  // are the SVG geometry attributes, not transform shorthands, and would be inert
+  // on an HTML element. Transforms have to be written out.
+  for (const { toggle, target } of leaving) {
+    const played = animate(
+      target,
+      { opacity: 0, transform: 'translateY(6px)' },
+      { duration: 0.16, ease: 'easeIn' },
+    );
+    // Race against a fallback timer: if the animation never signals completion
+    // (backgrounded tab, interrupted by a fast second filter change, driver
+    // hiccup), the card must still end up hidden — correctness can't depend
+    // on the animation succeeding, only its polish can.
+    void Promise.race([played, timeout(400)]).then(() => {
+      toggle.hidden = true;
+    });
+  }
+
+  entering.forEach(({ toggle, target }, i) => {
+    toggle.hidden = false;
+    const played = animate(
+      target,
+      { opacity: [0, 1], transform: ['translateY(6px)', 'translateY(0px)'] },
+      { duration: 0.3, delay: Math.min(i, 8) * 0.03, ease: [0.16, 1, 0.3, 1] },
+    );
+    // Same guarantee as the exit side: whatever happens to the animation, the
+    // card must not be left visible-but-invisible — that's the original bug.
+    void Promise.race([played, timeout(700)]).then(() => {
+      target.style.opacity = '1';
+      target.style.transform = '';
+    });
   });
 }
 
@@ -87,27 +222,42 @@ function initFilters(): void {
 
   const buttons = Array.from(group.querySelectorAll<HTMLButtonElement>('[data-filter]'));
   const items = Array.from(grid.querySelectorAll<HTMLElement>(':scope > [data-category]'));
+  // `ProductCard.astro`'s <figure> — not the <li> we toggle — is what carries
+  // `.reveal`, so that's what needs to be animated.
+  const targets = items.map((item) => item.querySelector<HTMLElement>('.reveal') ?? item);
 
-  const apply = (filter: string) => {
+  const motionReady = loadMotion();
+
+  const apply = async (filter: string) => {
     for (const button of buttons) {
       button.setAttribute('aria-pressed', String(button.dataset.filter === filter));
     }
 
+    const entering: FilterEntry[] = [];
+    const leaving: FilterEntry[] = [];
     let shown = 0;
-    for (const item of items) {
+
+    items.forEach((item, i) => {
       const match = filter === 'todos' || item.dataset.category === filter;
-      item.hidden = !match;
-      if (match) shown += 1;
-    }
+      const entry = { toggle: item, target: targets[i] };
+      if (match) {
+        shown += 1;
+        if (item.hidden) entering.push(entry);
+      } else if (!item.hidden) {
+        leaving.push(entry);
+      }
+    });
 
     if (status) {
       status.textContent = `${shown} ${shown === 1 ? 'emprendimiento' : 'emprendimientos'} en pantalla.`;
     }
+
+    await transitionFilterItems(entering, leaving, motionReady);
   };
 
   group.addEventListener('click', (e) => {
     const button = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-filter]');
-    if (button?.dataset.filter) apply(button.dataset.filter);
+    if (button?.dataset.filter) void apply(button.dataset.filter);
   });
 }
 
@@ -116,6 +266,8 @@ function initFilters(): void {
  * Combiña dos grupos de filtro (día + jornada) sobre la grilla de la agenda
  * (`#agenda-grid`). Es un filtro independiente del de productos: `initFilters()`
  * queda intacto para no arriesgar su prueba. Sin JS la lista completa es visible.
+ * Transición de entrada/salida delegada en `transitionFilterItems` — ver su
+ * comentario para el porqué de animar la opacidad explícitamente.
  */
 function initAgendaFilter(): void {
   const dayGroup = document.getElementById('agenda-days');
@@ -131,7 +283,9 @@ function initAgendaFilter(): void {
   let dayFilter = 'todos';
   let trackFilter = 'todos';
 
-  const apply = () => {
+  const motionReady = loadMotion();
+
+  const apply = async () => {
     for (const button of dayButtons) {
       button.setAttribute('aria-pressed', String(button.dataset.day === dayFilter));
     }
@@ -139,25 +293,36 @@ function initAgendaFilter(): void {
       button.setAttribute('aria-pressed', String(button.dataset.track === trackFilter));
     }
 
+    const entering: FilterEntry[] = [];
+    const leaving: FilterEntry[] = [];
     let shown = 0;
+
     for (const item of items) {
       const matchDay = dayFilter === 'todos' || item.dataset.day === dayFilter;
       const matchTrack = trackFilter === 'todos' || item.dataset.track === trackFilter;
       const match = matchDay && matchTrack;
-      item.hidden = !match;
-      if (match) shown += 1;
+      const entry = { toggle: item, target: item };
+
+      if (match) {
+        shown += 1;
+        if (item.hidden) entering.push(entry);
+      } else if (!item.hidden) {
+        leaving.push(entry);
+      }
     }
 
     if (status) {
       status.textContent = `${shown} ${shown === 1 ? 'actividad' : 'actividades'} en pantalla.`;
     }
+
+    await transitionFilterItems(entering, leaving, motionReady);
   };
 
   dayGroup.addEventListener('click', (e) => {
     const day = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-day]')?.dataset.day;
     if (day) {
       dayFilter = day;
-      apply();
+      void apply();
     }
   });
 
@@ -165,7 +330,7 @@ function initAgendaFilter(): void {
     const track = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-track]')?.dataset.track;
     if (track) {
       trackFilter = track;
-      apply();
+      void apply();
     }
   });
 }
@@ -191,7 +356,75 @@ function initVenueMap(): void {
   const cardStands = document.getElementById('zone-card-stands');
   const cardExpositores = document.getElementById('zone-card-expositores');
 
+  const motionReady = loadMotion();
+
+  /**
+   * Traza las vías peatonales cuando el plano entra en pantalla. Las vías ya son
+   * punteadas (`stroke-dasharray="10 8"`), así que para dibujarlas hay que pisar
+   * el patrón con un guión del largo total, animar el offset y recién ahí
+   * devolver el punteado original.
+   */
+  const drawPaths = async () => {
+    const paths = Array.from(wrapper.querySelectorAll<SVGPathElement>('[data-venue-path]'));
+    if (!paths.length) return;
+
+    const motion = motionReady ? await motionReady : null;
+    if (!motion) return; // motion reducido: las vías ya están dibujadas
+
+    const { animate } = motion;
+    paths.forEach((path, i) => {
+      const dotted = path.getAttribute('stroke-dasharray');
+      const length = path.getTotalLength();
+      path.style.strokeDasharray = `${length}`;
+      const played = animate(
+        path,
+        { strokeDashoffset: [length, 0] },
+        { duration: 0.7, delay: i * 0.12, ease: 'easeOut' },
+      );
+      void Promise.race([played, timeout(1400)]).then(() => {
+        path.style.strokeDashoffset = '';
+        path.style.strokeDasharray = dotted ?? '';
+      });
+    });
+  };
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          observer.unobserve(entry.target);
+          void drawPaths();
+        }
+      },
+      { threshold: 0.25 },
+    );
+    observer.observe(wrapper);
+  } else {
+    void drawPaths();
+  }
+
+  /** Pulso sobre el pabellón elegido: conecta el pin con su zona en el plano. */
+  const pulseZone = async (zoneId: string) => {
+    const shape = wrapper.querySelector<SVGRectElement>(`#svg-zone-${zoneId} rect`);
+    if (!shape) return;
+
+    const motion = motionReady ? await motionReady : null;
+    if (!motion) return;
+
+    const { animate } = motion;
+    const played = animate(
+      shape,
+      { fillOpacity: [0.16, 0.42, 0.16] },
+      { duration: 0.75, ease: 'easeOut' },
+    );
+    void Promise.race([played, timeout(1200)]).then(() => {
+      shape.style.fillOpacity = '';
+    });
+  };
+
   const select = (button: HTMLButtonElement) => {
+    void pulseZone(button.dataset.zone ?? '');
     for (const b of buttons) {
       const active = b === button;
       b.setAttribute('aria-pressed', String(active));
@@ -229,14 +462,20 @@ function initVenueMap(): void {
 
 /* --------------------------------------------------------------- accordion */
 /**
- * FAQ disclosure. Markup is native <details>/<summary> so the accordion works
- * without JS; this routine only keeps the aria-expanded state in sync with the
- * open attribute for assistive tech. It is also a progressive enhancement for
- * any `<details data-accordion>` element, not just the FAQ.
+ * FAQ disclosure. Markup is native <details>/<summary>, so the accordion works
+ * without JS and keeps its semantics for assistive tech; this routine syncs
+ * aria-expanded and adds the height interpolation the native element doesn't do
+ * (a browser snaps <details> open, it never animates it).
+ *
+ * Closing has to be intercepted: the browser collapses the panel the instant
+ * `open` flips, so we cancel the default, play the collapse, and only then
+ * flip the attribute.
  */
 function initAccordion(): void {
   const items = document.querySelectorAll<HTMLDetailsElement>('[data-accordion]');
   if (!items.length) return;
+
+  const motionReady = loadMotion();
 
   const sync = (item: HTMLDetailsElement) => {
     const toggle = item.querySelector<HTMLElement>('[data-accordion-toggle]');
@@ -246,6 +485,68 @@ function initAccordion(): void {
   items.forEach((item) => {
     sync(item);
     item.addEventListener('toggle', () => sync(item));
+
+    const summary = item.querySelector<HTMLElement>('summary');
+    const panel = summary?.nextElementSibling as HTMLElement | null;
+    if (!summary || !panel) return;
+
+    // Only the most recent interaction may settle the panel's final state.
+    let intent = 0;
+
+    summary.addEventListener('click', (event) => {
+      if (!motionReady) return; // reduced motion: leave the native behaviour alone
+
+      event.preventDefault();
+      const generation = ++intent;
+      const opening = !item.open;
+
+      void motionReady.then((motion) => {
+        if (generation !== intent) return;
+
+        if (!motion) {
+          item.open = opening;
+          return;
+        }
+
+        const { animate } = motion;
+
+        if (opening) {
+          item.open = true;
+          sync(item);
+          const full = panel.scrollHeight;
+          panel.style.overflow = 'hidden';
+          const played = animate(
+            panel,
+            { height: [0, `${full}px`], opacity: [0, 1] },
+            { duration: 0.32, ease: [0.16, 1, 0.3, 1] },
+          );
+          void Promise.race([played, timeout(700)]).then(() => {
+            if (generation !== intent) return;
+            // Back to `auto` so the answer can reflow (resize, font swap).
+            panel.style.height = '';
+            panel.style.overflow = '';
+            panel.style.opacity = '';
+          });
+          return;
+        }
+
+        const full = panel.scrollHeight;
+        panel.style.overflow = 'hidden';
+        const played = animate(
+          panel,
+          { height: [`${full}px`, 0], opacity: [1, 0] },
+          { duration: 0.24, ease: 'easeIn' },
+        );
+        void Promise.race([played, timeout(600)]).then(() => {
+          if (generation !== intent) return;
+          item.open = false;
+          sync(item);
+          panel.style.height = '';
+          panel.style.overflow = '';
+          panel.style.opacity = '';
+        });
+      });
+    });
   });
 }
 
@@ -288,11 +589,57 @@ function initParallax(): void {
   window.addEventListener('resize', onScroll, { passive: true });
 }
 
+/* --------------------------------------------------------- smooth scroll */
+/**
+ * Lenis, con todas las compuertas puestas y en este orden por algo:
+ *
+ * - Sólo en la portada (se detecta por el parallax del hero): es la única página
+ *   larga y con capas cuyo ritmo mejora con inercia. En páginas utilitarias
+ *   (formularios, agenda, mapa) el scroll suave estorba y no aporta.
+ * - Sólo con puntero fino y ≥1024px: en touch el sistema operativo ya tiene su
+ *   propio motor de inercia, mejor que cualquier librería, y pisarlo se siente
+ *   como scroll hijacking además de gastar batería.
+ * - Nunca con `prefers-reduced-motion`.
+ *
+ * Si alguna compuerta falla no se descarga el chunk siquiera.
+ */
+function initSmoothScroll(): void {
+  if (!document.querySelector('[data-parallax]')) return;
+  if (reduceMotion.matches) return;
+  if (!window.matchMedia('(min-width: 64rem) and (pointer: fine)').matches) return;
+
+  void import('lenis')
+    .then(({ default: Lenis }) => {
+      const lenis = new Lenis({ duration: 1.05, smoothWheel: true, touchMultiplier: 0 });
+      const frame = (time: number) => {
+        lenis.raf(time);
+        requestAnimationFrame(frame);
+      };
+      requestAnimationFrame(frame);
+
+      // Las anclas del header (#la-expo, #territorios…) tienen que seguir yendo a
+      // donde dicen: sin esto Lenis y el scroll nativo se pelean el destino.
+      document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener('click', (event) => {
+          const id = anchor.getAttribute('href');
+          if (!id || id === '#') return;
+          const target = document.querySelector(id);
+          if (!target) return;
+          event.preventDefault();
+          lenis.scrollTo(target as HTMLElement, { offset: -80 });
+        });
+      });
+    })
+    .catch(() => {
+      // Sin Lenis el scroll nativo sigue funcionando igual: no hay nada que reparar.
+    });
+}
+
 /* ------------------------------------------------------ expositores filter */
 function initExpositoresFilter(): void {
   const searchInput = document.getElementById('search-expositores') as HTMLInputElement | null;
   const filterButtons = document.querySelectorAll<HTMLButtonElement>('[data-rubro-filter]');
-  const cards = document.querySelectorAll<HTMLElement>('[data-expositor-card]');
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-expositor-card]'));
   const counter = document.getElementById('expositores-counter');
   const emptyState = document.getElementById('no-expositores');
 
@@ -301,23 +648,28 @@ function initExpositoresFilter(): void {
   let activeRubro = 'Todos';
   let searchTerm = '';
 
-  const applyFilters = () => {
+  const motionReady = loadMotion();
+
+  const applyFilters = async () => {
+    const entering: FilterEntry[] = [];
+    const leaving: FilterEntry[] = [];
     let visibleCount = 0;
 
-    cards.forEach((card) => {
+    for (const card of cards) {
       const cardRubro = card.getAttribute('data-rubro') || '';
       const searchText = card.getAttribute('data-search-text') || '';
-
       const matchesRubro = activeRubro === 'Todos' || cardRubro === activeRubro;
       const matchesSearch = !searchTerm || searchText.includes(searchTerm);
+      const match = matchesRubro && matchesSearch;
+      const entry = { toggle: card, target: card };
 
-      if (matchesRubro && matchesSearch) {
-        card.style.display = '';
-        visibleCount++;
-      } else {
-        card.style.display = 'none';
+      if (match) {
+        visibleCount += 1;
+        if (card.hidden) entering.push(entry);
+      } else if (!card.hidden) {
+        leaving.push(entry);
       }
-    });
+    }
 
     if (counter) {
       counter.textContent = `Mostrando ${visibleCount} de ${cards.length} expositores`;
@@ -330,12 +682,14 @@ function initExpositoresFilter(): void {
         emptyState.classList.add('hidden');
       }
     }
+
+    await transitionFilterItems(entering, leaving, motionReady);
   };
 
   if (searchInput) {
     searchInput.addEventListener('input', () => {
       searchTerm = searchInput.value.trim().toLowerCase();
-      applyFilters();
+      void applyFilters();
     });
   }
 
@@ -355,7 +709,7 @@ function initExpositoresFilter(): void {
         }
       });
 
-      applyFilters();
+      void applyFilters();
     });
   });
 }
@@ -418,13 +772,56 @@ function initEntradasForm(): void {
     menor: 0,
   };
 
+  const motionReady = loadMotion();
+
+  const formatAmount = (value: number) => `$${value.toLocaleString('es-AR')}`;
+
+  // Rolling counter. A plain rAF tween rather than a library: `motion/mini` only
+  // animates DOM properties, and pulling the full build in for one number would
+  // cost more than the ~10 lines it saves.
+  let shownTotal = prices.general ?? 3500;
+  let tween = 0;
+
+  const rollTo = (next: number) => {
+    if (!totalDisplay) return;
+    const generation = ++tween;
+    const from = shownTotal;
+    shownTotal = next;
+
+    const settle = () => {
+      if (generation === tween) totalDisplay.textContent = formatAmount(next);
+    };
+
+    if (reduceMotion.matches || from === next) {
+      settle();
+      return;
+    }
+
+    const started = performance.now();
+    const duration = 420;
+    const frame = (now: number) => {
+      if (generation !== tween) return; // a newer change already took over
+      const progress = Math.min((now - started) / duration, 1);
+      if (progress >= 1) {
+        settle();
+        return;
+      }
+      const eased = 1 - Math.pow(2, -10 * progress);
+      totalDisplay.textContent = formatAmount(Math.round(from + (next - from) * eased));
+      requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
+    // A price is not decoration: if frame callbacks never arrive (backgrounded
+    // tab, throttled device), the amount must still land on the real value.
+    setTimeout(settle, duration + 200);
+  };
+
   const updateTotal = () => {
     if (!tipoSelect || !cantidadInput || !totalDisplay) return;
     const tipo = tipoSelect.value;
     const price = prices[tipo] ?? 3500;
     const qty = Math.min(Math.max(parseInt(cantidadInput.value, 10) || 1, 1), 10);
-    const total = price * qty;
-    totalDisplay.textContent = `$${total.toLocaleString('es-AR')}`;
+    rollTo(price * qty);
   };
 
   if (tipoSelect) tipoSelect.addEventListener('change', updateTotal);
@@ -450,9 +847,13 @@ function initEntradasForm(): void {
       if (voucherDetails && cantidadInput && tipoSelect) {
         const qty = cantidadInput.value;
         const tipoLabel = tipoSelect.options[tipoSelect.selectedIndex]?.text || '';
-        voucherDetails.textContent = `¡Tu reserva de ${qty} entrada(s) (${tipoLabel}) fue confirmada! Presentá este código en boleterías del Predio Ferial para acceder.`;
+        voucherDetails.textContent = `¡Tu reserva de ${qty} entrada(s) (${tipoLabel}) fue confirmada! Presentá este código en boleterías de Ciudad Cultural para acceder.`;
       }
-      if (voucher) voucher.classList.remove('hidden');
+      if (voucher) {
+        const firstReveal = voucher.classList.contains('hidden');
+        voucher.classList.remove('hidden');
+        if (firstReveal) void revealVoucher(voucher);
+      }
 
       if (submitBtn && btnText) {
         submitBtn.disabled = false;
@@ -460,6 +861,34 @@ function initEntradasForm(): void {
       }
     }, 400);
   });
+
+  /** Emisión del comprobante: entra la tarjeta y se dibuja el tilde. */
+  async function revealVoucher(card: HTMLElement): Promise<void> {
+    const check = card.querySelector<SVGPathElement>('#voucher-check path');
+    const motion = motionReady ? await motionReady : null;
+    if (!motion) return; // reduced motion: aparece directo, con el tilde ya dibujado
+
+    const { animate } = motion;
+    animate(
+      card,
+      { opacity: [0, 1], transform: ['translateY(10px)', 'translateY(0px)'] },
+      { duration: 0.34, ease: [0.16, 1, 0.3, 1] },
+    );
+
+    if (!check) return;
+    const length = check.getTotalLength();
+    check.style.strokeDasharray = `${length}`;
+    const played = animate(
+      check,
+      { strokeDashoffset: [length, 0] },
+      { duration: 0.42, delay: 0.16, ease: 'easeOut' },
+    );
+    // El tilde no puede quedarse a medio dibujar si la animación no completa.
+    void Promise.race([played, timeout(900)]).then(() => {
+      check.style.strokeDasharray = '';
+      check.style.strokeDashoffset = '';
+    });
+  }
 }
 
 /* ---------------------------------------------------------- newsletter form */
@@ -497,6 +926,7 @@ function boot(): void {
   initEntradasForm();
   initNewsletterForm();
   initParallax();
+  initSmoothScroll();
 }
 
 if (document.readyState === 'loading') {

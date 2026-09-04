@@ -87,7 +87,10 @@ test('every rendered image loads and carries alt text', async ({ page }) => {
     [...document.images]
       // Images inside display:none containers legitimately never load.
       .filter((img) => img.getClientRects().length > 0)
-      .filter((img) => img.naturalWidth === 0 || !img.alt.trim())
+      // A decorative duplicate (the sponsors marquee clones its row to loop
+      // seamlessly) sits inside aria-hidden, where empty alt is the correct
+      // markup — assistive tech never reaches it. Still must actually load.
+      .filter((img) => (img.closest('[aria-hidden="true"]') ? img.naturalWidth === 0 : img.naturalWidth === 0 || !img.alt.trim()))
       .map((img) => img.currentSrc || img.src),
   );
   expect(bad).toEqual([]);

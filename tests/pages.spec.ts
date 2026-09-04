@@ -218,20 +218,20 @@ test('agenda filters sessions by day and track', async ({ page }) => {
   const allSessions = page.locator('#agenda-grid > li');
   await expect(allSessions).toHaveCount(18);
 
-  // Filter day 17
-  const day17Btn = page.locator('#agenda-days button[data-day="17"]');
-  await day17Btn.click();
-  await expect(day17Btn).toHaveAttribute('aria-pressed', 'true');
+  // Filter day 9
+  const day9Btn = page.locator('#agenda-days button[data-day="9"]');
+  await day9Btn.click();
+  await expect(day9Btn).toHaveAttribute('aria-pressed', 'true');
 
-  const day17Visible = page.locator('#agenda-grid > li:not([hidden])');
-  await expect(day17Visible).toHaveCount(5);
+  const day9Visible = page.locator('#agenda-grid > li:not([hidden])');
+  await expect(day9Visible).toHaveCount(5);
 
-  // Filter day 18
-  const day18Btn = page.locator('#agenda-days button[data-day="18"]');
-  await day18Btn.click();
+  // Filter day 10
+  const day10Btn = page.locator('#agenda-days button[data-day="10"]');
+  await day10Btn.click();
 
-  const day18Visible = page.locator('#agenda-grid > li:not([hidden])');
-  await expect(day18Visible).toHaveCount(4);
+  const day10Visible = page.locator('#agenda-grid > li:not([hidden])');
+  await expect(day10Visible).toHaveCount(4);
 });
 
 test('venue map updates detail card on zone click', async ({ page }) => {

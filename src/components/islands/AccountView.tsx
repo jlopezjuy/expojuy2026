@@ -1,10 +1,55 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { getAccount } from '../../lib/api/auth';
 import { sessionSignal, setSession, clearSession, type Session } from '../../lib/auth/session';
+
+/**
+ * Inclinación de la credencial siguiendo el puntero. Sólo con puntero fino: en
+ * touch no hay hover que la dispare, y el giroscopio queda deliberadamente
+ * afuera — pedir permiso de sensores para un efecto decorativo no se justifica.
+ */
+function useCardTilt<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+
+  useEffect(() => {
+    const card = ref.current;
+    if (!card) return;
+    if (!window.matchMedia('(pointer: fine)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const MAX_DEG = 6;
+
+    const onMove = (event: PointerEvent) => {
+      const box = card.getBoundingClientRect();
+      if (!box.width || !box.height) return;
+      const px = (event.clientX - box.left) / box.width - 0.5;
+      const py = (event.clientY - box.top) / box.height - 0.5;
+      card.style.transform = `perspective(900px) rotateX(${(-py * MAX_DEG).toFixed(2)}deg) rotateY(${(px * MAX_DEG).toFixed(2)}deg)`;
+    };
+
+    const reset = () => {
+      card.style.transform = '';
+    };
+
+    card.addEventListener('pointermove', onMove);
+    card.addEventListener('pointerleave', reset);
+    // Un scroll o un cambio de foco pueden dejar la tarjeta torcida sin puntero encima.
+    window.addEventListener('blur', reset);
+
+    return () => {
+      card.removeEventListener('pointermove', onMove);
+      card.removeEventListener('pointerleave', reset);
+      window.removeEventListener('blur', reset);
+      reset();
+    };
+  }, []);
+
+  return ref;
+}
 
 export default function AccountView() {
   const [session, setLocalSession] = useState<Session | null>(sessionSignal.value);
   const [refreshFailed, setRefreshFailed] = useState(false);
+  const cardRef = useCardTilt<HTMLDivElement>();
 
   useEffect(() => {
     const current = sessionSignal.value;
@@ -44,7 +89,10 @@ export default function AccountView() {
   ];
 
   return (
-    <div class="flex w-full max-w-md flex-col gap-6 rounded-card border border-night/10 bg-cream-deep/60 p-6 sm:p-8">
+    <div
+      ref={cardRef}
+      class="flex w-full max-w-md flex-col gap-6 rounded-card border border-night/10 bg-cream-deep/60 p-6 shadow-[0_18px_45px_-30px_rgba(4,12,20,0.7)] transition-transform duration-300 ease-out will-change-transform sm:p-8"
+    >
       <dl class="flex flex-col gap-5">
         {fields.map((field) => (
           <div key={field.label}>

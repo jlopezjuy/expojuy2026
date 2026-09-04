@@ -14,12 +14,12 @@ const { headingLevel = 'h1' } = Astro.props;
 const pillClass =
   'rounded-full border border-night/20 px-4 py-2 text-[0.62rem] font-bold tracking-[0.14em] whitespace-nowrap text-night/70 uppercase transition duration-300 ease-out hover:border-night/50 hover:text-night aria-pressed:border-night aria-pressed:bg-night aria-pressed:text-cream';
 
-const dayFilters = [{ id: 'todos', label: 'Todos los días' }, ...agendaDays.map((d) => ({ id: d.day, label: `Día ${d.day} de Sept.` }))];
+const dayFilters = [{ id: 'todos', label: 'Todos los días' }, ...agendaDays.map((d) => ({ id: d.day, label: `Día ${d.day} de Octubre` }))];
 const trackFilters = [{ id: 'todos', label: 'Todas las temáticas' }, ...agendaTracks];
 const trackById = new Map(agendaTracks.map((t) => [t.id, t]));
 ---
 
-<section class="bg-cream pb-16 lg:pb-20" aria-labelledby="agenda-title">
+<section class="bg-cream pt-28 pb-16 sm:pt-32 lg:pt-36 lg:pb-24" aria-labelledby="agenda-title">
   <Container width="normal">
     <div class="reveal">
       <SectionHeading
