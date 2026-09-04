@@ -116,6 +116,13 @@ function initFilters(): void {
  * Combiña dos grupos de filtro (día + jornada) sobre la grilla de la agenda
  * (`#agenda-grid`). Es un filtro independiente del de productos: `initFilters()`
  * queda intacto para no arriesgar su prueba. Sin JS la lista completa es visible.
+ *
+ * Las tarjetas llevan `.reveal` (opacity:0 hasta que el IntersectionObserver de
+ * `initReveals()` agrega `.is-visible`). Un elemento en `display:none` nunca
+ * dispara ese observer — si una tarjeta pasa a `hidden` antes de haber sido
+ * observada, al volverla a mostrar queda trabada en opacity:0 para siempre.
+ * Por eso este filtro no delega la visibilidad en `.reveal`: la anima de forma
+ * explícita con Motion, así el estado final no depende del observer.
  */
 function initAgendaFilter(): void {
   const dayGroup = document.getElementById('agenda-days');
@@ -131,7 +138,11 @@ function initAgendaFilter(): void {
   let dayFilter = 'todos';
   let trackFilter = 'todos';
 
-  const apply = () => {
+  // Fetched once, in parallel with the first render — not on first click — so
+  // the chunk is usually already in cache by the time someone taps a filter.
+  const motionReady = reduceMotion.matches ? null : import('motion/mini').catch(() => null);
+
+  const apply = async () => {
     for (const button of dayButtons) {
       button.setAttribute('aria-pressed', String(button.dataset.day === dayFilter));
     }
@@ -139,25 +150,76 @@ function initAgendaFilter(): void {
       button.setAttribute('aria-pressed', String(button.dataset.track === trackFilter));
     }
 
+    const entering: HTMLElement[] = [];
+    const leaving: HTMLElement[] = [];
     let shown = 0;
+
     for (const item of items) {
       const matchDay = dayFilter === 'todos' || item.dataset.day === dayFilter;
       const matchTrack = trackFilter === 'todos' || item.dataset.track === trackFilter;
       const match = matchDay && matchTrack;
-      item.hidden = !match;
-      if (match) shown += 1;
+
+      if (match) {
+        shown += 1;
+        if (item.hidden) entering.push(item);
+      } else if (!item.hidden) {
+        leaving.push(item);
+      }
     }
 
     if (status) {
       status.textContent = `${shown} ${shown === 1 ? 'actividad' : 'actividades'} en pantalla.`;
     }
+
+    const motion = motionReady ? await motionReady : null;
+
+    if (!motion) {
+      // Reduced motion, or the animation chunk didn't load: no transition,
+      // but every card still lands in the right state — that's the actual
+      // bug this replaces, not the absence of an animation.
+      for (const item of entering) {
+        item.hidden = false;
+        item.style.opacity = '';
+        item.style.transform = '';
+      }
+      for (const item of leaving) item.hidden = true;
+      return;
+    }
+
+    const { animate } = motion;
+
+    for (const item of leaving) {
+      const played = animate(item, { opacity: 0, y: 6 }, { duration: 0.16, ease: 'easeIn' });
+      // Race against a fallback timer: if the animation never signals completion
+      // (backgrounded tab, interrupted by a fast second click, driver hiccup),
+      // the card must still end up hidden — correctness can't depend on the
+      // animation succeeding, only its polish can.
+      void Promise.race([played, new Promise((resolve) => setTimeout(resolve, 400))]).then(() => {
+        item.hidden = true;
+      });
+    }
+
+    entering.forEach((item, i) => {
+      item.hidden = false;
+      const played = animate(
+        item,
+        { opacity: [0, 1], y: [6, 0] },
+        { duration: 0.3, delay: Math.min(i, 8) * 0.03, ease: [0.16, 1, 0.3, 1] },
+      );
+      // Same guarantee as the exit side: whatever happens to the animation,
+      // the card must not be left visible-but-invisible — that's the original bug.
+      void Promise.race([played, new Promise((resolve) => setTimeout(resolve, 700))]).then(() => {
+        item.style.opacity = '1';
+        item.style.transform = '';
+      });
+    });
   };
 
   dayGroup.addEventListener('click', (e) => {
     const day = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-day]')?.dataset.day;
     if (day) {
       dayFilter = day;
-      apply();
+      void apply();
     }
   });
 
@@ -165,7 +227,7 @@ function initAgendaFilter(): void {
     const track = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-track]')?.dataset.track;
     if (track) {
       trackFilter = track;
-      apply();
+      void apply();
     }
   });
 }

@@ -19,6 +19,7 @@
     "@astrojs/sitemap": "^3.7.4",
     "@preact/signals": "^2.8.2",
     "astro": "^7.2.10",
+    "motion": "^13.2.0",
     "preact": "^10.29.8"
   },
   "allowScripts": {

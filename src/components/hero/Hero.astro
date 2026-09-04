@@ -9,7 +9,7 @@ import HeroCollage from './HeroCollage.astro';
 
 <section
   id="top"
-  class="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-night"
+  class="relative isolate flex min-h-[100svh] flex-col justify-between overflow-hidden bg-night"
   aria-labelledby="hero-title"
 >
   <!-- Backdrop is over-scaled so the parallax translation never reveals an edge. -->
@@ -19,38 +19,38 @@ import HeroCollage from './HeroCollage.astro';
       sizes="100vw"
       ratio={16 / 9}
       priority
-      class="h-full w-full object-cover object-center [filter:saturate(1.12)_contrast(1.08)]"
+      class="h-full w-full object-cover object-center [filter:saturate(1.15)_contrast(1.08)]"
     />
   </div>
 
-  <!-- Cinematic grade: vignette top and bottom so header and copy stay legible. -->
+  <!-- Warm atmospheric cinematic grade: golden-hour tone and soft vignette -->
   <div
-    class="absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,rgba(4,12,20,0.72)_0%,rgba(4,12,20,0.1)_24%,rgba(4,12,20,0.34)_56%,rgba(4,12,20,0.93)_100%)]"
+    class="absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,rgba(10,8,6,0.68)_0%,rgba(195,110,35,0.06)_28%,rgba(8,12,18,0.32)_60%,rgba(4,12,20,0.92)_100%)]"
     aria-hidden="true"
   >
   </div>
 
-  <Container class="relative flex flex-1 flex-col pt-28 pb-8 sm:pt-32 lg:pt-[8vh] lg:pb-10">
-    <!-- Title block: sits high and runs across the photograph. -->
+  <Container class="relative z-10 flex flex-1 flex-col pt-28 pb-8 sm:pt-32 lg:pt-[8vh] lg:pb-10">
+    <!-- Title block: sits high and runs across the photograph with balanced scale. -->
     <div class="lg:mx-auto lg:w-[88%]">
-      <p class="eyebrow hero-animate-eyebrow flex flex-col gap-x-7 gap-y-0.5 text-white/85 sm:flex-row sm:justify-center">
+      <p class="eyebrow hero-animate-eyebrow flex flex-col gap-x-7 gap-y-0.5 text-white/90 sm:flex-row sm:justify-center tracking-[0.2em]">
         {event.eyebrow.map((line) => <span>{line}</span>)}
       </p>
 
-      <div class="hero-title-mask mt-2 pb-2 -mb-2 sm:mt-1">
+      <div class="hero-title-mask mt-1 pb-2">
         <h1
           id="hero-title"
-          class="text-hero hero-animate-title text-center font-normal text-white"
-          style="letter-spacing:-0.015em; text-shadow:0 18px 60px rgba(4,12,20,0.5)"
+          class="hero-animate-title text-center text-[clamp(5rem,13vw,13.5rem)] font-bold leading-[0.86] tracking-[-0.038em] text-cream"
+          style="text-shadow: 0 4px 20px rgba(0,0,0,0.55), 0 20px 60px rgba(0,0,0,0.75);"
         >
           JUJUY
         </h1>
       </div>
     </div>
 
-    <!-- Collage overlaps the title's right shoulder, as in the reference. -->
+    <!-- Collage: positioned on the right shoulder with breathing room so it never touches the title -->
     <div
-      class="pointer-events-none absolute top-[16%] right-gutter hidden w-[23%] max-w-[21rem] lg:block"
+      class="pointer-events-none absolute top-[16%] right-gutter hidden w-[21%] max-w-[19rem] lg:block xl:right-12 2xl:right-20"
     >
       <div class="pointer-events-auto"><HeroCollage /></div>
     </div>
