@@ -7,8 +7,10 @@
  */
 
 export interface Photo {
-  /** Unsplash photo id, i.e. the part after `photo-`. */
-  id: string;
+  /** Unsplash photo id, i.e. the part after `photo-`. Omit when `src` is set. */
+  id?: string;
+  /** Explicit local path, overriding the `/images/photos/${id}.jpg` convention. */
+  src?: string;
   /** Spanish alt text. Empty string only for purely decorative images. */
   alt: string;
   /** Intrinsic aspect ratio used to reserve layout space. */
@@ -18,11 +20,11 @@ export interface Photo {
 const p = (id: string, alt: string, ratio = 3 / 2): Photo => ({ id, alt, ratio });
 
 export const photos = {
-  heroBackdrop: p(
-    '1765042764074-2dd6bd291899',
-    'Cerros de la Quebrada de Humahuaca iluminados por el sol de la tarde',
-    16 / 9,
-  ),
+  heroBackdrop: {
+    src: '/images/photos/home.png',
+    alt: 'Vista aérea del predio de ExpoJuy iluminado al atardecer, con los cerros de fondo',
+    ratio: 16 / 9,
+  },
   collageArtisan: p(
     '1749835521236-d29d0004162d',
     'Artesana trabajando en su taller con luz cálida',
