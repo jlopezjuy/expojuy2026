@@ -34,7 +34,7 @@ const {
 
 const aspect = ratio ?? photo.ratio;
 const fallbackWidth = Math.min(1280, maxWidth);
-const localSrc = `/images/photos/${photo.id}.jpg`;
+const localSrc = photo.src ?? `/images/photos/${photo.id}.jpg`;
 ---
 
 <img

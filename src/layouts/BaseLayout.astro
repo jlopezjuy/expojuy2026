@@ -5,6 +5,7 @@ import '../styles/global.css';
 // same hashed asset.
 import ambitRegular from '../fonts/ambit-regular.woff2';
 import ambitSemibold from '../fonts/ambit-semibold.woff2';
+import Assistant from '../components/assistant/Assistant.astro';
 import { event } from '../data/site';
 
 interface Props {
@@ -108,6 +109,8 @@ const eventLd = {
     <a href="#main" class="skip-link">Saltar al contenido</a>
 
     <slot />
+
+    <Assistant />
 
     <script>
       import '../scripts/enhance';

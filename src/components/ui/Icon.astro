@@ -14,7 +14,13 @@ interface Props {
     | 'x'
     | 'youtube'
     | 'linkedin'
-    | 'search';
+    | 'search'
+    | 'sparkles'
+    | 'close'
+    | 'map-pin'
+    | 'clock'
+    | 'utensils'
+    | 'info';
   class?: string;
 }
 
@@ -107,6 +113,47 @@ const { name, class: className = 'h-5 w-5' } = Astro.props;
       <>
         <circle cx="11" cy="11" r="7" />
         <path d="m21 21-4.35-4.35" />
+      </>
+    )
+  }
+  {
+    name === 'sparkles' && (
+      <>
+        <path d="M12 3.5 13.7 9l5.5 1.7-5.5 1.7L12 18l-1.7-5.6L4.8 10.7 10.3 9 12 3.5Z" />
+        <path d="M18.8 3.2 19.4 5l1.8.6-1.8.6-.6 1.8-.6-1.8L16.4 5.6l1.8-.6.6-1.8ZM5.6 15.4l.5 1.5 1.5.5-1.5.5-.5 1.5-.5-1.5-1.5-.5 1.5-.5.5-1.5Z" />
+      </>
+    )
+  }
+  {name === 'close' && <path d="M18 6 6 18M6 6l12 12" />}
+  {
+    name === 'map-pin' && (
+      <>
+        <path d="M20 10.5c0 5.2-8 12-8 12s-8-6.8-8-12a8 8 0 0 1 16 0Z" />
+        <circle cx="12" cy="10.3" r="2.8" />
+      </>
+    )
+  }
+  {
+    name === 'clock' && (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 6.8V12l3.4 2" />
+      </>
+    )
+  }
+  {
+    name === 'utensils' && (
+      <>
+        <path d="M6.5 3v7a2.5 2.5 0 0 0 5 0V3M9 10.5V21" />
+        <path d="M17.5 3c-1.4 1.2-2 3.1-2 5.2 0 1.6.7 2.7 2 3.1V21" />
+      </>
+    )
+  }
+  {
+    name === 'info' && (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 11v5M12 7.8h.01" />
       </>
     )
   }

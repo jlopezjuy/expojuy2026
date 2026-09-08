@@ -912,6 +912,72 @@ function initNewsletterForm(): void {
   });
 }
 
+/* ------------------------------------------------------------ deep links */
+/**
+ * Parámetros de URL que enfocan una página en un elemento concreto. Los emite
+ * el asistente de visita (`ExpoDocument.actions`), y son la única forma que
+ * tiene un resultado de búsqueda de decir "ver en el mapa" sin mentir.
+ *
+ *   /mapa?zona=<id>          selecciona esa zona del plano
+ *   /agenda?dia=<9|10|11|12> filtra esa jornada
+ *   /expositores?q=<texto>   precarga el buscador del directorio
+ *
+ * Se resuelven reutilizando los manejadores que ya existen: se dispara el mismo
+ * click o el mismo evento `input` que haría el visitante, en vez de duplicar la
+ * lógica de filtrado.
+ */
+function initDeepLinks(): void {
+  const params = new URLSearchParams(window.location.search);
+
+  const zone = params.get('zona');
+  if (zone) {
+    document.querySelector<HTMLButtonElement>(`[data-zone="${CSS.escape(zone)}"]`)?.click();
+  }
+
+  const day = params.get('dia');
+  if (day) {
+    document
+      .getElementById('agenda-days')
+      ?.querySelector<HTMLButtonElement>(`[data-day="${CSS.escape(day)}"]`)
+      ?.click();
+  }
+
+  const query = params.get('q');
+  const expositoresSearch = document.getElementById('search-expositores') as HTMLInputElement | null;
+  if (query && expositoresSearch) {
+    expositoresSearch.value = query;
+    expositoresSearch.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+}
+
+/* -------------------------------------------------------------- asistente */
+/**
+ * El asistente se carga recién cuando alguien lo abre. El armazón ya está en el
+ * HTML, así que hasta ese momento ni Orama ni el índice pesan un byte. Mismo
+ * criterio que `loadMotion()`: un `import()` con `.catch()` que degrada sin
+ * romper nada.
+ */
+function initAssistant(): void {
+  const launcher = document.querySelector<HTMLButtonElement>('[data-assistant-open]');
+  if (!launcher) return;
+
+  const open = (event: Event) => {
+    event.preventDefault();
+    launcher.removeEventListener('click', open);
+    void import('./assistant')
+      .then(({ mountAssistant }) => {
+        mountAssistant();
+        launcher.click();
+      })
+      .catch(() => {
+        // El chunk no cargó: el botón vuelve a quedar disponible para reintentar.
+        launcher.addEventListener('click', open);
+      });
+  };
+
+  launcher.addEventListener('click', open);
+}
+
 /* -------------------------------------------------------------------- boot */
 function boot(): void {
   initReveals();
@@ -927,6 +993,9 @@ function boot(): void {
   initNewsletterForm();
   initParallax();
   initSmoothScroll();
+  // Después de los filtros: los deep links disparan sus manejadores.
+  initDeepLinks();
+  initAssistant();
 }
 
 if (document.readyState === 'loading') {

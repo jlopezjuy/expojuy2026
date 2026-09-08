@@ -1,0 +1,171 @@
+---
+/**
+ * Asistente de visita — modal flotante con encuadre.
+ *
+ * Todo el armazón se renderiza en el servidor y viaja en el HTML: abrir el
+ * modal no espera a ninguna descarga. El comportamiento vive en
+ * `src/scripts/assistant.ts`, que `enhance.ts` importa dinámicamente recién
+ * cuando el visitante toca el botón — el motor de búsqueda y su índice no
+ * cuestan nada a quien no lo usa.
+ *
+ * Sin JavaScript el lanzador queda oculto (regla `html:not(.js)` en
+ * global.css) y el sitio funciona igual que antes.
+ *
+ * Decisiones visuales, todas heredadas del sistema del sitio:
+ *  - Superficie `cream`, la misma del sitio. Eso restringe la paleta: sobre
+ *    crema, `teal` y `gold` no llegan a AA como texto (ver AGENTS.md), así que
+ *    el acento es `magenta`, igual que en `SectionHeading.astro`.
+ *  - Un solo radio (`--radius-card`). Las esquinas filosas del encuadre son
+ *    marcas de corte que enmarcan el CONTENIDO, no el contenedor.
+ *  - El eyebrow tracked .22em sobre display con la cola en color es la firma de
+ *    `SectionHeading.astro`; acá se reusa en vez de inventar otro encabezado.
+ *  - El input es una línea de escritura, no una caja.
+ *  - Las sugerencias son un índice numerado, no seis chips idénticos.
+ */
+import Icon from '../ui/Icon.astro';
+
+/** Atajos redactados con las palabras del visitante, no con las del sistema. */
+const suggestions = [
+  '¿Dónde puedo comer?',
+  '¿Qué actividades hay hoy?',
+  '¿Qué empresas participan?',
+  '¿Dónde están los baños?',
+  '¿Dónde puedo estacionar?',
+  '¿Dónde está el escenario?',
+] as const;
+---
+
+<div data-assistant class="assistant">
+  <button
+    type="button"
+    data-assistant-open
+    class="assistant-launcher"
+    aria-haspopup="dialog"
+    aria-expanded="false"
+    aria-controls="assistant-panel"
+  >
+    <Icon name="sparkles" class="h-4 w-4 shrink-0 text-gold-bright" />
+    <span class="assistant-launcher-label">Preguntá a ExpoJuy</span>
+  </button>
+
+  <div data-assistant-overlay class="assistant-overlay" hidden></div>
+
+  <div
+    id="assistant-panel"
+    data-assistant-panel
+    class="assistant-panel"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="assistant-title"
+    hidden
+  >
+    {/* Marcas de corte. Puramente decorativas. */}
+    <div class="assistant-frame" aria-hidden="true">
+      <span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="assistant-band px-7 pt-8 pb-6 sm:px-9">
+      <div class="flex items-start justify-between gap-6">
+        <div class="flex items-center gap-2.5">
+          {/* Late sólo mientras se busca; en reposo es una marca de color. */}
+          <span class="assistant-status" data-assistant-status aria-hidden="true"></span>
+          <p class="eyebrow text-magenta">Asistente de visita</p>
+        </div>
+
+        <button
+          type="button"
+          data-assistant-close
+          class="-mt-1 -mr-1 grid h-8 w-8 shrink-0 place-items-center text-night/50 transition-colors hover:text-night focus-visible:text-night"
+        >
+          <Icon name="close" class="h-4.5 w-4.5" />
+          <span class="sr-only">Cerrar el asistente</span>
+        </button>
+      </div>
+
+      <h2 id="assistant-title" class="font-display mt-4 text-display text-night">
+        ¿Qué querés <span class="text-magenta">encontrar?</span>
+      </h2>
+
+      <form data-assistant-form class="mt-7" role="search">
+        <label for="assistant-input" class="sr-only">
+          Preguntá sobre ExpoJuy 2026: gastronomía, agenda, empresas, stands o servicios
+        </label>
+        <input
+          type="search"
+          id="assistant-input"
+          data-assistant-input
+          class="assistant-input"
+          autocomplete="off"
+          enterkeyhint="search"
+          placeholder="Preguntá lo que quieras…"
+        />
+      </form>
+    </div>
+
+    {/* `data-lenis-prevent`: `initSmoothScroll()` monta Lenis con `smoothWheel`
+        en escritorio, y Lenis se queda con el evento wheel a nivel documento.
+        Sin esta marca el contenedor scrollea por código pero la rueda del mouse
+        no hace nada — el scroll se lo comía el smooth scroll de la página. */}
+    <div data-assistant-body data-lenis-prevent class="assistant-body px-7 pb-8 sm:px-9">
+      <section data-assistant-suggestions>
+        <p class="eyebrow pt-1 pb-3 text-night/55">Para empezar</p>
+        <ul>
+          {
+            suggestions.map((label, i) => (
+              <li>
+                <button type="button" data-assistant-suggestion={label} class="assistant-index-item">
+                  <span class="assistant-index-num">{String(i + 1).padStart(2, '0')}</span>
+                  <span class="text-body">{label}</span>
+                  <Icon name="arrow-right" class="assistant-index-arrow h-4 w-4 text-magenta" />
+                </button>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section data-assistant-results-section hidden>
+        <div class="flex flex-wrap items-center gap-2.5 pt-1 pb-3">
+          <p data-assistant-count class="eyebrow text-night/55" role="status" aria-live="polite"></p>
+          <span data-assistant-context class="eyebrow border border-night/25 px-2 py-1 text-night/80" hidden
+          ></span>
+        </div>
+
+        <p
+          data-assistant-notice
+          class="mb-4 border-l-2 border-magenta/70 py-1 pl-3 text-xs leading-relaxed text-night/75"
+          hidden
+        >
+        </p>
+
+        <ul data-assistant-results></ul>
+      </section>
+
+      <section data-assistant-empty class="py-12" hidden>
+        <p class="eyebrow text-magenta">Sin resultados</p>
+        <p class="font-display mt-3 text-title text-night">No encontré esa información</p>
+        <p class="mt-3 max-w-[42ch] text-body text-night/70">
+          No tengo ese dato publicado todavía. Probá con otras palabras, o consultá en la Mesa de
+          Informes del predio.
+        </p>
+      </section>
+
+      <section data-assistant-error class="py-12" hidden>
+        <p class="eyebrow text-magenta">Sin conexión</p>
+        <p class="font-display mt-3 text-title text-night">No pude cargar el buscador</p>
+        <p class="mt-3 max-w-[42ch] text-body text-night/70">
+          Revisá tu conexión y volvé a intentar. Mientras tanto podés recorrer la
+          <a class="text-magenta underline underline-offset-2" href="/agenda">agenda</a>, los
+          <a class="text-magenta underline underline-offset-2" href="/expositores">expositores</a>
+          y el <a class="text-magenta underline underline-offset-2" href="/mapa">mapa del predio</a>.
+        </p>
+      </section>
+    </div>
+
+    <div class="assistant-band border-t border-night/10 px-7 py-4 sm:px-9">
+      <p class="text-[0.66rem] leading-relaxed text-night/55">
+        Respondo sólo con información publicada en este sitio. Si un dato no está, te lo digo.
+      </p>
+    </div>
+  </div>
+</div>

@@ -405,3 +405,370 @@ html:not(.js) .reveal {
   }
 }
 
+/* ==================================================================
+   Asistente de visita — src/components/assistant/Assistant.astro
+
+   Encuadre, no caja. El modal flota sobre un fondo oscurecido y las
+   marcas de esquina enmarcan el CONTENIDO, no el contenedor: es el
+   gesto de las marcas de corte de imprenta, y de paso resuelve una
+   tensión real — el sitio usa `--radius-card: 0.5rem` en todos lados,
+   así que el panel lo respeta y las esquinas filosas viven adentro,
+   sin introducir un segundo radio en el sistema.
+
+   Superficie clara, la misma del sitio (`cream`). Eso restringe la
+   paleta de acentos y la restricción es del sistema, no una
+   preferencia: sobre `cream`, `teal` (~2:1) y `gold` (~1.9:1) no
+   llegan a AA — ver la advertencia en AGENTS.md. El acento de texto es
+   `magenta` (~4.9:1), igual que en `SectionHeading`. `gold` sobrevive
+   sólo donde el sitio ya lo usa bien: el badge de stand, cuyo texto es
+   `night` sobre un fondo `gold/10`.
+   ================================================================== */
+html:not(.js) .assistant {
+  display: none;
+}
+
+/* ------------------------------------------------------------ lanzador */
+/* Rectángulo, no píldora: la píldora era el segundo radio del sistema.
+   Se mantiene en `night` — es un CTA flotando sobre bandas claras y
+   oscuras, y el sitio ya resuelve así sus botones principales. */
+.assistant-launcher {
+  position: fixed;
+  right: 1rem;
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-radius: var(--radius-card);
+  background-color: var(--color-night);
+  color: var(--color-cream);
+  padding: 0.8rem 1.15rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  box-shadow: 0 12px 30px -12px rgb(7 18 30 / 45%);
+  transition:
+    transform 0.25s var(--ease-out-expo),
+    background-color 0.25s var(--ease-out-expo);
+}
+
+.assistant-launcher:hover {
+  transform: translateY(-2px);
+  background-color: var(--color-night-soft);
+}
+
+@media (max-width: 639px) {
+  .assistant-launcher {
+    padding: 0.85rem;
+  }
+
+  .assistant-launcher-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* -------------------------------------------------------------- fondo */
+.assistant-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background-color: rgb(7 18 30 / 42%);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  transition: opacity 0.28s var(--ease-out-expo);
+}
+
+.assistant-overlay[data-open] {
+  opacity: 1;
+}
+
+/* -------------------------------------------------------------- modal */
+/* La sombra se tinta hacia `night` en vez de negro puro: una sola fuente
+   de luz, coherente con el resto del sitio. */
+.assistant-panel {
+  position: fixed;
+  z-index: 80;
+  top: 50%;
+  left: 50%;
+  width: min(42rem, calc(100vw - 2rem));
+  max-height: min(82vh, 46rem);
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-card);
+  background-color: var(--color-cream);
+  box-shadow: 0 32px 70px -24px rgb(7 18 30 / 42%);
+  transform: translate(-50%, -50%) scale(0.97);
+  opacity: 0;
+  transition:
+    transform 0.3s var(--ease-out-expo),
+    opacity 0.24s var(--ease-out-expo);
+}
+
+.assistant-panel[data-open] {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+}
+
+/* En mobile el modal sigue flotando con margen: el encuadre se pierde si
+   el panel toca los bordes de la pantalla. */
+@media (max-width: 639px) {
+  .assistant-panel {
+    width: calc(100vw - 1.5rem);
+    max-height: 86vh;
+  }
+}
+
+/* Las bandas fijas (encabezado, pie) no se encogen; sólo el cuerpo scrollea. */
+.assistant-band {
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* ----------------------------------------------------- marcas de corte */
+/* Enmarcan el contenido. Decorativas: `aria-hidden` en el markup. */
+.assistant-frame {
+  position: absolute;
+  inset: 0.75rem;
+  pointer-events: none;
+}
+
+.assistant-frame span {
+  position: absolute;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 0 solid color-mix(in srgb, var(--color-magenta) 60%, transparent);
+}
+
+.assistant-frame span:nth-child(1) {
+  top: 0;
+  left: 0;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+
+.assistant-frame span:nth-child(2) {
+  top: 0;
+  right: 0;
+  border-top-width: 1px;
+  border-right-width: 1px;
+}
+
+.assistant-frame span:nth-child(3) {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+
+.assistant-frame span:nth-child(4) {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+}
+
+/* --------------------------------------------------------- indicador */
+/* Cuadrado, no círculo: el punto redondo es la convención de "grabando"
+   y acá el elemento hace un trabajo real — late sólo mientras se busca. */
+.assistant-status {
+  display: inline-block;
+  width: 0.375rem;
+  height: 0.375rem;
+  background-color: var(--color-magenta);
+  opacity: 0.5;
+  transition: opacity 0.2s linear;
+}
+
+.assistant-status[data-busy] {
+  opacity: 1;
+  animation: assistant-pulse 1s ease-in-out infinite;
+}
+
+@keyframes assistant-pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* ------------------------------------------------------------- input */
+/* Línea de escritura, no caja: es el gesto que más aleja al modal del
+   formulario genérico. El foco engrosa la línea en vez de dibujar un anillo. */
+.assistant-input {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-night) 22%, transparent);
+  border-radius: 0;
+  background: transparent;
+  padding: 0.4rem 0 0.7rem;
+  color: var(--color-night);
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  line-height: 1.3;
+  transition: border-color 0.25s var(--ease-out-expo);
+}
+
+.assistant-input::placeholder {
+  color: color-mix(in srgb, var(--color-night) 45%, transparent);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+}
+
+.assistant-input:focus {
+  outline: none;
+  border-bottom-color: var(--color-magenta);
+}
+
+/* El anillo global de :focus-visible dibujaría un rectángulo alrededor de
+   la línea; acá el foco ya se comunica con el color del subrayado. */
+.assistant-input:focus-visible {
+  outline: none;
+}
+
+/* La X nativa del input[type=search] compite con el botón de cerrar del modal
+   y rompe la línea de escritura. Se oculta: para borrar está el teclado. */
+.assistant-input::-webkit-search-cancel-button,
+.assistant-input::-webkit-search-decoration {
+  appearance: none;
+  display: none;
+}
+
+/* ------------------------------------------------------------- cuerpo */
+.assistant-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-night) 25%, transparent) transparent;
+}
+
+/* --------------------------------------------------------- índice 01— */
+/* Sumario de revista: numeral tabular en magenta, guión largo, hairline.
+   Nada de chips con caja — eran seis rectángulos idénticos sin jerarquía. */
+.assistant-index-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+  width: 100%;
+  border-top: 1px solid color-mix(in srgb, var(--color-night) 12%, transparent);
+  padding: 0.85rem 0.25rem 0.85rem 0;
+  text-align: left;
+  color: color-mix(in srgb, var(--color-night) 85%, transparent);
+  transition: color 0.2s var(--ease-out-expo);
+}
+
+.assistant-index-item:last-child {
+  border-bottom: 1px solid color-mix(in srgb, var(--color-night) 12%, transparent);
+}
+
+.assistant-index-num {
+  flex: 0 0 auto;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: color-mix(in srgb, var(--color-magenta) 75%, transparent);
+  transition: color 0.2s var(--ease-out-expo);
+}
+
+.assistant-index-arrow {
+  margin-left: auto;
+  flex: 0 0 auto;
+  opacity: 0;
+  transform: translateX(-0.35rem);
+  transition:
+    opacity 0.2s var(--ease-out-expo),
+    transform 0.2s var(--ease-out-expo);
+}
+
+.assistant-index-item:hover,
+.assistant-index-item:focus-visible {
+  color: var(--color-night);
+}
+
+.assistant-index-item:hover .assistant-index-num,
+.assistant-index-item:focus-visible .assistant-index-num {
+  color: var(--color-magenta);
+}
+
+.assistant-index-item:hover .assistant-index-arrow,
+.assistant-index-item:focus-visible .assistant-index-arrow {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------------------------------------------------- filas de resultado */
+/* Listado editorial separado por hairlines. Sin tarjeta, sin sombra:
+   la tarjeta dentro de un modal es una caja dentro de otra caja. */
+.assistant-row {
+  border-top: 1px solid color-mix(in srgb, var(--color-night) 12%, transparent);
+  padding: 1rem 0;
+}
+
+.assistant-row:first-child {
+  border-top: 0;
+}
+
+.assistant-row-kicker {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-magenta);
+}
+
+/* El único lugar donde `gold` sobrevive en claro: fondo, no texto. Es el
+   mismo tratamiento del badge de stand en Expositores.astro. */
+.assistant-row-stand {
+  border: 1px solid color-mix(in srgb, var(--color-gold) 45%, transparent);
+  background-color: color-mix(in srgb, var(--color-gold) 12%, transparent);
+  padding: 0.1rem 0.4rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: color-mix(in srgb, var(--color-night) 92%, transparent);
+}
+
+.assistant-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-night) 80%, transparent);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 0.15rem;
+  transition:
+    color 0.2s var(--ease-out-expo),
+    border-color 0.2s var(--ease-out-expo);
+}
+
+.assistant-action:hover {
+  color: var(--color-magenta);
+  border-bottom-color: var(--color-magenta);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assistant-panel,
+  .assistant-overlay {
+    transition: none !important;
+  }
+
+  .assistant-panel {
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .assistant-status[data-busy] {
+    animation: none !important;
+  }
+}

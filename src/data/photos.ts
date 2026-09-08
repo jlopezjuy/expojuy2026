@@ -7,8 +7,10 @@
  */
 
 export interface Photo {
-  /** Unsplash photo id, i.e. the part after `photo-`. */
-  id: string;
+  /** Unsplash photo id, i.e. the part after `photo-`. Omit when `src` is set. */
+  id?: string;
+  /** Explicit local path, overriding the `/images/photos/${id}.jpg` convention. */
+  src?: string;
   /** Spanish alt text. Empty string only for purely decorative images. */
   alt: string;
   /** Intrinsic aspect ratio used to reserve layout space. */
@@ -18,11 +20,11 @@ export interface Photo {
 const p = (id: string, alt: string, ratio = 3 / 2): Photo => ({ id, alt, ratio });
 
 export const photos = {
-  heroBackdrop: p(
-    '1765042764074-2dd6bd291899',
-    'Cerros de la Quebrada de Humahuaca iluminados por el sol de la tarde',
-    16 / 9,
-  ),
+  heroBackdrop: {
+    src: '/images/photos/home.png',
+    alt: 'Vista aérea del predio de ExpoJuy iluminado al atardecer, con los cerros de fondo',
+    ratio: 16 / 9,
+  },
   collageArtisan: p(
     '1749835521236-d29d0004162d',
     'Artesana trabajando en su taller con luz cálida',
@@ -38,11 +40,11 @@ export const photos = {
     'Camino recto atravesando las Salinas Grandes',
     3 / 2,
   ),
-  expoGate: p(
-    '1774082313811-f9852bd53d00',
-    'Calle de feria con puestos de expositores y visitantes',
-    3 / 2,
-  ),
+  expoGate: {
+    src: '/images/photos/humahuaca.png',
+    alt: 'Mercado artesanal de Humahuaca junto al monumento y las montañas',
+    ratio: 1672 / 941,
+  },
   regionPuna: p('1650970327761-4ebbd90b88bd', 'Llamas junto a una laguna altoandina en la Puna', 3 / 2),
   regionQuebrada: p(
     '1765567972885-9b63d0f6c7db',
@@ -59,10 +61,20 @@ export const photos = {
   prodDiseno: p('1595351298020-038700609878', 'Torno de alfarero con herramientas de taller', 1),
   prodHierbas: p('1709207517323-a8fd737c5498', 'Emprendedora cosechando hierbas aromáticas', 1),
   prodTurismo: p('1772722185174-4f1b62c9c4a7', 'Laguna de altura con una llama pastando', 1),
-  prodTelar: p('1749584550329-12f3252202f1', 'Tejedor trabajando en un telar de madera', 1),
+  // prodTelar: p('1749584550329-12f3252202f1', 'Tejedor trabajando en un telar de madera', 1),
+  prodTelar: {
+    src: '/images/photos/telar02.png',
+    alt: 'Mercado artesanal de Humahuaca junto al monumento y las montañas',
+    ratio: 1,
+  },
 
   sabores: p('1762631383815-784c04533802', 'Plato criollo servido en un bol de madera', 4 / 3),
-  personas: p('1773613927259-a1f954d1671e', 'Retrato de una mujer jujeña con sombrero tradicional', 4 / 3),
+  // personas: p('1773613927259-a1f954d1671e', 'Retrato de una mujer jujeña con sombrero tradicional', 4 / 3),
+  personas: {
+    src: '/images/photos/artistas02.png',
+    alt: 'Mercado artesanal de Humahuaca junto al monumento y las montañas',
+    ratio: 4 / 3,
+  },
   agenda: p('1536257104079-aa99c6460a5a', 'Atardecer rosado sobre las sierras', 4 / 3),
   ctaSunset: p('1510218129079-74e00c5a90ea', 'Sierras recortadas contra un cielo naranja y violeta', 21 / 9),
 } satisfies Record<string, Photo>;
