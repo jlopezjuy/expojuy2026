@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import Analytics from '@vercel/analytics/astro';
 // Preload the two Ambit weights used for first paint (body Regular, heading
 // SemiBold). Astro fingerprints them; the @font-face url() resolves to the
 // same hashed asset.
@@ -115,5 +116,6 @@ const eventLd = {
     <script>
       import '../scripts/enhance';
     </script>
+    <Analytics />
   </body>
 </html>
