@@ -3,7 +3,7 @@ title: Avanzan a paso firme las obras y preparativos en el Predio Ferial Jujuy
 date: 2026-08-15
 description: La Cámara de Comercio Exterior de Jujuy y el Gobierno Provincial supervisaron las adecuaciones de infraestructura, estacionamiento y áreas cubiertas para recibir a más de 100.000 visitantes.
 category: Infraestructura
-image: /images/photos/1774082313811-f9852bd53d00.jpg
+image: /images/photos/humahuaca.png
 ---
 
 A pocas semanas del inicio formal de **ExpoJuy 2026**, que se llevará a cabo del **17 al 20 de septiembre de 2026**, las autoridades de la Cámara de Comercio Exterior de Jujuy junto a representantes del Ministerio de Desarrollo Económico y Producción realizaron una recorrida exhaustiva por las instalaciones del **Predio Ferial Jujuy**, ubicado en San Salvador de Jujuy.
