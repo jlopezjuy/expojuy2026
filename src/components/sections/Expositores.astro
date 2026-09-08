@@ -40,7 +40,7 @@ const { headingLevel = 'h1' } = Astro.props;
           type="search"
           id="search-expositores"
           placeholder="Buscar por empresa, rubro o stand..."
-          class="w-full rounded-card border border-night/20 bg-cream-deep/80 py-3.5 pr-4 pl-11 text-body text-night placeholder:text-night/50 transition-colors focus:border-magenta focus:bg-cream focus:outline-none focus:ring-2 focus:ring-magenta/20"
+          class="w-full align-text-middle rounded-card border border-night/20 bg-cream-deep/80 py-3.5 pr-4 pl-11 text-body text-night placeholder:text-night/50 transition-colors focus:border-magenta focus:bg-cream focus:outline-none focus:ring-2 focus:ring-magenta/20"
         />
       </div>
 
@@ -51,7 +51,7 @@ const { headingLevel = 'h1' } = Astro.props;
             <button
               type="button"
               data-rubro-filter={rubro}
-              class={`rounded-full px-4 py-2 text-[0.68rem] font-bold tracking-[0.14em] uppercase transition-all duration-300 ${
+              class={`inline-flex min-h-8 items-center justify-center rounded-full px-4 text-[0.68rem] leading-none font-bold tracking-[0.14em] whitespace-nowrap uppercase transition-all duration-300 ${
                 index === 0
                   ? 'bg-night text-cream shadow-sm'
                   : 'border border-night/15 bg-cream-deep/60 text-night/80 hover:border-night/40 hover:bg-cream-deep'

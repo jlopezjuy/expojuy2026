@@ -22,10 +22,10 @@ import SectionHeading from '../ui/SectionHeading.astro';
         Empresas, emprendedores y destinos que muestran lo mejor de nuestra tierra al mundo.
       </p>
 
-      <ul class="mt-10 flex items-start justify-between gap-3 sm:justify-start sm:gap-6">
+      <ul class="mt-10 flex items-center justify-between gap-3 sm:justify-start sm:gap-6">
         {
           pillars.map((pillar) => (
-            <li class="flex min-w-0 flex-col items-start gap-2.5">
+            <li class="flex min-w-0 flex-col items-center gap-2.5">
               <Icon name={pillar.icon} class="h-6 w-6 text-night" />
               <span class="text-[0.52rem] leading-tight font-bold tracking-[0.08em] text-night/80 uppercase">
                 {pillar.label}
