@@ -113,7 +113,8 @@ export interface Sponsor {
 }
 
 /**
- * Institutional supporters read off the sponsor strip in 00.png.
+ * Legacy mockup entries read off the strip in 00.png, NOT verified 2026 sponsors.
+ * Not rendered by Sponsors.astro; regional-companies.ts supplies its illustrative list.
  * No official logo files exist in this repo for most of them, so they render
  * as text wordmarks. The Cámara de Comercio Exterior logo was found in
  * `recursos/EXPOJUY_Logo2026/logo_camcomext.png` and is used as a real image.

@@ -1,46 +1,39 @@
 ---
 import { Image } from 'astro:assets';
-import { sponsors } from '../../data/site';
+import { regionalCompanies, regionalCompaniesNotice, regionalCompaniesTitle } from '../../data/regional-companies';
 import Container from '../layout/Container.astro';
 ---
 
-<section class="border-t border-night/10 bg-cream py-8" aria-labelledby="sponsors-title">
+<section class="border-t border-night/10 bg-cream py-8" aria-labelledby="sponsors-title" aria-describedby="regional-companies-notice">
   <Container class="flex flex-col items-center gap-6 lg:flex-row lg:gap-10">
     <h2
       id="sponsors-title"
       class="shrink-0 font-sans text-[0.7rem] font-bold tracking-[0.14em] text-night/70 uppercase"
     >
-      Acompañan
+      {regionalCompaniesTitle}
     </h2>
 
-    {/* Entidades y patrocinadores oficiales de ExpoJuy 2026. La Cámara de Comercio Exterior
-        se renderiza con su imagotipo vectorial oficial, y las restantes entidades con
-        wordmarks tipográficos institucionales de alto contraste.
-
-        Desde `lg` la fila se convierte en marquesina continua: la lista real se duplica
-        una sola vez (la copia va `aria-hidden`, nunca la lee un lector de pantalla) y
-        ambas pistas se desplazan a la par, lo que da el bucle sin costura. Por debajo de
-        `lg` queda el rail original, desplazable con el dedo: movimiento permanente en
-        mobile gasta batería y no aporta nada. */}
-    <div class="sponsors-viewport w-full">
+    {/* La copia visual permite el bucle de escritorio; queda fuera del árbol accesible.
+        En pantallas pequeñas la lista es desplazable, sin movimiento automático. */}
+    <div class="sponsors-viewport min-w-0 w-full">
       <ul
         class="sponsors-track rail -mx-gutter w-full items-center gap-8 px-gutter lg:mx-0 lg:overflow-visible lg:px-0 lg:[mask-image:none] lg:[-webkit-mask-image:none]"
         tabindex="0"
-        aria-label="Acompañan"
+        aria-label={regionalCompaniesTitle}
       >
         {
-          sponsors.map((sponsor) => (
+          regionalCompanies.map((company) => (
             <li class="flex items-center">
-              {sponsor.logo ? (
+              {company.logo ? (
                 <Image
-                  src={sponsor.logo}
-                  alt={sponsor.name}
-                  width={120}
-                  class="h-8 w-auto object-contain grayscale transition-[filter] duration-300 hover:grayscale-0"
+                  src={company.logo}
+                  alt={company.name}
+                  width={192}
+                  class="h-auto w-24 shrink-0 object-contain"
                 />
               ) : (
-                <span class="text-center text-[0.72rem] leading-tight font-bold tracking-[0.05em] whitespace-nowrap text-night/70 uppercase grayscale transition-colors duration-300 hover:text-night/85">
-                  {sponsor.name}
+                <span class="text-center text-[0.72rem] leading-tight font-bold tracking-[0.05em] whitespace-nowrap text-night/70 uppercase transition-colors duration-300 hover:text-night/85">
+                  {company.name}
                 </span>
               )}
             </li>
@@ -50,18 +43,18 @@ import Container from '../layout/Container.astro';
 
       <ul class="sponsors-track sponsors-track--clone items-center gap-8" aria-hidden="true">
         {
-          sponsors.map((sponsor) => (
+          regionalCompanies.map((company) => (
             <li class="flex items-center">
-              {sponsor.logo ? (
+              {company.logo ? (
                 <Image
-                  src={sponsor.logo}
+                  src={company.logo}
                   alt=""
-                  width={120}
-                  class="h-8 w-auto object-contain grayscale transition-[filter] duration-300 hover:grayscale-0"
+                  width={192}
+                  class="h-auto w-24 shrink-0 object-contain"
                 />
               ) : (
-                <span class="text-center text-[0.72rem] leading-tight font-bold tracking-[0.05em] whitespace-nowrap text-night/70 uppercase grayscale transition-colors duration-300 hover:text-night/85">
-                  {sponsor.name}
+                <span class="text-center text-[0.72rem] leading-tight font-bold tracking-[0.05em] whitespace-nowrap text-night/70 uppercase transition-colors duration-300 hover:text-night/85">
+                  {company.name}
                 </span>
               )}
             </li>
@@ -69,6 +62,11 @@ import Container from '../layout/Container.astro';
         }
       </ul>
     </div>
+  </Container>
+  <Container>
+    <p id="regional-companies-notice" class="mt-4 text-center text-xs leading-relaxed text-night/70">
+      {regionalCompaniesNotice}
+    </p>
   </Container>
 </section>
 
@@ -98,7 +96,7 @@ import Container from '../layout/Container.astro';
     }
 
     /* Pausa al pasar el mouse o al tabular hacia un logo: si alguien quiere
-       mirar un patrocinador, el movimiento deja de pelearle. */
+       mirar una empresa, el movimiento deja de pelearle. */
     .sponsors-viewport:hover .sponsors-track,
     .sponsors-viewport:focus-within .sponsors-track {
       animation-play-state: paused;
@@ -117,6 +115,9 @@ import Container from '../layout/Container.astro';
   @media (prefers-reduced-motion: reduce) {
     .sponsors-track {
       animation: none;
+      flex-wrap: wrap;
+      min-width: 0;
+      width: 100%;
     }
 
     .sponsors-track--clone {
