@@ -12,7 +12,7 @@ interface Props {
 const { headingLevel = 'h1' } = Astro.props;
 
 const pillClass =
-  'rounded-full border border-night/20 px-4 py-2 text-[0.62rem] font-bold tracking-[0.14em] whitespace-nowrap text-night/70 uppercase transition duration-300 ease-out hover:border-night/50 hover:text-night aria-pressed:border-night aria-pressed:bg-night aria-pressed:text-cream';
+  'inline-flex min-h-8 items-center justify-center rounded-full border border-night/20 px-4 text-[0.62rem] leading-none font-bold tracking-[0.14em] whitespace-nowrap text-night/70 uppercase transition duration-300 ease-out hover:border-night/50 hover:text-night aria-pressed:border-night aria-pressed:bg-night aria-pressed:text-cream';
 
 const dayFilters = [{ id: 'todos', label: 'Todos los días' }, ...agendaDays.map((d) => ({ id: d.day, label: `Día ${d.day} de Octubre` }))];
 const trackFilters = [{ id: 'todos', label: 'Todas las temáticas' }, ...agendaTracks];
@@ -40,7 +40,7 @@ const trackById = new Map(agendaTracks.map((t) => [t.id, t]));
       <div class="flex flex-col gap-3">
         <p class="eyebrow text-night/60">Filtrar por jornada</p>
         <div
-          class="rail -mx-gutter px-gutter sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:[mask-image:none] sm:[-webkit-mask-image:none]"
+          class="flex rail -mx-gutter px-gutter sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:[mask-image:none] sm:[-webkit-mask-image:none]"
           role="group"
           aria-label="Filtrar agenda por día"
           id="agenda-days"
@@ -64,7 +64,7 @@ const trackById = new Map(agendaTracks.map((t) => [t.id, t]));
       <div class="flex flex-col gap-3">
         <p class="eyebrow text-night/60">Filtrar por temática</p>
         <div
-          class="rail -mx-gutter px-gutter sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:[mask-image:none] sm:[-webkit-mask-image:none]"
+          class="flex rail -mx-gutter px-gutter sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:[mask-image:none] sm:[-webkit-mask-image:none]"
           role="group"
           aria-label="Filtrar agenda por temática"
           id="agenda-tracks"
