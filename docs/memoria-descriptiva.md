@@ -12,11 +12,11 @@
 | :--- | :--- |
 | **Nombre de la propuesta** | Propuesta 1 — *Jujuy Cinematográfico* |
 | **Concepto central** | "Jujuy Cinematográfico: Tierra que produce, crea y emprende" |
-| **Representante del equipo** | Juan Lopez (`contacto@palabraviva.app`) |
-| **Integrantes del equipo** | Juan Lopez (Líder Técnico & Frontend Architect) y Equipo de Desarrollo Digital |
+| **Representante del equipo** | Juan Manuel Lopez (`jlopezjuy@gmail.com`) |
+| **Integrantes del equipo** | Juan Manuel Lopez y Franco Emanuel Aban Tejerina |
 | **Evento oficial** | **ExpoJuy 2026** — Del 17 al 20 de septiembre de 2026 |
 | **Sede oficial** | Predio Ferial Jujuy, San Salvador de Jujuy, República Argentina |
-| **Prototipo navegable** | [Ver maqueta interactiva y prototipo navegable](https://expojuy-2026.vercel.app/) / [Repositorio de código](https://github.com/juanlopez/ExpoJujuy2026) |
+| **Prototipo navegable** | [Ver maqueta interactiva y prototipo navegable](https://expojujuy2026-beryl.vercel.app/) / [Repositorio de código](https://github.com/juanlopez/ExpoJujuy2026) |
 | **Fecha de entrega** | 8 de septiembre de 2026 |
 
 ---
@@ -107,7 +107,11 @@ La inclusión digital es un pilar irrenunciable del proyecto:
 | **Framework Base** | **Astro 7.2** | Renderizado estático de vanguardia (SSG), compilación a HTML puro, soporte nativo de Content Collections y arquitectura de islas para interactividad puntual. |
 | **Motor de Estilos** | **Tailwind CSS v4.3** | Integración directa mediante `@tailwindcss/vite`, sistema de diseño basado en variables `@theme`, eliminación de CSS sin uso y compilación instantánea. |
 | **Lenguaje** | **TypeScript 6.0** | Tipado estricto en datos de eventos, expositores y agenda. Cero errores en chequeo estático (`astro check`). |
-| **Islas de Cliente** | **Preact 10.29** | Micro-framework reactivo de solo 3 KB para componentes interactivos específicos, minimizando la carga sobre el navegador. |
+| **Islas de Cliente** | **Preact 10.29 + @astrojs/preact** | Micro-framework reactivo de solo 3 KB para componentes interactivos específicos (autenticación, filtros, buscador), minimizando la carga sobre el navegador. |
+| **Estado Reactivo** | **@preact/signals** | Manejo de estado reactivo y desacoplado (p. ej. sesión de usuario) sin re-renders innecesarios ni dependencias de un store global. |
+| **Motor de Búsqueda** | **@orama/orama + @orama/stemmers** | Índice de búsqueda full-text 100% client-side (sin backend ni servicios externos), con soporte de stemming en español para la barra de búsqueda instantánea de expositores y noticias. |
+| **Animaciones** | **Motion (`motion/mini`)** | Micro-motor de animación cargado de forma diferida (*lazy import*) y suspendido por completo bajo `prefers-reduced-motion`, usado en transiciones de filtros y parallax puntual. |
+| **Scroll Suave** | **Lenis** | Desplazamiento asistido de alto rendimiento para la experiencia de scroll cinematográfica, respetando la accesibilidad de movimiento reducido. |
 | **Tipografía** | **Ambit (Local Woff2)** | Familia provista por la organización, precargada en `BaseLayout` con `font-display: swap`. |
 | **Testing & QA** | **Playwright 1.62 + axe-core** | Pruebas automatizadas de extremo a extremo en emuladores Desktop Chrome, Tablet y Mobile Pixel, verificando regresiones visuales y accesibilidad. |
 | **SEO & Indexación** | **@astrojs/sitemap + Schema.org** | Generación automatizada de sitemaps XML, robots.txt estructurado y metadatos enriquecidos de evento (*Event*) para indexación en Google. |

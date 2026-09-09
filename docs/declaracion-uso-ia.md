@@ -10,8 +10,8 @@
 | Campo | Detalle Oficial |
 | :--- | :--- |
 | **Nombre de la propuesta** | Propuesta 1 — *Jujuy Cinematográfico* |
-| **Representante del equipo** | Juan Lopez (`contacto@palabraviva.app`) |
-| **Integrantes del equipo** | Juan Lopez (Arquitectura Frontend & Desarrollo Web) y Equipo Colaborador |
+| **Representante del equipo** | Juan Manuel Lopez (`jlopezjuy@gmail.com`) |
+| **Integrantes del equipo** | Juan Manuel Lopez y Franco Emanuel Aban Tejerina |
 | **Rol en el proyecto** | Diseño UX/UI, maquetación Astro 7, arquitectura de datos y optimización web |
 | **Fecha de emisión** | 8 de septiembre de 2026 |
 
@@ -33,10 +33,10 @@ El desarrollo de esta propuesta se rigió bajo los siguientes principios éticos
 
 | Categoría | Herramienta / Modelo | Proveedor | Finalidad Específica en el Proyecto |
 | :--- | :--- | :--- | :--- |
-| **Asistencia en Arquitectura y Código** | Claude 3.5 Sonnet / Gemini 3.8 Pro | Anthropic / Google | Soporte en la refactorización de componentes Astro (`.astro`), tipado estricto en TypeScript, configuración de Tailwind CSS v4 y estructuración de tests automatizados de accesibilidad en Playwright. |
-| **Visión Artificial y Análisis de Mockups** | Gemini 1.5 Pro / Claude 3.5 Multimodal | Google / Anthropic | Análisis de los mockups compositivos de referencia (`00.png` y `02.png`) para extraer coordenadas de retícula, relaciones de aspecto de tarjetas y verificar paridad visual de maquetación. |
-| **Auditoría Técnica y QA** | Antigravity AI Engine | Google DeepMind | Ejecución de revisiones automatizadas contra estándares WCAG 2.1 AA, detección de saltos de encabezado HTML, contrastes y chequeo de cumplimiento de Bases y Condiciones. |
-| **Redacción Técnica y Documentación** | Modelos LLM Avanzados | Anthropic / Google | Corrección ortotipográfica, redacción estructurada de especificaciones técnicas (`design-spec.md`) y asistencia en la elaboración de la presente memoria. |
+| **Generación de Imágenes** | ChatGPT | OpenAI | Generación y ajuste de imágenes de referencia para el moodboard visual del concepto "Jujuy Cinematográfico". |
+| **Investigación Técnica y Código** | Codex | OpenAI | Investigación de patrones de Astro y Tailwind CSS v4, asistencia en la escritura y revisión de componentes, y resolución de bugs puntuales. |
+| **Investigación Técnica y Código** | Claude | Anthropic | Desarrollo de componentes Astro/Preact, tipado en TypeScript, debugging y aceleración de tareas repetitivas de código. |
+| **Redacción Técnica y Documentación** | Claude | Anthropic | Asistencia en la redacción y actualización de especificaciones técnicas y de la presente memoria. |
 
 ---
 
@@ -56,6 +56,6 @@ Por medio de la presente, los integrantes del equipo declaramos bajo juramento:
 3. Que asumimos la **total y exclusiva responsabilidad técnica, conceptual y legal** sobre la totalidad del código, diseño, textos y recursos que integran la propuesta.
 
 **Firma del Representante Oficial:**  
-*Juan Lopez*  
+*Juan Manuel Lopez*  
 Representante del Equipo — Desafío Digital ExpoJuy 2026  
 San Salvador de Jujuy, República Argentina
